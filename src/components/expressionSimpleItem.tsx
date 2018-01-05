@@ -137,14 +137,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                 return 'date-range';
             }
             if ( meta.attrCtrlType === 'picklist' ) {
-                if ( operator === 'is-one-of' ) {
-                    return 'multi-pick';
-                }
-                else {
-                    return 'pick';
-                }
+                return ( operator === 'is-one-of' ) ? 'multi-pick' : 'pick';
             }
-            if (validCtrlKind.indexOf(meta.attrCtrlType)) {
+            if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
                 return meta.attrCtrlType;
             }
         }
