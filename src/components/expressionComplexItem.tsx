@@ -99,6 +99,16 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                 {value: 'or', label: 'OR'}
             ];
 
+            let menu = (<span>&nbsp;</span>);
+            if (!this.props.readonly) {
+                menu = (
+                    <DropdownButton id="menu-simple-dropdown" title="">
+                        <MenuItem onClick={() => {this.addSimpleChild(); }}>New Line</MenuItem>
+                        <MenuItem divider={true} />
+                        <MenuItem eventKey="3">Another Link</MenuItem>
+                    </DropdownButton>
+                );
+            }
             return (
                 <div className="expr-complex-item">
                     <div className="expr-logic">
@@ -113,11 +123,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                             onChange={(evt: any) => {this.updateOperator(evt.value); }}
                         />
                         <div className="expr-logic-part">
-                            <DropdownButton id="menu-simple-dropdown" title="">
-                                <MenuItem onClick={() => {this.addSimpleChild(); }}>New Line</MenuItem>
-                                <MenuItem divider={true} />
-                                <MenuItem eventKey="3">Another Link</MenuItem>
-                            </DropdownButton>
+                            {menu}
                         </div>
                     </div>
                     <div className="expr-children">

@@ -180,7 +180,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     <ExpressionValueText 
                         value={this.state.operands[0]} 
                         readOnly={this.props.readonly}
-                        onChange={(...evt: any[]) => {this.updateValue(...evt); }}
+                        onChange={(evt: any) => {this.updateValue(evt); }}
                     />
                 );
                 break;
@@ -189,7 +189,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     <ExpressionValueNumber
                         value={this.state.operands[0]} 
                         readOnly={this.props.readonly}
-                        onChange={(...evt: any[]) => {this.updateValue(...evt); }}
+                        onChange={(evt: any) => {this.updateValue(evt); }}
                     />
                 );
                 break;
@@ -236,6 +236,19 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                 break;
         }        
 
+        let menu = (<span>&nbsp;</span>);
+        if (!this.props.readonly) {
+            menu = ( 
+                <DropdownButton id="menu-simple-dropdown" title="">
+                    <MenuItem onClick={() => {this.replaceWithComplex('and'); }}>AND</MenuItem>
+                    <MenuItem onClick={() => {this.replaceWithComplex('or'); }}>OR</MenuItem>
+                    <MenuItem onClick={() => {this.addSibling(); }}>New Line</MenuItem>
+                    <MenuItem divider={true} />
+                    <MenuItem onClick={() => {this.removeSelf(); }}>Remove</MenuItem>
+                </DropdownButton>
+            );
+        }
+
         return (
             <div className="expr-simple-item">
                 <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
@@ -253,18 +266,13 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     options={this.state.allowedOperators}
                     searchable={false}
                     clearable={false}
+                    disabled={this.props.readonly}
                     value={this.state.operator}
                     onChange={(evt: any) => {this.updateOperator(evt.value); }}
                 />
                 {operandCtrl}
                 <div className="expr-simple-part">
-                    <DropdownButton id="menu-simple-dropdown" title="">
-                        <MenuItem onClick={() => {this.replaceWithComplex('and'); }}>AND</MenuItem>
-                        <MenuItem onClick={() => {this.replaceWithComplex('or'); }}>OR</MenuItem>
-                        <MenuItem onClick={() => {this.addSibling(); }}>New Line</MenuItem>
-                        <MenuItem divider={true} />
-                        <MenuItem onClick={() => {this.removeSelf(); }}>Remove</MenuItem>
-                    </DropdownButton>
+                    {menu}
                 </div>
             </div>
         );
