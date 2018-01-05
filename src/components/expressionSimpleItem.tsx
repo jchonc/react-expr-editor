@@ -4,6 +4,7 @@ import Select from 'react-select';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 import ExpressionValueText from './editors/ExpressionValueText';
+import ExpressionValueNumber from './editors/ExpressionValueNumber';
 import ExpressionValueList from './editors/ExpressionValueList';
 import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
 import ExpressionValueDate from './editors/ExpressionValueDate';
@@ -26,6 +27,10 @@ interface ExpressionSimpleItemProps {
     parent: any;
     readonly: boolean;
 }
+
+const validCtrlKind: string[] = [
+    'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
+];
 
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, ExpressionSimpleItemState> {
     
@@ -127,35 +132,23 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
     }
 
     getOperandKind(meta: any, operator: string) {
-        if (!meta) {
-            return 'none';
-        }
-        // none | text | number | date | time | datetime | date-range | pick | multi-pick 
-        if ( meta.attrCtrlType === 'date' && operator === 'between' ) {
-            return 'date-range';
-        }
-        if ( meta.attrCtrlType === 'picklist' ) {
-            if ( operator === 'is-one-of' ) {
-                return 'multi-pick';
+        if (meta) {
+            if ( meta.attrCtrlType === 'date' && operator === 'between' ) {
+                return 'date-range';
             }
-            else {
-                return 'pick';
+            if ( meta.attrCtrlType === 'picklist' ) {
+                if ( operator === 'is-one-of' ) {
+                    return 'multi-pick';
+                }
+                else {
+                    return 'pick';
+                }
+            }
+            if (validCtrlKind.indexOf(meta.attrCtrlType)) {
+                return meta.attrCtrlType;
             }
         }
-        switch ( meta.attrCtrlType ) {
-            case 'number':
-                return 'number';
-            case 'text':
-                return 'text';
-            case 'date':
-                return 'date';
-            case 'time':
-                return 'time';
-            case 'datetime':
-                return 'datetime';
-            default: 
-                return 'none';
-        }
+        return 'none';
     }
 
     render() {
@@ -185,6 +178,15 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             case 'text':
                 operandCtrl = (
                     <ExpressionValueText 
+                        value={this.state.operands[0]} 
+                        readOnly={this.props.readonly}
+                        onChange={(...evt: any[]) => {this.updateValue(...evt); }}
+                    />
+                );
+                break;
+            case 'number':
+                operandCtrl = (
+                    <ExpressionValueNumber
                         value={this.state.operands[0]} 
                         readOnly={this.props.readonly}
                         onChange={(...evt: any[]) => {this.updateValue(...evt); }}

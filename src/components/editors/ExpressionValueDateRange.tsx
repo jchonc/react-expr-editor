@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { DateRangePicker } from 'react-dates';
-import 'react-dates/lib/css/_datepicker.css';
 import moment from 'moment';
+
+import 'react-dates/lib/css/_datepicker.css';
+import './react_dates_overrides.css';
 
 interface ExpressionValueDateRangeState {
     focusedInput: any;
