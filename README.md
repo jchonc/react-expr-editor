@@ -2,11 +2,8 @@ My first attempt for expression editor
 
 TODO:
 
-* Boostrap style and components
-* Feature list
-* Render
-* pseudo selector for lines
-* Item Editor
-* Menu, operations
-* Fetch/API
-* Conversion </> RL6
+* lines using :first-child :before
+* date/date-range need re-skin
+* fetch/api
+* lookup for user/employee
+* drag-n-drop
