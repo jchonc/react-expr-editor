@@ -1,0 +1,4 @@
+.expr-simple-item {display: table; width: 520px;}
+.expr-simple-part {display: table-cell; width: 20px;}
+.expr-simple-field {display: table-cell; width: 120px;}
+.expr-simple-value {display: table-cell; }

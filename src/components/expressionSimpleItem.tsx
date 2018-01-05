@@ -4,6 +4,10 @@ import Select from 'react-select';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 import ExpressionValueText from './editors/ExpressionValueText';
+import ExpressionValueList from './editors/ExpressionValueList';
+import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
+import ExpressionValueDate from './editors/ExpressionValueDate';
+import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 
 import './expressionSimpleItem.css';
 import 'react-select/dist/react-select.css';
@@ -64,10 +68,8 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             return elm.attrId === elmId;
         });
 
-        expression.set({
-            attrId: elmId,
-            attrCaption: meta.attrCaption    
-        });
+        expression.attrId = elmId;
+        expression.attrCaption = meta.attrCaption;
 
         this.setState({
             attrMeta: meta,
@@ -80,9 +82,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
     updateOperator(operator: string) {
         const expression = this.props.node;
         const meta = this.state.attrMeta;
-        expression.set({
-            operator: operator
-        });
+        expression.operator = operator;
         this.setState({
             operator: operator,
             operandKind: this.getOperandKind(meta, expression.operator)               
@@ -97,15 +97,39 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         return;
     }
 
+    removeSelf() {
+        this.props.parent.removeChild(this.props.node);
+    }
+
+    replaceWithComplex(logic: string) {
+        this.props.parent.replaceWithComplex(logic, this.props.node);
+    }
+
+    addSibling() {
+        this.props.parent.addSimpleChild();
+    }
+
     getAllowedOperators(meta: any) {
         // gt; ge; lt; le; between; is-one-of; 
-        return [
+        let results =  [
             { value: 'eq', label: 'equals to'},
             { value: 'ne', label: 'not equal to'}
         ];
+        if (meta) {
+            if ( meta.attrCtrlType === 'picklist' ) {
+                results.push({ value: 'is-one-of', label: 'is one of'});
+            }
+            if ( meta.attrCtrlType === 'date' ) {
+                results.push({ value: 'between', label: 'between'});
+            }            
+        }
+        return results;
     }
 
     getOperandKind(meta: any, operator: string) {
+        if (!meta) {
+            return 'none';
+        }
         // none | text | number | date | time | datetime | date-range | pick | multi-pick 
         if ( meta.attrCtrlType === 'date' && operator === 'between' ) {
             return 'date-range';
@@ -135,55 +159,111 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
     }
 
     render() {
+
         let options = this.context.metaDictionary.map(function(item: any) {
             return {
                 value: item.attrId,
                 label: item.attrCaption
             };
         });
-
-        let operandCtrl = (<div />);
-        if (this.state.operandKind === 'text' ) {
-            operandCtrl = (
-                <ExpressionValueText 
-                    value={this.state.operands[0]} 
-                    onChange={(...evt: any[]) => {this.updateValue(...evt); }}
-                />
-            );
+        
+        const meta = this.state.attrMeta;
+        let listItems = [];
+        if (meta) {
+            if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams ) {
+                const list = this.context.cachedPickLists.find(function(lr: any) {
+                    return lr.listName === meta.attrCtrlParams;
+                });
+                if (list) {
+                    listItems = list.items;
+                }
+            }
         }
 
+        let operandCtrl: any;
+        switch (this.state.operandKind) {
+            case 'text':
+                operandCtrl = (
+                    <ExpressionValueText 
+                        value={this.state.operands[0]} 
+                        readOnly={this.props.readonly}
+                        onChange={(...evt: any[]) => {this.updateValue(...evt); }}
+                    />
+                );
+                break;
+            case 'pick':                
+                operandCtrl = (
+                    <ExpressionValueList 
+                        value={this.state.operands[0]} 
+                        readOnly={this.props.readonly}
+                        options={listItems}
+                        onChange={(...evt: any[]) => {this.updateValue(...evt); }}
+                    />
+                );
+                break;
+            case 'multi-pick':
+                operandCtrl = (
+                    <ExpressionValueMultiList 
+                        values={this.state.operands} 
+                        readOnly={this.props.readonly}
+                        options={listItems}
+                        onChange={(evt: any) => {this.updateValue(...evt); }}
+                    />
+                );
+                break;
+            case 'date':
+                operandCtrl = (
+                    <ExpressionValueDate
+                        value={this.state.operands[0]}
+                        readOnly={this.props.readonly}
+                        onChange={(evt: any) => {this.updateValue(...evt); }}
+                    />
+                );
+                break;
+            case 'date-range':
+                operandCtrl = (
+                    <ExpressionValueDateRange
+                        values={this.state.operands}
+                        readOnly={this.props.readonly}
+                        onChange={(evt: any) => {this.updateValue(...evt); }}
+                    />
+                );
+                break;
+            default:
+                operandCtrl = (<div />);
+                break;
+        }        
+
         return (
-            <div className="expr-simple-item row">
-                <form className="form-inline">
-                    <div className="input-group">
-                        <div className="input-group-addon"><i className="fa fa-th" aria-hidden="true" /></div>
-                        <Select 
-                            className="expr-logic-variable"
-                            options={options}
-                            searchable={false}
-                            clearable={false}
-                            disabled={this.props.readonly}
-                            value={this.state.attrId}
-                            onChange={(evt: any) => {this.updateMetaReference(evt.value); }}
-                        />
-                        <Select
-                            className="expr-logic-operator"
-                            options={this.state.allowedOperators}
-                            searchable={false}
-                            clearable={false}
-                            value={this.state.operator}
-                            onChange={(evt: any) => {this.updateOperator(evt.value); }}
-                        />
-                        {operandCtrl}
-                        <div className="input-group-addon">
-                            <DropdownButton id="menu-simple-dropdown" title="">
-                                <MenuItem eventKey="1">Action</MenuItem>
-                                <MenuItem divider={true} />
-                                <MenuItem eventKey="3">Another Link</MenuItem>
-                            </DropdownButton>
-                        </div>
-                    </div>
-                </form>
+            <div className="expr-simple-item">
+                <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
+                <Select 
+                    className="expr-simple-field"
+                    options={options}
+                    searchable={false}
+                    clearable={false}
+                    disabled={this.props.readonly}
+                    value={this.state.attrId}
+                    onChange={(evt: any) => {this.updateMetaReference(evt.value); }}
+                />
+                <Select
+                    className="expr-simple-field"
+                    options={this.state.allowedOperators}
+                    searchable={false}
+                    clearable={false}
+                    value={this.state.operator}
+                    onChange={(evt: any) => {this.updateOperator(evt.value); }}
+                />
+                {operandCtrl}
+                <div className="expr-simple-part">
+                    <DropdownButton id="menu-simple-dropdown" title="">
+                        <MenuItem onClick={() => {this.replaceWithComplex('and'); }}>AND</MenuItem>
+                        <MenuItem onClick={() => {this.replaceWithComplex('or'); }}>OR</MenuItem>
+                        <MenuItem onClick={() => {this.addSibling(); }}>New Line</MenuItem>
+                        <MenuItem divider={true} />
+                        <MenuItem onClick={() => {this.removeSelf(); }}>Remove</MenuItem>
+                    </DropdownButton>
+                </div>
             </div>
         );
     }

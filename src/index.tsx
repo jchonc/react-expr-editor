@@ -5,6 +5,8 @@ import App from './containers/App';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 
+import 'react-dates/initialize';
+
 ReactDOM.render(
   <App />,
   document.getElementById('root') as HTMLElement

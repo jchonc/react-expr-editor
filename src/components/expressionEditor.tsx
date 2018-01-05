@@ -4,7 +4,7 @@ import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
 
 interface ExpressionEditorState {
-    fullScreen: boolean;
+    expression: any;
 }
 
 interface ExpressionEditorProps {
@@ -15,11 +15,10 @@ interface ExpressionEditorProps {
 }
 
 const knownPickLists = [{
-    listId: '1201',
-    listCaption: 'Gender',
+    listName: 'Gender',
     items: [
-        { cd: 'GD_MALE', caption: 'Male', description: 'Gentleman'},
-        { cd: 'GD_FEMALE', caption: 'Female', description: 'Lady'}
+        { value: 'GD_MALE', label: 'Male', description: 'Gentleman'},
+        { value: 'GD_FEMALE', label: 'Female', description: 'Lady'}
     ]
 }];
 
@@ -41,6 +40,13 @@ const knownMetaDictionary = [{
     attrDataType: 'string',
     attrCtrlType: 'picklist',
     attrCtrlParams: 'Gender'
+}, {
+    attrId: '11004',
+    attrCaption: 'Birthday',
+    attrDataType: 'date',
+    attrCtrlType: 'date',
+    attrCtrlParams: ''
+   
 }];
 
 export default class ExpressionEditor extends React.Component<ExpressionEditorProps, ExpressionEditorState> {
@@ -56,8 +62,11 @@ export default class ExpressionEditor extends React.Component<ExpressionEditorPr
     constructor(props: any) {
         super(props);
         this.state = {
-            fullScreen: false
+            expression: props.expression
         };
+        this.addSimpleChild = this.addSimpleChild.bind(this);
+        this.removeChild = this.removeChild.bind(this);
+        this.replaceWithComplex = this.replaceWithComplex.bind(this);
     }
 
     getChildContext() {
@@ -67,15 +76,38 @@ export default class ExpressionEditor extends React.Component<ExpressionEditorPr
         };
     }
 
+    addSimpleChild() {
+        this.setState({
+            expression: { name: 'compare', attrId: '', attrCaption: '', operator: '', operands: [''] }
+        });
+    }
+
+    removeChild(child: any) {
+        this.addSimpleChild();
+    }
+
+    replaceWithComplex(logic: string, child: any) {
+        if (child) {
+            const newComplexNode = {
+                name: 'logic',
+                operator: logic,
+                operands: [child]
+            };
+            this.setState({
+                expression: newComplexNode
+            });
+        }
+    }
+
     render() {
-        let expression = this.props.expression;
+        let expression = this.state.expression;
         if ( expression ) {
             return (
                 <div>
                     <div>Toolbar</div>
                     <div className="row expr-editor">
                         <div className="expr-canvas">
-                            <ExpressionItem node={expression} readonly={this.props.readonly} parent={null} /> 
+                            <ExpressionItem node={expression} readonly={this.props.readonly} parent={this} /> 
                         </div>
                     </div>
                 </div>

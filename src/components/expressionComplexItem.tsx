@@ -31,6 +31,9 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             operator: props.node.operator,
             children: props.node.operands
         };
+        this.addSimpleChild = this.addSimpleChild.bind(this);
+        this.removeChild = this.removeChild.bind(this);
+        this.replaceWithComplex = this.replaceWithComplex.bind(this);
     }
 
     updateOperator(op: string) {
@@ -38,6 +41,49 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         this.setState({
             operator: this.props.node.operator 
         });
+    }
+
+    addSimpleChild() {
+        const newElement = {
+            name: 'compare', attrId: '', attrCaption: '', operator: '', operands: [''] 
+        };
+        const newChildren = [...this.state.children, newElement];
+        this.props.node.operands = newChildren;
+        this.setState({
+            children: newChildren
+        });
+    }
+
+    removeChild(child: any) {
+        if (child) {
+            const idx = this.state.children.indexOf(child);
+            if (idx >= 0) {
+                const newChildren = this.state.children.splice(idx, 1);
+                this.props.node.operands = newChildren;
+                this.setState({
+                    children: newChildren
+                });
+            }
+        }
+    }
+
+    replaceWithComplex(logic: string, child: any) {
+        if (child) {
+            const idx = this.state.children.indexOf(child);
+            if (idx >= 0) {
+                const newComplexNode = {
+                    name: 'logic',
+                    operator: logic,
+                    operands: [child]
+                };
+                const newChildren = this.state.children;
+                newChildren[idx] = newComplexNode;
+                this.props.node.operands = newChildren;
+                this.setState({
+                    children: newChildren
+                });
+            }
+        }
     }
 
     render() {
@@ -54,31 +100,27 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             ];
 
             return (
-                <div className="expr-complex-item row">
-                    <div className="expr-logic col-md-3">
-                        <form className="form-inline">
-                            <div className="input-group">
-                                <div className="input-group-addon"><i className="fa fa-th" aria-hidden="true" /></div>
-                                <Select 
-                                    className="expr-logic-operator"
-                                    options={options}
-                                    searchable={false}
-                                    clearable={false}
-                                    disabled={this.props.readonly}
-                                    value={this.state.operator}
-                                    onChange={(evt: any) => {this.updateOperator(evt.value); }}
-                                />
-                                <div className="input-group-addon">
-                                <DropdownButton id="menu-simple-dropdown" title="">
-                                    <MenuItem eventKey="1">Action</MenuItem>
-                                    <MenuItem divider={true} />
-                                    <MenuItem eventKey="3">Another Link</MenuItem>
-                                </DropdownButton>
-                                </div>
-                            </div>
-                        </form>
+                <div className="expr-complex-item">
+                    <div className="expr-logic">
+                        <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
+                        <Select 
+                            className="expr-logic-operator"
+                            options={options}
+                            searchable={false}
+                            clearable={false}
+                            disabled={this.props.readonly}
+                            value={this.state.operator}
+                            onChange={(evt: any) => {this.updateOperator(evt.value); }}
+                        />
+                        <div className="expr-logic-part">
+                            <DropdownButton id="menu-simple-dropdown" title="">
+                                <MenuItem onClick={() => {this.addSimpleChild(); }}>New Line</MenuItem>
+                                <MenuItem divider={true} />
+                                <MenuItem eventKey="3">Another Link</MenuItem>
+                            </DropdownButton>
+                        </div>
                     </div>
-                    <div className="expr-children col-md-9">
+                    <div className="expr-children">
                         {nodes}
                     </div>
                 </div>

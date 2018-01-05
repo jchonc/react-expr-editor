@@ -1,8 +1,12 @@
-.expr-complex-item {border: solid 1px green;}
+.expr-complex-item {display: table;}
 
-.expr-children {background: #ccc;}
+.expr-children { display: table-cell;}
 .expr-children > div:first-child {background: green;} 
 .expr-children > div:last-child {background: blue;} 
 .expr-children > div:only-child {background:red;}
 
-.expr-logic-operator {width: 120px;}
+.expr-logic { display: table-cell; width: 120px;}
+.expr-logic-part {display: table-cell; width: 20px; padding: 2px;}
+.expr-logic-operator {display: table-cell; width: 80px; }
+
+

@@ -5,6 +5,7 @@ interface ExpressionValueTextState {
 
 interface ExpressionValueTextProps {
     value: any;
+    readOnly: boolean;
     onChange: any;
 }
 
@@ -14,7 +15,8 @@ class ExpressionValueText extends React.Component<ExpressionValueTextProps, Expr
         return (
             <input 
                 type="text" 
-                className="form-control" 
+                className="expr-simple-value" 
+                readOnly={this.props.readOnly}
                 value={this.props.value} 
                 onChange={(evt) => { this.props.onChange(evt.target.value); }}
             />
