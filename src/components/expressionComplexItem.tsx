@@ -56,12 +56,12 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
 
     removeChild(child: any) {
         if (child) {
-            const idx = this.state.children.indexOf(child);
+            let children = this.props.node.operands;
+            const idx = children.indexOf(child);
             if (idx >= 0) {
-                const newChildren = this.state.children.splice(idx, 1);
-                this.props.node.operands = newChildren;
+                children.splice(idx, 1);
                 this.setState({
-                    children: newChildren
+                    children: children
                 });
             }
         }
