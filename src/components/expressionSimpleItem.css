@@ -1,4 +1,13 @@
-.expr-simple-item {display: table; width: 520px;}
+.expr-simple-item {
+    display: table; 
+    width: 520px; 
+    margin: 10px;
+    background-color: #afaaaa;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.11);
+    padding: 3px;
+    border-radius: 5px;
+    position: relative;
+}
 .expr-simple-part {display: table-cell; width: 20px;}
 .expr-simple-field {display: table-cell; width: 120px;}
 .expr-simple-value {display: table-cell; }

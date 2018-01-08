@@ -1,11 +1,87 @@
-.expr-complex-item {display: table;}
+.expr-complex-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 10px;
+}
 
-.expr-children { display: table-cell;}
-.expr-children > div:first-child {background: green;} 
-.expr-children > div:last-child {background: blue;} 
-.expr-children > div:only-child {background:red;}
+.expr-children { display: table-cell; position: relative;}
 
-.expr-logic { display: table-cell; width: 120px;}
+/* First Node */
+.expr-children > div:first-child::before {
+    border-top: 2px solid #1ca842;
+    border-left: 2px solid #1ca842;
+    width: 7px;
+    height: calc(50% + 10px);
+    position: absolute;
+    content: '';
+    left: -6px;
+    top: 50%;
+} 
+
+/* Middle Node*/
+.expr-children > div:not(:first-child):not(:last-child)::before {
+    border-left: 2px solid #1ca842;
+    width: 7px;
+    height: calc(100% + 20px);
+    position: absolute;
+    content: '';
+    bottom: -10px;
+    left: -6px;
+}
+
+.expr-children > div:not(:first-child):not(:last-child)::after {
+    border-top: 2px solid #1ca842;
+    width: 7px;
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: -6px;
+}
+
+/* Last Node*/
+.expr-children > div:last-child::before {
+    border-bottom: 2px solid #1ca842;
+    border-left: 2px solid #1ca842;
+    width: 7px;
+    height: calc(50% + 10px);
+    position: absolute;
+    content: '';
+    bottom: 50%;
+    left: -6px;
+}
+
+/* Only Node*/
+.expr-children > div:only-child::before {
+    border-bottom: 2px solid #1ca842;
+    border-left: 0px solid transparent;
+    border-top: 0px solid transparent;
+    width: 5px;
+    height: 0px;
+    position: absolute;
+    content: '';
+    bottom: 50%;
+    left: -6px;
+}
+
+.expr-logic { 
+    display: block; 
+    width: 130px;
+    background-color: #afaaaa;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.11);
+    padding: 3px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.expr-logic::after{
+    border-bottom: 2px solid #1ca842;
+    width: 5px;
+    position: absolute;
+    content: '';
+    bottom: 45%;
+    right: -5px;
+}
 .expr-logic-part {display: table-cell; width: 20px; padding: 2px;}
 .expr-logic-operator {display: table-cell; width: 80px; }
 
