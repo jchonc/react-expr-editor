@@ -13,6 +13,9 @@ import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 import './expressionSimpleItem.css';
 import 'react-select/dist/react-select.css';
 
+import { DragSource } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
+
 interface ExpressionSimpleItemState {
     attrMeta: any;
     allowedOperators: any;
@@ -26,11 +29,62 @@ interface ExpressionSimpleItemProps {
     node: any;
     parent: any;
     readonly: boolean;
+    connectDragSource: any;
+    connectDropTargetComplex: any;
+    connectDropTargetSimple: any;
+    isDragging: boolean;
 }
 
 const validCtrlKind: string[] = [
     'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
 ];
+
+const ItemTypes = {
+    Complex: 'Complex',
+    Simple: 'Simple'
+};
+
+const simpleSource = {
+    beginDrag(props: any, monitor: any) {
+        return {node: props.node, parent: props.parent};
+    }
+};
+
+const simpleTarget = {
+    drop(props: any, monitor: any) {
+        let dragNodeInfo = monitor.getItem();
+        let condition = dragNodeInfo.node.name === 'logic' ? 
+            !props.parent.isAncestor(dragNodeInfo.node) : 
+            dragNodeInfo.node.attrId !== props.node.attrId;
+        if (condition) {
+            dragNodeInfo.parent.removeChild(dragNodeInfo.node);
+            props.parent.dragChildIn(props.node, dragNodeInfo.node);
+        }
+    }
+};
+
+function dropCollectComplex(connect: any, monitor: any) {
+    return {
+        connectDropTargetComplex: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    };
+}
+
+function dropCollectSimple(connect: any, monitor: any) {
+    return {
+        connectDropTargetSimple: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    };
+}
+
+function dragCollect(connect: any, monitor: any) {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    };
+}
 
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, ExpressionSimpleItemState> {
     
@@ -146,6 +200,26 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         return 'none';
     }
 
+    componentWillReceiveProps(newProps: any) {
+        let expression = newProps.node;
+        let meta = this.context.metaDictionary.find(function(elm: any) {
+            return elm.attrId === expression.attrId;
+        });
+
+        this.setState({
+            attrMeta: meta,
+            allowedOperators: this.getAllowedOperators(meta),
+            attrId: expression.attrId,
+            operator: expression.operator,
+            operandKind: this.getOperandKind(meta, expression.operator),
+            operands: expression.operands
+        });
+    }
+
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        return nextProps.node.attrId !== this.props.node.attrId;
+    }
+
     render() {
 
         let options = this.context.metaDictionary.map(function(item: any) {
@@ -244,7 +318,8 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             );
         }
 
-        return (
+        const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
+        return connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
             <div className="expr-simple-item">
                 <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
                 <Select 
@@ -270,10 +345,15 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     {menu}
                 </div>
             </div>
-        );
+        )));
     }
 
 }
 
-export default ExpressionSimpleItem;
+export default 
+DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
+    DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
+        DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
+    )
+);
   
