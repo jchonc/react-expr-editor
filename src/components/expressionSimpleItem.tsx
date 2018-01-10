@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import Select from 'react-select';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
+import { DragSource, DropTarget } from 'react-dnd';
 
 import ExpressionValueText from './editors/ExpressionValueText';
 import ExpressionValueNumber from './editors/ExpressionValueNumber';
@@ -12,9 +13,6 @@ import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 
 import './expressionSimpleItem.css';
 import 'react-select/dist/react-select.css';
-
-import { DragSource } from 'react-dnd';
-import { DropTarget } from 'react-dnd';
 
 interface ExpressionSimpleItemState {
     attrMeta: any;

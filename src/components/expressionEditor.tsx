@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
+import { Button } from 'react-bootstrap';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -109,9 +110,19 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     render() {
         let expression = this.state.expression;
         if ( expression ) {
+            let buttons = (<div />);
+            if (!this.props.readOnly) {
+                buttons = (
+                    <div>
+                        <Button type="button">Copy</Button>
+                        <Button type="button">Paste</Button>
+                        <Button type="button">Clear</Button>
+                    </div>
+                );
+            }
             return (
                 <div>
-                    <div>Toolbar</div>
+                    {buttons}
                     <div className="row expr-editor">
                         <div className="expr-canvas">
                             <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} /> 
