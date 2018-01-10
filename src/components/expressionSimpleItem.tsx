@@ -25,7 +25,7 @@ interface ExpressionSimpleItemState {
 interface ExpressionSimpleItemProps {
     node: any;
     parent: any;
-    readonly: boolean;
+    readOnly: boolean;
 }
 
 const validCtrlKind: string[] = [
@@ -168,71 +168,44 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             }
         }
 
-        let operandCtrl: any;
+        let OperandCtrlTag = null;
+
         switch (this.state.operandKind) {
             case 'text':
-                operandCtrl = (
-                    <ExpressionValueText 
-                        value={this.state.operands[0]} 
-                        readOnly={this.props.readonly}
-                        onChange={(evt: any) => {this.updateValue(evt); }}
-                    />
-                );
+                OperandCtrlTag = ExpressionValueText;
                 break;
             case 'number':
-                operandCtrl = (
-                    <ExpressionValueNumber
-                        value={this.state.operands[0]} 
-                        readOnly={this.props.readonly}
-                        onChange={(evt: any) => {this.updateValue(evt); }}
-                    />
-                );
+                OperandCtrlTag = ExpressionValueNumber;
                 break;
             case 'pick':                
-                operandCtrl = (
-                    <ExpressionValueList 
-                        value={this.state.operands[0]} 
-                        readOnly={this.props.readonly}
-                        options={listItems}
-                        onChange={(...evt: any[]) => {this.updateValue(...evt); }}
-                    />
-                );
+                OperandCtrlTag = ExpressionValueList;
                 break;
             case 'multi-pick':
-                operandCtrl = (
-                    <ExpressionValueMultiList 
-                        values={this.state.operands} 
-                        readOnly={this.props.readonly}
-                        options={listItems}
-                        onChange={(evt: any) => {this.updateValue(...evt); }}
-                    />
-                );
+                OperandCtrlTag = ExpressionValueMultiList; 
                 break;
             case 'date':
-                operandCtrl = (
-                    <ExpressionValueDate
-                        value={this.state.operands[0]}
-                        readOnly={this.props.readonly}
-                        onChange={(evt: any) => {this.updateValue(...evt); }}
-                    />
-                );
+                OperandCtrlTag = ExpressionValueDate;
                 break;
             case 'date-range':
-                operandCtrl = (
-                    <ExpressionValueDateRange
-                        values={this.state.operands}
-                        readOnly={this.props.readonly}
-                        onChange={(evt: any) => {this.updateValue(...evt); }}
-                    />
-                );
+                OperandCtrlTag = ExpressionValueDateRange;
                 break;
             default:
-                operandCtrl = (<div />);
                 break;
         }        
 
+        let OperandCtrl = OperandCtrlTag ? (
+            <OperandCtrlTag
+                values={this.state.operands} 
+                readOnly={this.props.readOnly}
+                options={listItems}
+                onChange={(...evt: any[]) => {this.updateValue(...evt); }}
+            />
+        ) : (
+            <div>Empty</div>
+        );
+
         let menu = (<span>&nbsp;</span>);
-        if (!this.props.readonly) {
+        if (!this.props.readOnly) {
             menu = ( 
                 <DropdownButton id="menu-simple-dropdown" title="">
                     <MenuItem onClick={() => {this.replaceWithComplex('and'); }}>AND</MenuItem>
@@ -252,7 +225,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     options={options}
                     searchable={false}
                     clearable={false}
-                    disabled={this.props.readonly}
+                    disabled={this.props.readOnly}
                     value={this.state.attrId}
                     onChange={(evt: any) => {this.updateMetaReference(evt.value); }}
                 />
@@ -261,11 +234,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     options={this.state.allowedOperators}
                     searchable={false}
                     clearable={false}
-                    disabled={this.props.readonly}
+                    disabled={this.props.readOnly}
                     value={this.state.operator}
                     onChange={(evt: any) => {this.updateOperator(evt.value); }}
                 />
-                {operandCtrl}
+                {OperandCtrl}
                 <div className="expr-simple-part">
                     {menu}
                 </div>

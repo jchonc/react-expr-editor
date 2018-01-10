@@ -6,14 +6,14 @@ import Adapter from 'enzyme-adapter-react-16';
 
 it('text should show', () => {
     
-    let value = 'someString';
+    let values = ['someString'];
     const onChanged = () => undefined;
     
     configure({ adapter: new Adapter() }); 
 
     const component = shallow(
         <ExpressionValueText 
-            value={value}
+            values={values}
             readOnly={false}
             onChange={onChanged}
         />          

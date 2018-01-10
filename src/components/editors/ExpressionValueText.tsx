@@ -4,7 +4,7 @@ interface ExpressionValueTextState {
 }
 
 interface ExpressionValueTextProps {
-    value: any;
+    values: any[];
     readOnly: boolean;
     onChange: any;
 }
@@ -12,13 +12,17 @@ interface ExpressionValueTextProps {
 class ExpressionValueText extends React.Component<ExpressionValueTextProps, ExpressionValueTextState> {
 
     render() {
+        let v = '';
+        if ( this.props.values && this.props.values.length ) {
+            v = this.props.values[0];
+        }
         return (
             <input 
                 type="text" 
                 className="expr-simple-value" 
                 readOnly={this.props.readOnly}
-                value={this.props.value} 
-                onChange={(evt) => { this.props.onChange(evt.target.value); }}
+                value={v} 
+                onChange={(evt) => { this.props.onChange([evt.target.value]); }}
             />
         );
     }

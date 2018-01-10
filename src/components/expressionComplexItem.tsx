@@ -15,7 +15,7 @@ interface ExpressionComplexItemState {
 interface ExpressionComplexItemProps {
     node: any;
     parent: any;
-    readonly: boolean;
+    readOnly: boolean;
 }
 
 class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, ExpressionComplexItemState> {
@@ -91,7 +91,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         const self = this;
         if (this.state.children && this.state.children.length) {
             let nodes = this.state.children.map(function(n: any, i: number) {
-                return (<ExpressionItem key={i} node={n} parent={self} readonly={props.readonly} />);
+                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readOnly} />);
             });
 
             const options: any = [
@@ -100,7 +100,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             ];
 
             let menu = (<span>&nbsp;</span>);
-            if (!this.props.readonly) {
+            if (!this.props.readOnly) {
                 menu = (
                     <DropdownButton id="menu-simple-dropdown" title="">
                         <MenuItem onClick={() => {this.addSimpleChild(); }}>New Line</MenuItem>
@@ -118,7 +118,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                             options={options}
                             searchable={false}
                             clearable={false}
-                            disabled={this.props.readonly}
+                            disabled={this.props.readOnly}
                             value={this.state.operator}
                             onChange={(evt: any) => {this.updateOperator(evt.value); }}
                         />

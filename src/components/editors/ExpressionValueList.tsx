@@ -5,7 +5,7 @@ interface ExpressionValueListState {
 }
 
 interface ExpressionValueListProps {
-    value: any;
+    values: any[];
     options: any;
     readOnly: boolean;
     onChange: any;
@@ -14,6 +14,10 @@ interface ExpressionValueListProps {
 class ExpressionValueList extends React.Component<ExpressionValueListProps, ExpressionValueListState> {
 
     render() {
+        let v = '';
+        if (this.props.values && this.props.values.length) {
+            v = this.props.values[0];
+        }
         return (
             <Select 
                 className="expr-simple-value"
@@ -21,7 +25,7 @@ class ExpressionValueList extends React.Component<ExpressionValueListProps, Expr
                 searchable={false}
                 clearable={false}
                 disabled={this.props.readOnly}
-                value={this.props.value}
+                value={v}
                 onChange={(evt: any) => {this.props.onChange(evt.value); }}
             />
         );

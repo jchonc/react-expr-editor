@@ -9,7 +9,7 @@ interface ExpressionItemState {
 interface ExpressionItemProps {
     node: any;
     parent: any;
-    readonly: boolean;
+    readOnly: boolean;
 }
 
 export default class ExpressionItem extends React.Component<ExpressionItemProps, ExpressionItemState> {
@@ -22,12 +22,12 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
         else {
             if (node.name === 'logic') {
                 return (
-                    <ExpressionComplexItem node={node} parent={this.props.parent} readonly={this.props.readonly} />
+                    <ExpressionComplexItem node={node} parent={this.props.parent} readOnly={this.props.readOnly} />
                 );
             } 
             else {
                 return (
-                    <ExpressionSimpleItem node={node} parent={this.props.parent} readonly={this.props.readonly} />
+                    <ExpressionSimpleItem node={node} parent={this.props.parent} readOnly={this.props.readOnly} />
                 );
             }
         }

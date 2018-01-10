@@ -48,7 +48,7 @@ class App extends React.Component<AppProps, AppState> {
         <div className="row">
           <h2>Welcome to React</h2>
         </div>
-        <ExpressionEditor readonly={false} moduleId={1} entityName="patient" expression={this.state.expression} />
+        <ExpressionEditor readOnly={false} moduleId={1} entityName="patient" expression={this.state.expression} />
         <hr/>
         <div>
             <button type="button" onClick={() => {this.reveal(); }}>Reveal</button>

@@ -8,7 +8,7 @@ interface ExpressionEditorState {
 }
 
 interface ExpressionEditorProps {
-    readonly: boolean;
+    readOnly: boolean;
     moduleId: number;
     entityName: string;
     expression: any;
@@ -107,7 +107,7 @@ export default class ExpressionEditor extends React.Component<ExpressionEditorPr
                     <div>Toolbar</div>
                     <div className="row expr-editor">
                         <div className="expr-canvas">
-                            <ExpressionItem node={expression} readonly={this.props.readonly} parent={this} /> 
+                            <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} /> 
                         </div>
                     </div>
                 </div>
