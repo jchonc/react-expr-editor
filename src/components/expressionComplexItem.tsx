@@ -7,6 +7,9 @@ import { DropdownButton, MenuItem } from 'react-bootstrap';
 import './expressionComplexItem.css';
 import 'react-select/dist/react-select.css';
 
+import { DragSource } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
+
 interface ExpressionComplexItemState {
     operator: string;
     children: any;
@@ -16,6 +19,42 @@ interface ExpressionComplexItemProps {
     node: any;
     parent: any;
     readOnly: boolean;
+    connectDragSource: any;
+    connectDropTarget: any;
+    isDragging: boolean;
+}
+
+const ItemTypes = {
+    Complex: 'Complex',
+    Simple: 'Simple'
+};
+
+const complexSource = {
+    beginDrag(props: any, monitor: any) {
+        return {node: props.node, parent: props.parent};
+    }
+};
+
+const complexTarget = {
+    drop(props: any, monitor: any) {
+        let dragNodeInfo = monitor.getItem();
+        window.console.log(dragNodeInfo);
+    }
+};
+
+function dropCollect(connect: any, monitor: any) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    };
+}
+
+function dragCollect(connect: any, monitor: any) {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    };
 }
 
 class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, ExpressionComplexItemState> {
@@ -67,6 +106,21 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         }
     }
 
+    removeSelf() {
+        this.props.parent.removeChild(this.props.node);
+    }
+
+    dragChildIn(target: any, source: any) {
+        let children = this.props.node.operands;
+        const targetIndex = children.indexOf(target);
+        if (targetIndex >= 0) {
+            children.splice(targetIndex + 1, 0, source);
+            this.setState({
+                children: children
+            });
+        }
+    }
+
     replaceWithComplex(logic: string, child: any) {
         if (child) {
             const idx = this.state.children.indexOf(child);
@@ -84,6 +138,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                 });
             }
         }
+    }
+
+    isAncestor(current: any) {
+        return current === this.props.node ? true : this.props.parent.isAncestor(this.props.node);
     }
 
     render() {
@@ -106,26 +164,32 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                         <MenuItem onClick={() => {this.addSimpleChild(); }}>New Line</MenuItem>
                         <MenuItem divider={true} />
                         <MenuItem eventKey="3">Another Link</MenuItem>
+                        <MenuItem onClick={() => {this.removeSelf(); }}>Remove Group</MenuItem>
                     </DropdownButton>
                 );
             }
+            const { connectDropTarget, connectDragSource } = this.props;
+
+            let logicNode = connectDragSource(connectDropTarget(
+                <div className="expr-logic">
+                    <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
+                    <Select 
+                        className="expr-logic-operator"
+                        options={options}
+                        searchable={false}
+                        clearable={false}
+                        disabled={this.props.readOnly}
+                        value={this.state.operator}
+                        onChange={(evt: any) => {this.updateOperator(evt.value); }}
+                    />
+                    <div className="expr-logic-part">
+                        {menu}
+                    </div>
+                </div>));
+
             return (
                 <div className="expr-complex-item">
-                    <div className="expr-logic">
-                        <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
-                        <Select 
-                            className="expr-logic-operator"
-                            options={options}
-                            searchable={false}
-                            clearable={false}
-                            disabled={this.props.readOnly}
-                            value={this.state.operator}
-                            onChange={(evt: any) => {this.updateOperator(evt.value); }}
-                        />
-                        <div className="expr-logic-part">
-                            {menu}
-                        </div>
-                    </div>
+                    {logicNode}
                     <div className="expr-children">
                         {nodes}
                     </div>
@@ -136,5 +200,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
     }        
 }
 
-export default ExpressionComplexItem;
+export default 
+DropTarget(ItemTypes.Simple, complexTarget, dropCollect)(
+    DropTarget(ItemTypes.Complex, complexTarget, dropCollect)(
+        DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
+    )
+);
   

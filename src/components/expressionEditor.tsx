@@ -3,6 +3,9 @@ import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
 
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+
 interface ExpressionEditorState {
     expression: any;
 }
@@ -49,7 +52,7 @@ const knownMetaDictionary = [{
    
 }];
 
-export default class ExpressionEditor extends React.Component<ExpressionEditorProps, ExpressionEditorState> {
+class ExpressionEditor extends React.Component<ExpressionEditorProps, ExpressionEditorState> {
 
     static childContextTypes = {
         metaDictionary: PropTypes.any,
@@ -86,6 +89,10 @@ export default class ExpressionEditor extends React.Component<ExpressionEditorPr
         this.addSimpleChild();
     }
 
+    isAncestor(current: any) {
+        return false;
+    }
+
     replaceWithComplex(logic: string, child: any) {
         if (child) {
             const newComplexNode = {
@@ -118,3 +125,5 @@ export default class ExpressionEditor extends React.Component<ExpressionEditorPr
         }
     }
 }
+
+export default DragDropContext(HTML5Backend)(ExpressionEditor);
