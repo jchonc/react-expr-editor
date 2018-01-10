@@ -18,9 +18,10 @@ interface ExpressionComplexItemState {
 interface ExpressionComplexItemProps {
     node: any;
     parent: any;
-    readOnly: boolean;
+    readonly: boolean;
     connectDragSource: any;
-    connectDropTarget: any;
+    connectDropTargetComplex: any;
+    connectDropTargetSimple: any;
     isDragging: boolean;
 }
 
@@ -38,13 +39,29 @@ const complexSource = {
 const complexTarget = {
     drop(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        window.console.log(dragNodeInfo);
+        
+        let condition = dragNodeInfo.node.name === 'logic' ? 
+            dragNodeInfo.node !== props.node && !props.parent.isAncestor(dragNodeInfo.node)
+            : true;
+
+        if (condition){
+            dragNodeInfo.parent.removeChild(dragNodeInfo.node);
+            props.node.operands.unshift(dragNodeInfo.node);
+        }
     }
 };
 
-function dropCollect(connect: any, monitor: any) {
+function dropCollectComplex(connect: any, monitor: any) {
     return {
-        connectDropTarget: connect.dropTarget(),
+        connectDropTargetComplex: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    };
+}
+
+function dropCollectSimple(connect: any, monitor: any) {
+    return {
+        connectDropTargetSimple: connect.dropTarget(),
         isOver: monitor.isOver(),
         canDrop: monitor.canDrop()
     };
@@ -99,9 +116,13 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             const idx = children.indexOf(child);
             if (idx >= 0) {
                 children.splice(idx, 1);
-                this.setState({
-                    children: children
-                });
+                if (children.length == 0){
+                    this.removeSelf();
+                }else{
+                    this.setState({
+                        children: children
+                    });
+                }
             }
         }
     }
@@ -140,8 +161,16 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         }
     }
 
-    isAncestor(current: any) {
-        return current === this.props.node ? true : this.props.parent.isAncestor(this.props.node);
+    isAncestor(connector: any) {
+        return connector === this.props.node ? true : this.props.parent.isAncestor(connector);
+    }
+
+    componentWillReceiveProps(newProps: any) {
+
+        this.setState({
+            operator: newProps.node.operator,
+            children: newProps.node.operands
+        });
     }
 
     render() {
@@ -149,7 +178,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         const self = this;
         if (this.state.children && this.state.children.length) {
             let nodes = this.state.children.map(function(n: any, i: number) {
-                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readOnly} />);
+                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readonly} />);
             });
 
             const options: any = [
@@ -158,7 +187,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             ];
 
             let menu = (<span>&nbsp;</span>);
-            if (!this.props.readOnly) {
+            if (!this.props.readonly) {
                 menu = (
                     <DropdownButton id="menu-simple-dropdown" title="">
                         <MenuItem onClick={() => {this.addSimpleChild(); }}>New Line</MenuItem>
@@ -168,9 +197,9 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                     </DropdownButton>
                 );
             }
-            const { connectDropTarget, connectDragSource } = this.props;
+            const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
 
-            let logicNode = connectDragSource(connectDropTarget(
+            let logicNode = connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
                 <div className="expr-logic">
                     <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
                     <Select 
@@ -178,14 +207,14 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                         options={options}
                         searchable={false}
                         clearable={false}
-                        disabled={this.props.readOnly}
+                        disabled={this.props.readonly}
                         value={this.state.operator}
                         onChange={(evt: any) => {this.updateOperator(evt.value); }}
                     />
                     <div className="expr-logic-part">
                         {menu}
                     </div>
-                </div>));
+                </div>)));
 
             return (
                 <div className="expr-complex-item">
@@ -201,8 +230,8 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
 }
 
 export default 
-DropTarget(ItemTypes.Simple, complexTarget, dropCollect)(
-    DropTarget(ItemTypes.Complex, complexTarget, dropCollect)(
+DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
+    DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
         DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
     )
 );
