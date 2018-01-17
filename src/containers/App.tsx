@@ -12,15 +12,62 @@ let testExpression = {
   operator: 'eq',
   operands: ['Jian']
 };*/
+export enum ExpressionType {
+  Logic,
+  Compare
+}
 
-let testComplexExpression = {
+export enum ExpressionOperator {
+  And,
+  Or,
+  Equal,
+  NotEqual,
+  IsBetween,
+  IsNotBetween
+}
+
+export interface ExpressionOperand {
+  name: ExpressionType;
+}
+
+export type Expression = {
+  name: ExpressionType,
+  operator: ExpressionOperator,
+  nodeId: number,
+  operands?: Expression[] | string[],
+  attrId?: string,
+  attrCaption?: string
+};
+
+let testComplexExpression: Expression = {
   nodeId: AttrIdSingleton.NextUniqueNodeId,
-  name: 'logic',
-  operator: 'and',
+  name: ExpressionType.Logic,
+  operator: ExpressionOperator.And,
   operands: [
-    {name: 'compare', attrId: '11001', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'First Name', operator: 'eq', operands: ['Jian'] },
-    {name: 'compare', attrId: '11003', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'Gender', operator: 'ne', operands: ['GD_MALE'] },
-    {name: 'compare', attrId: '11004', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'Birthday', operator: 'eq', operands: ['2011-12-12']}
+    {
+      name: ExpressionType.Compare,
+      attrId: '11001',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
+      attrCaption: 'First Name',
+      operator: ExpressionOperator.Equal,
+      operands: ['Jian']
+    },
+    {
+      name: ExpressionType.Compare,
+      attrId: '11003',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
+      attrCaption: 'Gender',
+      operator: ExpressionOperator.NotEqual,
+      operands: ['GD_MALE']
+    },
+    {
+      name: ExpressionType.Compare,
+      attrId: '11004',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
+      attrCaption: 'Birthday',
+      operator: ExpressionOperator.Equal,
+      operands: ['2011-12-12']
+    }
   ]
 };
 
@@ -35,7 +82,7 @@ interface AppState {
 class App extends React.Component<AppProps, AppState> {
   constructor(props: any) {
     super(props);
-    this.state =  {
+    this.state = {
       expression: testComplexExpression
     };
   }
@@ -52,10 +99,10 @@ class App extends React.Component<AppProps, AppState> {
           <h2>Welcome to React</h2>
         </div>
         <ExpressionEditor readOnly={false} moduleId={1} entityName="patient" expression={this.state.expression} />
-        <hr/>
+        <hr />
         <div>
-            <Button type="primary" onClick={() => {this.reveal(); }}>Reveal</Button>
-            <div id="expr_value" />
+          <Button type="primary" onClick={() => { this.reveal(); }}>Reveal</Button>
+          <div id="expr_value" />
         </div>
       </div>
     );

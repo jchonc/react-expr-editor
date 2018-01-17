@@ -109,9 +109,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
             return;
         }
 
-        console.log(oldParent.operands);
-        console.log(sourceIndex);
-
         oldParent.operands.splice(sourceIndex, 1);
 
         let targetIndex = newParentID === targetID ? -1 : 
