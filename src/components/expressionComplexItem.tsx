@@ -12,7 +12,6 @@ import { AttrIdSingleton } from '../constants/constants';
 import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, complexSource, complexTarget } from '../constants/dragConstants';
 
 import './expressionComplexItem.css';
-import 'react-select/dist/react-select.css';
 
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';

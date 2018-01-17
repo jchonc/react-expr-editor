@@ -18,7 +18,6 @@ import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, simpleSource, simpleTarget } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
-import 'react-select/dist/react-select.css';
 
 interface ExpressionSimpleItemState {
     attrMeta: any;
