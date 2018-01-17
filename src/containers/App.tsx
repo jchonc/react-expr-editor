@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
+import { AttrIdSingleton } from '../constants/constants';
 
 /*
 let testExpression = {
@@ -12,12 +13,13 @@ let testExpression = {
 };*/
 
 let testComplexExpression = {
+  nodeId: AttrIdSingleton.NextUniqueNodeId,
   name: 'logic',
   operator: 'and',
   operands: [
-    {name: 'compare', attrId: '11001', attrCaption: 'First Name', operator: 'eq', operands: ['Jian'] },
-    {name: 'compare', attrId: '11003', attrCaption: 'Gender', operator: 'ne', operands: ['GD_MALE'] },
-    {name: 'compare', attrId: '11004', attrCaption: 'Birthday', operator: 'eq', operands: ['2011-12-12']}
+    {name: 'compare', attrId: '11001', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'First Name', operator: 'eq', operands: ['Jian'] },
+    {name: 'compare', attrId: '11003', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'Gender', operator: 'ne', operands: ['GD_MALE'] },
+    {name: 'compare', attrId: '11004', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'Birthday', operator: 'eq', operands: ['2011-12-12']}
   ]
 };
 

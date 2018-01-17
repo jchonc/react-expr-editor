@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import Select from 'react-select';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { DragSource, DropTarget } from 'react-dnd';
+import classNames from 'classnames';
 
 import ExpressionValueText from './editors/ExpressionValueText';
 import ExpressionValueNumber from './editors/ExpressionValueNumber';
@@ -31,6 +32,7 @@ interface ExpressionSimpleItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
+    hoverCallback: any;
 }
 
 const validCtrlKind: string[] = [
@@ -44,20 +46,30 @@ const ItemTypes = {
 
 const simpleSource = {
     beginDrag(props: any, monitor: any) {
-        return {node: props.node, parent: props.parent};
+        return {node: props.node, parentID: props.parent.props.node.nodeId, hoverCallback: props.hoverCallback};
+    },
+    endDrag(props: any, monitor: any) {
+        let dragNodeInfo = monitor.getItem();
+        dragNodeInfo.node.isClone = false;
     }
 };
 
 const simpleTarget = {
-    drop(props: any, monitor: any) {
+    hover(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
         let condition = dragNodeInfo.node.name === 'logic' ? 
             !props.parent.isAncestor(dragNodeInfo.node) : 
-            dragNodeInfo.node.attrId !== props.node.attrId;
+            dragNodeInfo.node.nodeId !== props.node.nodeId;
         if (condition) {
-            dragNodeInfo.parent.removeChild(dragNodeInfo.node);
-            props.parent.dragChildIn(props.node, dragNodeInfo.node);
+            dragNodeInfo.node.isClone = true;
+            let newParentID = props.parent.props.node.nodeId;
+            dragNodeInfo.hoverCallback(dragNodeInfo.parentID, newParentID, props.node.nodeId, dragNodeInfo.node.nodeId);
+            dragNodeInfo.parentID = newParentID;
         }
+    },
+    drop(props: any, monitor: any) {
+        let dragNodeInfo = monitor.getItem();
+        dragNodeInfo.node.isClone = false;
     }
 };
 
@@ -214,10 +226,6 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         });
     }
 
-    shouldComponentUpdate(nextProps: any, nextState: any) {
-        return nextProps.node.attrId !== this.props.node.attrId;
-    }
-
     render() {
 
         let options = this.context.metaDictionary.map(function(item: any) {
@@ -291,7 +299,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
 
         const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
         return connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
-            <div className="expr-simple-item">
+            <div className={classNames('expr-simple-item', {clone: this.props.node.isClone})}>
                 <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
                 <Select 
                     className="expr-simple-field"

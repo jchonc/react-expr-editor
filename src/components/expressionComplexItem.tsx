@@ -3,6 +3,9 @@ import * as PropTypes from 'prop-types';
 import ExpressionItem from './expressionItem';
 import Select from 'react-select';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
+import classNames from 'classnames';
+
+import { AttrIdSingleton } from '../constants/constants';
 
 import './expressionComplexItem.css';
 import 'react-select/dist/react-select.css';
@@ -23,6 +26,7 @@ interface ExpressionComplexItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
+    hoverCallback: any;
 }
 
 const ItemTypes = {
@@ -32,22 +36,34 @@ const ItemTypes = {
 
 const complexSource = {
     beginDrag(props: any, monitor: any) {
-        return {node: props.node, parent: props.parent};
+        return {node: props.node, 
+                parentID: props.parent ? props.parent.props.node.nodeId: props.node.nodeId, 
+                hoverCallback: props.hoverCallback
+            };
+    },
+    endDrag(props: any, monitor: any) {
+        let dragNodeInfo = monitor.getItem();
+        dragNodeInfo.node.isClone = false;
     }
 };
 
 const complexTarget = {
-    drop(props: any, monitor: any) {
+    hover(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
         
         let condition = dragNodeInfo.node.name === 'logic' ? 
             dragNodeInfo.node !== props.node && !props.parent.isAncestor(dragNodeInfo.node)
             : true;
 
-        if (condition){
-            dragNodeInfo.parent.removeChild(dragNodeInfo.node);
-            props.node.operands.unshift(dragNodeInfo.node);
+        if (condition && props.node.operands[0].nodeId !== dragNodeInfo.node.nodeId) {
+            dragNodeInfo.node.isClone = true;
+            dragNodeInfo.hoverCallback(dragNodeInfo.parentID, props.node.nodeId, props.node.nodeId, dragNodeInfo.node.nodeId);
+            dragNodeInfo.parentID = props.node.nodeId;
         }
+    },
+    drop(props: any, monitor: any) {
+        let dragNodeInfo = monitor.getItem();
+        dragNodeInfo.node.isClone = false;
     }
 };
 
@@ -75,21 +91,23 @@ function dragCollect(connect: any, monitor: any) {
 }
 
 class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, ExpressionComplexItemState> {
-    
     static contextTypes = {
         metaDictionary: PropTypes.any,
         cachedPickLists: PropTypes.any
     };
+    
+    self: ExpressionComplexItem;
 
     constructor (props: any, context: any) {
         super(props, context);
         this.state = {
             operator: props.node.operator,
-            children: props.node.operands
+            children: props.node.operands,
         };
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
+        //his.props.node.self = this;
     }
 
     updateOperator(op: string) {
@@ -101,7 +119,12 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
 
     addSimpleChild() {
         const newElement = {
-            name: 'compare', attrId: '', attrCaption: '', operator: '', operands: [''] 
+            name: 'compare',
+             attrId: '',
+             nodeId: AttrIdSingleton.NextUniqueNodeId, 
+             attrCaption: '', 
+             operator: '', 
+             operands: [''] 
         };
         const newChildren = [...this.state.children, newElement];
         this.props.node.operands = newChildren;
@@ -116,9 +139,9 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             const idx = children.indexOf(child);
             if (idx >= 0) {
                 children.splice(idx, 1);
-                if (children.length == 0){
+                if (children.length === 0) {
                     this.removeSelf();
-                }else{
+                } else {
                     this.setState({
                         children: children
                     });
@@ -131,22 +154,12 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         this.props.parent.removeChild(this.props.node);
     }
 
-    dragChildIn(target: any, source: any) {
-        let children = this.props.node.operands;
-        const targetIndex = children.indexOf(target);
-        if (targetIndex >= 0) {
-            children.splice(targetIndex + 1, 0, source);
-            this.setState({
-                children: children
-            });
-        }
-    }
-
     replaceWithComplex(logic: string, child: any) {
         if (child) {
             const idx = this.state.children.indexOf(child);
             if (idx >= 0) {
                 const newComplexNode = {
+                    nodeId: AttrIdSingleton.NextUniqueNodeId,
                     name: 'logic',
                     operator: logic,
                     operands: [child]
@@ -178,7 +191,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         const self = this;
         if (this.state.children && this.state.children.length) {
             let nodes = this.state.children.map(function(n: any, i: number) {
-                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readonly} />);
+                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readonly} hoverCallback={props.hoverCallback}/>);
             });
 
             const options: any = [
@@ -217,7 +230,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                 </div>)));
 
             return (
-                <div className="expr-complex-item">
+                <div className={classNames('expr-complex-item', {clone: this.props.node.isClone})}>
                     {logicNode}
                     <div className="expr-children">
                         {nodes}
