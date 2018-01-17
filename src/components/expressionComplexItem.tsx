@@ -8,7 +8,6 @@ const Option = Select.Option;
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 import './expressionComplexItem.css';
-import 'react-select/dist/react-select.css';
 
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';

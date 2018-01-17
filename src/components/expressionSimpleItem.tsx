@@ -16,7 +16,6 @@ import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 
 import './expressionSimpleItem.css';
-import 'react-select/dist/react-select.css';
 
 interface ExpressionSimpleItemState {
     attrMeta: any;
