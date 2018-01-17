@@ -18,13 +18,15 @@ import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, simpleSource, simpleTarget } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
+import { ExpressionOperandKind } from '../types/index';
+
 
 interface ExpressionSimpleItemState {
     attrMeta: any;
     allowedOperators: any;
     attrId: string;
     operator: string;
-    operandKind: string;
+    operandKind: ExpressionOperandKind;
     operands: any;
 }
 

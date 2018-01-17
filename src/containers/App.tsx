@@ -3,69 +3,35 @@ import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
 import { AttrIdSingleton } from '../constants/constants';
 import Button from 'antd/lib/button';
-
-/*
-let testExpression = {
-  name: 'compare',
-  attrId: '11001',
-  attrCaption: 'First Name',
-  operator: 'eq',
-  operands: ['Jian']
-};*/
-export enum ExpressionType {
-  Logic,
-  Compare
-}
-
-export enum ExpressionOperator {
-  And,
-  Or,
-  Equal,
-  NotEqual,
-  IsBetween,
-  IsNotBetween
-}
-
-export interface ExpressionOperand {
-  name: ExpressionType;
-}
-
-export type Expression = {
-  name: ExpressionType,
-  operator: ExpressionOperator,
-  nodeId: number,
-  operands?: Expression[] | string[],
-  attrId?: string,
-  attrCaption?: string
-};
+import { Expression } from '../types/index';
 
 let testComplexExpression: Expression = {
   nodeId: AttrIdSingleton.NextUniqueNodeId,
-  name: ExpressionType.Logic,
-  operator: ExpressionOperator.And,
+  name: 'logic',
+  operator: 'And',
   operands: [
     {
-      name: ExpressionType.Compare,
+      name: 'compare',
       attrId: '11001',
       nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'First Name',
-      operator: ExpressionOperator.Equal,
+      operator: 'Equal',
       operands: ['Jian']
     },
     {
-      name: ExpressionType.Compare,
+      name: 'compare',
       attrId: '11003',
       nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Gender',
-      operator: ExpressionOperator.NotEqual,
+      operator: 'NotEqual',
       operands: ['GD_MALE']
     },
     {
-      name: ExpressionType.Compare,
+      name: 'compare',
       attrId: '11004',
       nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Birthday',
-      operator: ExpressionOperator.Equal,
+      operator: 'Equal',
       operands: ['2011-12-12']
     }
   ]
@@ -86,6 +52,19 @@ class App extends React.Component<AppProps, AppState> {
       expression: testComplexExpression
     };
   }
+
+  // componentDidMount() {
+  //   let r = new Request('/expressions/1');
+  //   fetch(r).then((response) => {
+  //     if (response.ok) {
+  //       response.json().then((exp: Expression) => {
+  //         this.setState({
+  //           expression: exp
+  //         });
+  //       });
+  //     }
+  //   });
+  // }
 
   reveal() {
     const result = JSON.stringify(this.state.expression);
