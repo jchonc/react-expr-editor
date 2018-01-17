@@ -1,9 +1,6 @@
 import * as React from 'react';
-import { DateRangePicker } from 'react-dates';
 import moment from 'moment';
-
-import 'react-dates/lib/css/_datepicker.css';
-import './react_dates_overrides.css';
+import { DatePicker } from 'antd';
 
 interface ExpressionValueDateRangeState {
     focusedInput: any;
@@ -21,7 +18,8 @@ class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeP
 
     constructor(props: any) {
         super(props);
-        this.onDatesChanged = this.onDatesChanged.bind(this);
+        this.onStartChanged = this.onStartChanged.bind(this);
+        this.onEndChanged = this.onEndChanged.bind(this);
         this.state = {
             focusedInput: null,
             startDate: moment(props.values[0]),
@@ -29,27 +27,52 @@ class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeP
         };
     }
 
-    onDatesChanged( arg: {startDate: moment.Moment, endDate: moment.Moment}  ) {
-        this.props.onChange([arg.startDate.format('YYYY-MM-DD'), arg.endDate.format('YYYY-MM-DD')]);
+    onStartChanged( startDate: moment.Moment) {
+        this.props.onChange([startDate, this.state.endDate]);
         this.setState({
-            startDate: arg.startDate,
-            endDate: arg.endDate
+            startDate: startDate,
+        });
+    }
+
+    onEndChanged(endDate: moment.Moment) {
+        this.props.onChange([this.state.startDate, endDate]);
+        this.setState({
+            endDate: endDate
         });
     }
 
     render() {
         return (
-            <DateRangePicker
-                startDateId="START_DATE"
-                endDateId="END_DATE"
-                startDate={this.state.startDate} 
-                endDate={this.state.endDate}
-                readOnly={this.props.readOnly}
-                focusedInput={this.state.focusedInput} 
-                onFocusChange={focusedInput => this.setState({ focusedInput })}
-                isOutsideRange={() => false}
-                onDatesChange={this.onDatesChanged}
-            />
+            // <DateRangePicker
+            //     startDateId="START_DATE"
+            //     endDateId="END_DATE"
+            //     startDate={this.state.startDate} 
+            //     endDate={this.state.endDate}
+            //     readOnly={this.props.readOnly}
+            //     focusedInput={this.state.focusedInput} 
+            //     onFocusChange={focusedInput => this.setState({ focusedInput })}
+            //     isOutsideRange={() => false}
+            //     onDatesChange={this.onDatesChanged}
+            // />
+            <div>
+                <DatePicker
+                    // disabledDate={this.disabledStartDate}
+                    format="YYYY-MM-DD HH:mm:ss"
+                    value={this.state.startDate}
+                    placeholder="Start"
+                    onChange={this.onStartChanged}
+                    // onOpenChange={this.handleStartOpenChange}
+                />
+                <DatePicker
+                    // disabledDate={this.disabledEndDate}
+                    format="YYYY-MM-DD HH:mm:ss"
+                    value={this.state.endDate}
+                    placeholder="End"
+                    onChange={this.onEndChanged}
+                    // open={endOpen}
+                    // onOpenChange={this.handleEndOpenChange}
+                />
+            </div>
         );
     }
 }

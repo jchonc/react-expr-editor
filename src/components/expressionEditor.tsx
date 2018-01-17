@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
-import { Button } from 'react-bootstrap';
+
 import { AttrIdSingleton } from '../constants/constants';
+import Button from 'antd/lib/button';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -22,8 +23,8 @@ interface ExpressionEditorProps {
 const knownPickLists = [{
     listName: 'Gender',
     items: [
-        { value: 'GD_MALE', label: 'Male', description: 'Gentleman'},
-        { value: 'GD_FEMALE', label: 'Female', description: 'Lady'}
+        { value: 'GD_MALE', label: 'Male', description: 'Gentleman' },
+        { value: 'GD_FEMALE', label: 'Female', description: 'Lady' }
     ]
 }];
 
@@ -51,7 +52,7 @@ const knownMetaDictionary = [{
     attrDataType: 'date',
     attrCtrlType: 'date',
     attrCtrlParams: ''
-   
+
 }];
 
 class ExpressionEditor extends React.Component<ExpressionEditorProps, ExpressionEditorState> {
@@ -169,14 +170,14 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     render() {
         let expression = this.state.expression;
-        if ( expression ) {
+        if (expression) {
             let buttons = (<div />);
             if (!this.props.readOnly) {
                 buttons = (
                     <div>
-                        <Button type="button">Copy</Button>
-                        <Button type="button">Paste</Button>
-                        <Button type="button">Clear</Button>
+                        <Button>Copy</Button>
+                        <Button>Paste</Button>
+                        <Button>Clear</Button>
                     </div>
                 );
             }

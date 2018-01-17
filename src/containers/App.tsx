@@ -2,6 +2,7 @@ import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
 import { AttrIdSingleton } from '../constants/constants';
+import Button from 'antd/lib/button';
 
 /*
 let testExpression = {
@@ -53,7 +54,7 @@ class App extends React.Component<AppProps, AppState> {
         <ExpressionEditor readOnly={false} moduleId={1} entityName="patient" expression={this.state.expression} />
         <hr/>
         <div>
-            <button type="button" onClick={() => {this.reveal(); }}>Reveal</button>
+            <Button type="primary" onClick={() => {this.reveal(); }}>Reveal</Button>
             <div id="expr_value" />
         </div>
       </div>

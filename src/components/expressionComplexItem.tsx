@@ -1,7 +1,10 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from './expressionItem';
-import Select from 'react-select';
+
+import { Select } from 'antd';
+const Option = Select.Option;
+
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classNames from 'classnames';
 
@@ -38,7 +41,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
     
     self: ExpressionComplexItem;
 
-    constructor (props: any, context: any) {
+    constructor(props: any, context: any) {
         super(props, context);
         this.state = {
             operator: props.node.operator,
@@ -53,7 +56,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
     updateOperator(op: string) {
         this.props.node.operator = op;
         this.setState({
-            operator: this.props.node.operator 
+            operator: this.props.node.operator
         });
     }
 
@@ -135,18 +138,18 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             });
 
             const options: any = [
-                {value: 'and', label: 'AND'},
-                {value: 'or', label: 'OR'}
+                { value: 'and', label: 'AND' },
+                { value: 'or', label: 'OR' }
             ];
 
             let menu = (<span>&nbsp;</span>);
             if (!this.props.readonly) {
                 menu = (
                     <DropdownButton id="menu-simple-dropdown" title="">
-                        <MenuItem onClick={() => {this.addSimpleChild(); }}>New Line</MenuItem>
+                        <MenuItem onClick={() => { this.addSimpleChild(); }}>New Line</MenuItem>
                         <MenuItem divider={true} />
                         <MenuItem eventKey="3">Another Link</MenuItem>
-                        <MenuItem onClick={() => {this.removeSelf(); }}>Remove Group</MenuItem>
+                        <MenuItem onClick={() => { this.removeSelf(); }}>Remove Group</MenuItem>
                     </DropdownButton>
                 );
             }
@@ -155,15 +158,17 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             let logicNode = connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
                 <div className="expr-logic">
                     <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
-                    <Select 
+                    <Select
                         className="expr-logic-operator"
-                        options={options}
-                        searchable={false}
-                        clearable={false}
+                        // options={options}
+                        // searchable={false}
+                        // clearable={false}
                         disabled={this.props.readonly}
                         value={this.state.operator}
-                        onChange={(evt: any) => {this.updateOperator(evt.value); }}
-                    />
+                        onChange={(evt: any) => { this.updateOperator(evt.value); }}
+                    >
+                        {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
+                    </Select>
                     <div className="expr-logic-part">
                         {menu}
                     </div>
@@ -179,13 +184,12 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
             );
         }
         return null;
-    }        
+    }
 }
 
-export default 
-DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
-    DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
-        DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
-    )
-);
-  
+export default
+    DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
+        DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
+            DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
+        )
+    );
