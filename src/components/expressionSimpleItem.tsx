@@ -242,9 +242,10 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         }
 
         const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
-        return connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
+        const drag = connectDragSource(<div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>)
+        return connectDropTargetComplex(connectDropTargetSimple(
             <div className={classNames('expr-simple-item', {clone: this.props.node.isClone})}>
-                <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
+                {drag}
                 <Select 
                     className="expr-simple-field"
                     options={options}
@@ -268,7 +269,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     {menu}
                 </div>
             </div>
-        )));
+        ));
     }
 
 }
