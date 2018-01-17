@@ -6,16 +6,17 @@ import Button from 'antd/lib/button';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { Expression, ExpressionOperator } from '../types/index';
 
 interface ExpressionEditorState {
-    expression: any;
+    expression: Expression;
 }
 
 interface ExpressionEditorProps {
     readOnly: boolean;
     moduleId: number;
     entityName: string;
-    expression: any;
+    expression: Expression;
 }
 
 const knownPickLists = [{
@@ -82,7 +83,13 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     addSimpleChild() {
         this.setState({
-            expression: { name: 'compare', attrId: '', attrCaption: '', operator: '', operands: [''] }
+            expression: {
+                name: 'compare',
+                attrId: '',
+                attrCaption: '',
+                operator: 'And',
+                operands: ['']
+            }
         });
     }
 
@@ -94,9 +101,9 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
         return false;
     }
 
-    replaceWithComplex(logic: string, child: any) {
+    replaceWithComplex(logic: ExpressionOperator, child: any) {
         if (child) {
-            const newComplexNode = {
+            const newComplexNode: Expression = {
                 name: 'logic',
                 operator: logic,
                 operands: [child]

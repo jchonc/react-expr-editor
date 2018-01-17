@@ -16,13 +16,15 @@ import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 
 import './expressionSimpleItem.css';
+import { ExpressionOperandKind } from '../types/index';
+
 
 interface ExpressionSimpleItemState {
     attrMeta: any;
     allowedOperators: any;
     attrId: string;
     operator: string;
-    operandKind: string;
+    operandKind: ExpressionOperandKind;
     operands: any;
 }
 
@@ -218,7 +220,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
     }
 
     // shouldComponentUpdate(nextProps: any, nextState: any) {
-        // return nextProps.node.attrId !== this.props.node.attrId;
+    // return nextProps.node.attrId !== this.props.node.attrId;
     // }
 
     render() {

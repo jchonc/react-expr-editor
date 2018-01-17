@@ -2,12 +2,13 @@ import * as React from 'react';
 
 import ExpressionSimpleItem from './expressionSimpleItem';
 import ExpressionComplexItem from './expressionComplexItem';
+import { Expression } from '../types/index';
 
 interface ExpressionItemState {
 }
 
 interface ExpressionItemProps {
-    node: any;
+    node: Expression;
     parent: any;
     readOnly: boolean;
 }
