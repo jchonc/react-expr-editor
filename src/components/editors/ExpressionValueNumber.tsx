@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { InputNumber } from 'antd';
 
 interface ExpressionValueNumberState {
 }
@@ -16,12 +17,11 @@ class ExpressionValueNumber extends React.Component<ExpressionValueNumberProps, 
             v = this.props.values[0];
         }
         return (
-            <input 
-                type="Number" 
+            <InputNumber 
                 className="expr-simple-value" 
-                readOnly={this.props.readOnly}
+                disabled={this.props.readOnly}
                 value={v} 
-                onChange={(evt) => { this.props.onChange(evt.target.value); }}
+                onChange={(value) => { this.props.onChange(value); }}
             />
         );
     }

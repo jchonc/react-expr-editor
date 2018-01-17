@@ -1,5 +1,6 @@
 import * as React from 'react';
-import Select from 'react-select';
+import { Select } from 'antd';
+const Option = Select.Option;
 
 interface ExpressionValueListState {
 }
@@ -19,15 +20,16 @@ class ExpressionValueList extends React.Component<ExpressionValueListProps, Expr
             v = this.props.values[0];
         }
         return (
-            <Select 
+            <Select
                 className="expr-simple-value"
-                options={this.props.options}
-                searchable={false}
-                clearable={false}
+                // searchable={false}
+                // clearable={false}
                 disabled={this.props.readOnly}
                 value={v}
-                onChange={(evt: any) => {this.props.onChange(evt.value); }}
-            />
+                onChange={(value: any) => { this.props.onChange(value); }}
+            >
+                {this.props.options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
+            </Select>
         );
     }
 }

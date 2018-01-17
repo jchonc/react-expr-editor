@@ -1,7 +1,11 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import Select from 'react-select';
+
+import { Select } from 'antd';
+const Option = Select.Option;
+
 import { DropdownButton, MenuItem } from 'react-bootstrap';
+
 import { DragSource, DropTarget } from 'react-dnd';
 
 import ExpressionValueText from './editors/ExpressionValueText';
@@ -44,15 +48,15 @@ const ItemTypes = {
 
 const simpleSource = {
     beginDrag(props: any, monitor: any) {
-        return {node: props.node, parent: props.parent};
+        return { node: props.node, parent: props.parent };
     }
 };
 
 const simpleTarget = {
     drop(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        let condition = dragNodeInfo.node.name === 'logic' ? 
-            !props.parent.isAncestor(dragNodeInfo.node) : 
+        let condition = dragNodeInfo.node.name === 'logic' ?
+            !props.parent.isAncestor(dragNodeInfo.node) :
             dragNodeInfo.node.attrId !== props.node.attrId;
         if (condition) {
             dragNodeInfo.parent.removeChild(dragNodeInfo.node);
@@ -85,7 +89,7 @@ function dragCollect(connect: any, monitor: any) {
 }
 
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, ExpressionSimpleItemState> {
-    
+
     static contextTypes = {
         metaDictionary: PropTypes.any,
         cachedPickLists: PropTypes.any
@@ -105,7 +109,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             };
         }
         else {
-            let meta = context.metaDictionary.find(function(elm: any) {
+            let meta = context.metaDictionary.find(function (elm: any) {
                 return elm.attrId === expression.attrId;
             });
             this.state = {
@@ -121,7 +125,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
 
     updateMetaReference(elmId: string) {
         const expression = this.props.node;
-        let meta = this.context.metaDictionary.find(function(elm: any) {
+        let meta = this.context.metaDictionary.find(function (elm: any) {
             return elm.attrId === elmId;
         });
 
@@ -132,7 +136,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             attrMeta: meta,
             allowedOperators: this.getAllowedOperators(meta),
             attrId: elmId,
-            operandKind: this.getOperandKind(meta, expression.operator)    
+            operandKind: this.getOperandKind(meta, expression.operator)
         });
     }
 
@@ -142,15 +146,15 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         expression.operator = operator;
         this.setState({
             operator: operator,
-            operandKind: this.getOperandKind(meta, expression.operator)               
+            operandKind: this.getOperandKind(meta, expression.operator)
         });
     }
 
-    updateValue( ...values: any[]) {
+    updateValue(...values: any[]) {
         this.props.node.operands = values;
         this.setState({
             operands: [...values]
-        });        
+        });
         return;
     }
 
@@ -168,28 +172,28 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
 
     getAllowedOperators(meta: any) {
         // gt; ge; lt; le; between; is-one-of; 
-        let results =  [
-            { value: 'eq', label: 'equals to'},
-            { value: 'ne', label: 'not equal to'}
+        let results = [
+            { value: 'eq', label: 'equals to' },
+            { value: 'ne', label: 'not equal to' }
         ];
         if (meta) {
-            if ( meta.attrCtrlType === 'picklist' ) {
-                results.push({ value: 'is-one-of', label: 'is one of'});
+            if (meta.attrCtrlType === 'picklist') {
+                results.push({ value: 'is-one-of', label: 'is one of' });
             }
-            if ( meta.attrCtrlType === 'date' ) {
-                results.push({ value: 'between', label: 'between'});
-            }            
+            if (meta.attrCtrlType === 'date') {
+                results.push({ value: 'between', label: 'between' });
+            }
         }
         return results;
     }
 
     getOperandKind(meta: any, operator: string) {
         if (meta) {
-            if ( meta.attrCtrlType === 'date' && operator === 'between' ) {
+            if (meta.attrCtrlType === 'date' && operator === 'between') {
                 return 'date-range';
             }
-            if ( meta.attrCtrlType === 'picklist' ) {
-                return ( operator === 'is-one-of' ) ? 'multi-pick' : 'pick';
+            if (meta.attrCtrlType === 'picklist') {
+                return (operator === 'is-one-of') ? 'multi-pick' : 'pick';
             }
             if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
                 return meta.attrCtrlType;
@@ -200,7 +204,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
 
     componentWillReceiveProps(newProps: any) {
         let expression = newProps.node;
-        let meta = this.context.metaDictionary.find(function(elm: any) {
+        let meta = this.context.metaDictionary.find(function (elm: any) {
             return elm.attrId === expression.attrId;
         });
 
@@ -214,24 +218,24 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         });
     }
 
-    shouldComponentUpdate(nextProps: any, nextState: any) {
-        return nextProps.node.attrId !== this.props.node.attrId;
-    }
+    // shouldComponentUpdate(nextProps: any, nextState: any) {
+        // return nextProps.node.attrId !== this.props.node.attrId;
+    // }
 
     render() {
 
-        let options = this.context.metaDictionary.map(function(item: any) {
+        let options = this.context.metaDictionary.map(function (item: any) {
             return {
                 value: item.attrId,
                 label: item.attrCaption
             };
         });
-        
+
         const meta = this.state.attrMeta;
         let listItems = [];
         if (meta) {
-            if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams ) {
-                const list = this.context.cachedPickLists.find(function(lr: any) {
+            if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams) {
+                const list = this.context.cachedPickLists.find(function (lr: any) {
                     return lr.listName === meta.attrCtrlParams;
                 });
                 if (list) {
@@ -249,11 +253,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             case 'number':
                 OperandCtrlTag = ExpressionValueNumber;
                 break;
-            case 'pick':                
+            case 'pick':
                 OperandCtrlTag = ExpressionValueList;
                 break;
             case 'multi-pick':
-                OperandCtrlTag = ExpressionValueMultiList; 
+                OperandCtrlTag = ExpressionValueMultiList;
                 break;
             case 'date':
                 OperandCtrlTag = ExpressionValueDate;
@@ -263,28 +267,28 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                 break;
             default:
                 break;
-        }        
+        }
 
         let OperandCtrl = OperandCtrlTag ? (
             <OperandCtrlTag
-                values={this.state.operands} 
+                values={this.state.operands}
                 readOnly={this.props.readOnly}
                 options={listItems}
-                onChange={(...evt: any[]) => {this.updateValue(...evt); }}
+                onChange={(...evt: any[]) => { this.updateValue(...evt); }}
             />
         ) : (
-            <div>Empty</div>
-        );
+                <div>Empty</div>
+            );
 
         let menu = (<span>&nbsp;</span>);
         if (!this.props.readOnly) {
-            menu = ( 
+            menu = (
                 <DropdownButton id="menu-simple-dropdown" title="">
-                    <MenuItem onClick={() => {this.replaceWithComplex('and'); }}>AND</MenuItem>
-                    <MenuItem onClick={() => {this.replaceWithComplex('or'); }}>OR</MenuItem>
-                    <MenuItem onClick={() => {this.addSibling(); }}>New Line</MenuItem>
+                    <MenuItem onClick={() => { this.replaceWithComplex('and'); }}>AND</MenuItem>
+                    <MenuItem onClick={() => { this.replaceWithComplex('or'); }}>OR</MenuItem>
+                    <MenuItem onClick={() => { this.addSibling(); }}>New Line</MenuItem>
                     <MenuItem divider={true} />
-                    <MenuItem onClick={() => {this.removeSelf(); }}>Remove</MenuItem>
+                    <MenuItem onClick={() => { this.removeSelf(); }}>Remove</MenuItem>
                 </DropdownButton>
             );
         }
@@ -293,24 +297,32 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         return connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
             <div className="expr-simple-item">
                 <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
-                <Select 
-                    className="expr-simple-field"
-                    options={options}
-                    searchable={false}
-                    clearable={false}
-                    disabled={this.props.readOnly}
-                    value={this.state.attrId}
-                    onChange={(evt: any) => {this.updateMetaReference(evt.value); }}
-                />
                 <Select
                     className="expr-simple-field"
-                    options={this.state.allowedOperators}
-                    searchable={false}
-                    clearable={false}
+                    // options={options}
+                    // searchable={false}
+                    // clearable={false}
+                    disabled={this.props.readOnly}
+                    value={this.state.attrId}
+                    onChange={(value: any) => { this.updateMetaReference(value); }}
+                >
+                    {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
+                </Select>
+                <Select
+                    className="expr-simple-field"
+                    // options={}
+                    // searchable={false}
+                    // clearable={false}
                     disabled={this.props.readOnly}
                     value={this.state.operator}
-                    onChange={(evt: any) => {this.updateOperator(evt.value); }}
-                />
+                    onChange={(value: any) => { this.updateOperator(value); }}
+                >
+                    {
+                        this.state.allowedOperators.map((o: any) =>
+                            <Option key={o.value} value={o.value}>{o.label}</Option>
+                        )
+                    }
+                </Select>
                 {OperandCtrl}
                 <div className="expr-simple-part">
                     {menu}
@@ -321,10 +333,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
 
 }
 
-export default 
-DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
-    DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
-        DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
-    )
-);
-  
+export default
+    DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
+        DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
+            DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
+        )
+    );

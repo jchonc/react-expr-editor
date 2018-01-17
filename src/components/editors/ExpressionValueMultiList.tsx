@@ -1,5 +1,6 @@
 import * as React from 'react';
-import Select from 'react-select';
+import { Select } from 'antd';
+const Option = Select.Option;
 
 interface ExpressionValueMultiListState {
 }
@@ -25,16 +26,19 @@ class ExpressionValueMultiList extends React.Component<ExpressionValueMultiListP
 
     render() {
         return (
-            <Select 
+            <Select
                 className="expr-simple-value"
-                options={this.props.options}
-                multi={true}
-                searchable={false}
-                clearable={false}
+                // options={this.props.options}
+                // multi={true}
+                // searchable={false}
+                // clearable={false}
+                mode="multiple"
                 disabled={this.props.readOnly}
                 value={this.props.values}
                 onChange={this.onSelectionChanged}
-            />
+            >
+                {this.props.options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
+            </Select>
         );
     }
 }
