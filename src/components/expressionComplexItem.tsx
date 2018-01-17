@@ -6,6 +6,7 @@ import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classNames from 'classnames';
 
 import { AttrIdSingleton } from '../constants/constants';
+import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, complexSource, complexTarget } from '../constants/dragConstants';
 
 import './expressionComplexItem.css';
 import 'react-select/dist/react-select.css';
@@ -27,67 +28,6 @@ interface ExpressionComplexItemProps {
     connectDropTargetSimple: any;
     isDragging: boolean;
     hoverCallback: any;
-}
-
-const ItemTypes = {
-    Complex: 'Complex',
-    Simple: 'Simple'
-};
-
-const complexSource = {
-    beginDrag(props: any, monitor: any) {
-        return {node: props.node, 
-                parentID: props.parent ? props.parent.props.node.nodeId: props.node.nodeId, 
-                hoverCallback: props.hoverCallback
-            };
-    },
-    endDrag(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
-    }
-};
-
-const complexTarget = {
-    hover(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-        
-        let condition = dragNodeInfo.node.name === 'logic' ? 
-            dragNodeInfo.node !== props.node && !props.parent.isAncestor(dragNodeInfo.node)
-            : true;
-
-        if (condition && props.node.operands[0].nodeId !== dragNodeInfo.node.nodeId) {
-            dragNodeInfo.node.isClone = true;
-            dragNodeInfo.hoverCallback(dragNodeInfo.parentID, props.node.nodeId, props.node.nodeId, dragNodeInfo.node.nodeId);
-            dragNodeInfo.parentID = props.node.nodeId;
-        }
-    },
-    drop(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
-    }
-};
-
-function dropCollectComplex(connect: any, monitor: any) {
-    return {
-        connectDropTargetComplex: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dropCollectSimple(connect: any, monitor: any) {
-    return {
-        connectDropTargetSimple: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dragCollect(connect: any, monitor: any) {
-    return {
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
-    };
 }
 
 class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, ExpressionComplexItemState> {

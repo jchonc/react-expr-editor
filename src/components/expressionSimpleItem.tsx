@@ -11,6 +11,7 @@ import ExpressionValueList from './editors/ExpressionValueList';
 import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
 import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
+import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, simpleSource, simpleTarget } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
 import 'react-select/dist/react-select.css';
@@ -38,63 +39,6 @@ interface ExpressionSimpleItemProps {
 const validCtrlKind: string[] = [
     'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
 ];
-
-const ItemTypes = {
-    Complex: 'Complex',
-    Simple: 'Simple'
-};
-
-const simpleSource = {
-    beginDrag(props: any, monitor: any) {
-        return {node: props.node, parentID: props.parent.props.node.nodeId, hoverCallback: props.hoverCallback};
-    },
-    endDrag(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
-    }
-};
-
-const simpleTarget = {
-    hover(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-        let condition = dragNodeInfo.node.name === 'logic' ? 
-            !props.parent.isAncestor(dragNodeInfo.node) : 
-            dragNodeInfo.node.nodeId !== props.node.nodeId;
-        if (condition) {
-            dragNodeInfo.node.isClone = true;
-            let newParentID = props.parent.props.node.nodeId;
-            dragNodeInfo.hoverCallback(dragNodeInfo.parentID, newParentID, props.node.nodeId, dragNodeInfo.node.nodeId);
-            dragNodeInfo.parentID = newParentID;
-        }
-    },
-    drop(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
-    }
-};
-
-function dropCollectComplex(connect: any, monitor: any) {
-    return {
-        connectDropTargetComplex: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dropCollectSimple(connect: any, monitor: any) {
-    return {
-        connectDropTargetSimple: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dragCollect(connect: any, monitor: any) {
-    return {
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
-    };
-}
 
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, ExpressionSimpleItemState> {
     
