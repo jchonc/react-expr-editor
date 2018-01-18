@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Input } from 'antd';
+import { observer, inject } from 'mobx-react';
+import { IExpressionStore } from '../../types/index';
 
 interface ExpressionValueTextState {
 }
@@ -8,8 +10,12 @@ interface ExpressionValueTextProps {
     values: any[];
     readOnly: boolean;
     onChange: any;
+    expressionStore?: IExpressionStore;
+
 }
 
+@inject('expressionStore')
+@observer
 class ExpressionValueText extends React.Component<ExpressionValueTextProps, ExpressionValueTextState> {
 
     render() {

@@ -22,11 +22,8 @@ import './expressionComplexItem.css';
 
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
-
-interface ExpressionComplexItemState {
-    operator: string;
-    children: any;
-}
+import { inject, observer } from 'mobx-react';
+import { IExpressionStore, IExpressionTreeNode, ExpressionOperator } from '../types/index';
 
 interface ExpressionComplexItemProps {
     node: any;
@@ -37,9 +34,12 @@ interface ExpressionComplexItemProps {
     connectDropTargetSimple: any;
     isDragging: boolean;
     hoverCallback: any;
-}
+    expressionStore?: IExpressionStore;
 
-class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, ExpressionComplexItemState> {
+}
+@inject('expressionStore')
+@observer
+class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> {
     static contextTypes = {
         metaDictionary: PropTypes.any,
         cachedPickLists: PropTypes.any
@@ -49,10 +49,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
 
     constructor(props: any, context: any) {
         super(props, context);
-        this.state = {
-            operator: props.node.operator,
-            children: props.node.operands,
-        };
+        // this.state = {
+        //     operator: props.node.operator,
+        //     children: props.node.operands,
+        // };
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
@@ -70,12 +70,12 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         const newElement = {
             name: 'compare',
             attrId: '',
-            nodeId: AttrIdSingleton.NextUniqueNodeId, 
-            attrCaption: '', 
-            operator: '', 
-            operands: [''] 
+            nodeId: AttrIdSingleton.NextUniqueNodeId,
+            attrCaption: '',
+            operator: '',
+            operands: ['']
         };
-        const newChildren = [...this.state.children, newElement];
+        const newChildren = [...(this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]), newElement];
         this.props.node.operands = newChildren;
         this.setState({
             children: newChildren
@@ -103,17 +103,19 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         this.props.parent.removeChild(this.props.node);
     }
 
-    replaceWithComplex(logic: string, child: any) {
+    replaceWithComplex(logic: ExpressionOperator, child: any) {
         if (child) {
-            const idx = this.state.children.indexOf(child);
+            const operands = (this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]);
+            const idx = operands.indexOf(child);
             if (idx >= 0) {
-                const newComplexNode = {
+                const newComplexNode: IExpressionTreeNode = {
                     nodeId: AttrIdSingleton.NextUniqueNodeId,
                     name: 'logic',
                     operator: logic,
-                    operands: [child]
+                    operands: [child],
+                    isClone: false
                 };
-                const newChildren = this.state.children;
+                const newChildren = operands;
                 newChildren[idx] = newComplexNode;
                 this.props.node.operands = newChildren;
                 this.setState({
@@ -138,9 +140,18 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
     render() {
         const props = this.props;
         const self = this;
-        if (this.state.children && this.state.children.length) {
-            let nodes = this.state.children.map(function(n: any, i: number) {
-                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readonly} hoverCallback={props.hoverCallback}/>);
+        const operands = (this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]);
+
+        if (operands && operands.length) {
+            let nodes = operands.map(function (n: any, i: number) {
+                return (
+                    <ExpressionItem
+                        key={i}
+                        node={n}
+                        parent={self}
+                        readOnly={props.readonly}
+                        hoverCallback={props.hoverCallback}
+                    />);
             });
 
             const options: any = [
@@ -170,7 +181,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                         // searchable={false}
                         // clearable={false}
                         disabled={this.props.readonly}
-                        value={this.state.operator}
+                        value={this.props.node.operator}
                         onChange={(evt: any) => { this.updateOperator(evt.value); }}
                     >
                         {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}

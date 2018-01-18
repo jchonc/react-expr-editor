@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Select } from 'antd';
+import { inject, observer } from 'mobx-react';
+import { IExpressionStore } from '../../types/index';
 const Option = Select.Option;
 
 interface ExpressionValueListState {
@@ -10,8 +12,11 @@ interface ExpressionValueListProps {
     options: any;
     readOnly: boolean;
     onChange: any;
-}
+    expressionStore?: IExpressionStore;
 
+}
+@inject('expressionStore')
+@observer
 class ExpressionValueList extends React.Component<ExpressionValueListProps, ExpressionValueListState> {
 
     render() {

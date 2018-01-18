@@ -19,6 +19,8 @@ export interface IExpressionTreeNode {
   attrCaption?: string;
   isValid?: boolean;
   isClone: boolean;
+  parent?: IExpressionTreeNode;
+  children?: IExpressionTreeNode[];
 }
 
 export interface IExpressionStore {
@@ -29,6 +31,7 @@ export interface IExpressionStore {
   valid: boolean;
   knownMetaDictionary: any[];
   knownPickLists: any[];
+  getNode: (nodeId: string) => IExpressionTreeNode|undefined;
   addSimpleChild: () => void;
   validate: () => void;
   reveal: () => void;

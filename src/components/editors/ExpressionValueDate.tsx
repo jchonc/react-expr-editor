@@ -2,6 +2,8 @@ import * as React from 'react';
 import { DatePicker } from 'antd';
 
 import moment from 'moment';
+import { observer, inject } from 'mobx-react';
+import { IExpressionStore } from '../../types/index';
 
 interface ExpressionValueDateState {
     focused: boolean;
@@ -11,9 +13,12 @@ interface ExpressionValueDateState {
 interface ExpressionValueDateProps {
     values: any;
     readOnly: boolean;
-    onChange: any;
-}
+    onChange: any;   
+    expressionStore?: IExpressionStore;
 
+}
+@inject('expressionStore')
+@observer
 class ExpressionValueDate extends React.Component<ExpressionValueDateProps, ExpressionValueDateState> {
     constructor(props: any) {
         super(props);

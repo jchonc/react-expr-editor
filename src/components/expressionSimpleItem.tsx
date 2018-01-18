@@ -25,9 +25,10 @@ import {
 } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
-import { ExpressionOperandKind } from '../types/index';
+import { ExpressionOperandKind, IExpressionStore } from '../types/index';
 import ValidatorFactory from '../factories/ValidatorFactory';
 import ExpressionValueLookup from './editors/ExpressionValueLookup';
+import { observer, inject } from 'mobx-react';
 
 interface ExpressionSimpleItemState {
     attrMeta: any;
@@ -47,12 +48,16 @@ interface ExpressionSimpleItemProps {
     connectDropTargetSimple: any;
     isDragging: boolean;
     hoverCallback: any;
+    expressionStore?: IExpressionStore;
+
 }
 
 const validCtrlKind: string[] = [
     'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
 ];
 
+@inject('expressionStore')
+@observer
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, ExpressionSimpleItemState> {
 
     static contextTypes = {

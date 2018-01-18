@@ -87,8 +87,8 @@ class ExpressionStore implements IExpressionStore {
         return;
     }
 
-    @action getExpressionNode(id: string): IExpressionTreeNode {
-        return this.expressionMap[id];
+    @action getNode(id: string): IExpressionTreeNode| undefined {
+        return this.expressionMap.get(id);
     }
 
     @action addSimpleChild() {
@@ -159,7 +159,7 @@ class ExpressionStore implements IExpressionStore {
         };
 
         this.valid = validateNode(this.expression);
-        
+
     }
 
     @action reveal() {

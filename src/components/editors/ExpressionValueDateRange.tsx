@@ -1,6 +1,8 @@
 import * as React from 'react';
 import moment from 'moment';
 import { DatePicker } from 'antd';
+import { inject, observer } from 'mobx-react';
+import { IExpressionStore } from '../../types/index';
 
 interface ExpressionValueDateRangeState {
     focusedInput: any;
@@ -12,8 +14,11 @@ interface ExpressionValueDateRangeProps {
     values: any;
     readOnly: boolean;
     onChange: any;
-}
+    expressionStore?: IExpressionStore;
 
+}
+@inject('expressionStore')
+@observer
 class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeProps, ExpressionValueDateRangeState> {
 
     constructor(props: any) {
