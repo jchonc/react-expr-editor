@@ -1,3 +1,4 @@
 .expr-editor {height: 430px; overflow: auto;}
 .expr-canvas {height: 2000px; width:2000px;}
 .clone{outline: dashed 2px #1ca842; opacity: 0.5}
+.error {color: red}

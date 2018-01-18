@@ -29,19 +29,38 @@ interface AppProps {
 
 interface AppState {
   expression: any;
+  valid: boolean;
 }
 
 class App extends React.Component<AppProps, AppState> {
   constructor(props: any) {
     super(props);
     this.state =  {
-      expression: testComplexExpression
+      expression: testComplexExpression,
+      valid: true
     };
   }
 
   reveal() {
     const result = JSON.stringify(this.state.expression);
     document.getElementById('expr_value')!.innerHTML = result;
+  }
+
+  validate(){
+
+    let validateNode = (node: any): boolean =>{
+      if (node.name == 'logic') {
+        let result = true;
+        for (let i = 0 ; i < node.operands.length && result; i++){
+          result = result && validateNode(node.operands[i]);
+        }
+        return result;
+      } else {
+        return node.isValid
+      }
+    }
+
+    this.setState({ valid: validateNode(this.state.expression)});
   }
 
   render() {
@@ -52,8 +71,10 @@ class App extends React.Component<AppProps, AppState> {
         </div>
         <ExpressionEditor readOnly={false} moduleId={1} entityName="patient" expression={this.state.expression} />
         <hr/>
+        {!this.state.valid && <div className='error'>There is an error</div>}
         <div>
             <button type="button" onClick={() => {this.reveal(); }}>Reveal</button>
+            <button type="button" onClick={() => {this.validate(); }}>validate</button>
             <div id="expr_value" />
         </div>
       </div>
