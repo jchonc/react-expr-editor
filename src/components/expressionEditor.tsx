@@ -9,6 +9,9 @@ import HTML5Backend from 'react-dnd-html5-backend';
 
 interface ExpressionEditorState {
     expression: any;
+    knownMetaDictionary: any;
+    knownPickLists: any;
+    metaLoaded: boolean;
 }
 
 interface ExpressionEditorProps {
@@ -17,41 +20,6 @@ interface ExpressionEditorProps {
     entityName: string;
     expression: any;
 }
-
-const knownPickLists = [{
-    listName: 'Gender',
-    items: [
-        { value: 'GD_MALE', label: 'Male', description: 'Gentleman' },
-        { value: 'GD_FEMALE', label: 'Female', description: 'Lady' }
-    ]
-}];
-
-const knownMetaDictionary = [{
-    attrId: '11001',
-    attrCaption: 'First Name',
-    attrDataType: 'string',
-    attrCtrlType: 'text',
-    attrCtrlParams: ''
-}, {
-    attrId: '11002',
-    attrCaption: 'Last Name',
-    attrDataType: 'string',
-    attrCtrlType: 'text',
-    attrCtrlParams: ''
-}, {
-    attrId: '11003',
-    attrCaption: 'Gender',
-    attrDataType: 'string',
-    attrCtrlType: 'picklist',
-    attrCtrlParams: 'Gender'
-}, {
-    attrId: '11004',
-    attrCaption: 'Birthday',
-    attrDataType: 'date',
-    attrCtrlType: 'date',
-    attrCtrlParams: ''
-
-}];
 
 class ExpressionEditor extends React.Component<ExpressionEditorProps, ExpressionEditorState> {
 
@@ -66,17 +34,63 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     constructor(props: any) {
         super(props);
         this.state = {
-            expression: props.expression
+            expression: props.expression,
+            knownMetaDictionary: null,
+            knownPickLists: null,
+            metaLoaded: false
         };
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
     }
 
+    componentDidMount() {
+        const dictionaryUrl = `/dictionary/${this.props.moduleId}/${this.props.entityName}`;
+        fetch(dictionaryUrl)
+            .then((res) => res.json())
+            .then((resData) => {
+                const dictionray = resData;
+                let usedLists: string[] = [];
+                resData.map(function(attr: any) {
+                    if (attr.attrCtrlType === 'picklist' && attr.attrCtrlParams) {
+                        if (usedLists.indexOf(attr.attrCtrlParams) < 0) {
+                            usedLists.push(attr.attrCtrlParams);
+                        }
+                    }
+                });
+                if (usedLists && usedLists.length) {
+                    const picklistUrl = '/picklists';
+                    fetch(picklistUrl, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'                   
+                        },
+                        method: 'POST',
+                        body: JSON.stringify(usedLists)
+                    })
+                        .then((res) => res.json())
+                        .then((resLists) => {
+                            this.setState({
+                                knownMetaDictionary: dictionray,
+                                knownPickLists: resLists,
+                                metaLoaded: true
+                            });
+                        });
+                }
+                else {
+                    this.setState({
+                        knownMetaDictionary: dictionray,
+                        knownPickLists: [],
+                        metaLoaded: true
+                    });
+                }               
+            });
+    }
+
     getChildContext() {
         return {
-            metaDictionary: knownMetaDictionary,
-            cachedPickLists: knownPickLists
+            metaDictionary: this.state.knownMetaDictionary,
+            cachedPickLists: this.state.knownPickLists
         };
     }
 
@@ -108,31 +122,36 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     }
 
     render() {
-        let expression = this.state.expression;
-        if (expression) {
-            let buttons = (<div />);
-            if (!this.props.readOnly) {
-                buttons = (
+        if (!this.state.metaLoaded) {
+            return (<div>Loading Metabase</div>);
+        }
+        else {
+            let expression = this.state.expression;
+            if (expression) {
+                let buttons = (<div />);
+                if (!this.props.readOnly) {
+                    buttons = (
+                        <div>
+                            <Button>Copy</Button>
+                            <Button>Paste</Button>
+                            <Button>Clear</Button>
+                        </div>
+                    );
+                }
+                return (
                     <div>
-                        <Button>Copy</Button>
-                        <Button>Paste</Button>
-                        <Button>Clear</Button>
+                        {buttons}
+                        <div className="row expr-editor">
+                            <div className="expr-canvas">
+                                <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} />
+                            </div>
+                        </div>
                     </div>
                 );
             }
-            return (
-                <div>
-                    {buttons}
-                    <div className="row expr-editor">
-                        <div className="expr-canvas">
-                            <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} />
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-        else {
-            return (<div>Expression Editor</div>);
+            else {
+                return (<div>Expression Editor</div>);
+            }
         }
     }
 }

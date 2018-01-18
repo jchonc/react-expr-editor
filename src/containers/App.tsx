@@ -2,6 +2,7 @@ import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
 import Button from 'antd/lib/button';
+import { ExpressionType, ExpressionOperator, Expression } from '../constants/expression';
 
 /*
 let testExpression = {
@@ -11,31 +12,6 @@ let testExpression = {
   operator: 'eq',
   operands: ['Jian']
 };*/
-export enum ExpressionType {
-  Logic,
-  Compare
-}
-
-export enum ExpressionOperator {
-  And,
-  Or,
-  Equal,
-  NotEqual,
-  IsBetween,
-  IsNotBetween
-}
-
-export interface ExpressionOperand {
-  name: ExpressionType;
-}
-
-export type Expression = {
-  name: ExpressionType,
-  operator: ExpressionOperator,
-  operands?: Expression[] | string[],
-  attrId?: string,
-  attrCaption?: string
-};
 
 let testComplexExpression: Expression = {
   name: ExpressionType.Logic,
