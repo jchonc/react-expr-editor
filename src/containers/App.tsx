@@ -1,7 +1,9 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
+import { AttrIdSingleton } from '../constants/constants';
 import Button from 'antd/lib/button';
+<<<<<<< HEAD
 import { ExpressionType, ExpressionOperator, Expression } from '../constants/expression';
 
 /*
@@ -12,30 +14,37 @@ let testExpression = {
   operator: 'eq',
   operands: ['Jian']
 };*/
+=======
+import { Expression } from '../types/index';
+>>>>>>> e61fa2cc54548a5ace29e44413d49638b54f3f01
 
 let testComplexExpression: Expression = {
-  name: ExpressionType.Logic,
-  operator: ExpressionOperator.And,
+  nodeId: AttrIdSingleton.NextUniqueNodeId,
+  name: 'logic',
+  operator: 'And',
   operands: [
     {
-      name: ExpressionType.Compare,
+      name: 'compare',
       attrId: '11001',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'First Name',
-      operator: ExpressionOperator.Equal,
+      operator: 'Equal',
       operands: ['Jian']
     },
     {
-      name: ExpressionType.Compare,
+      name: 'compare',
       attrId: '11003',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Gender',
-      operator: ExpressionOperator.NotEqual,
+      operator: 'NotEqual',
       operands: ['GD_MALE']
     },
     {
-      name: ExpressionType.Compare,
+      name: 'compare',
       attrId: '11004',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Birthday',
-      operator: ExpressionOperator.Equal,
+      operator: 'Equal',
       operands: ['2011-12-12']
     }
   ]
@@ -56,6 +65,19 @@ class App extends React.Component<AppProps, AppState> {
       expression: testComplexExpression
     };
   }
+
+  // componentDidMount() {
+  //   let r = new Request('/expressions/1');
+  //   fetch(r).then((response) => {
+  //     if (response.ok) {
+  //       response.json().then((exp: Expression) => {
+  //         this.setState({
+  //           expression: exp
+  //         });
+  //       });
+  //     }
+  //   });
+  // }
 
   reveal() {
     const result = JSON.stringify(this.state.expression);
