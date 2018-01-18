@@ -11,20 +11,13 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { ExpressionOperator, IExpressionTreeNode, IExpressionStore } from '../types/index';
 import { inject, observer } from 'mobx-react';
 
-interface ExpressionEditorState {
-    expression: IExpressionTreeNode;
-    knownMetaDictionary: any;
-    knownPickLists: any;
-    metaLoaded: boolean;
-}
-
 interface ExpressionEditorProps {
     expressionStore?: IExpressionStore;
 }
 
 @inject('expressionStore')
 @observer
-class ExpressionEditor extends React.Component<ExpressionEditorProps, ExpressionEditorState> {
+class ExpressionEditor extends React.Component<ExpressionEditorProps> {
 
     static childContextTypes = {
         metaDictionary: PropTypes.any,
@@ -55,8 +48,8 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     getChildContext() {
         return {
-            metaDictionary: this.state.knownMetaDictionary,
-            cachedPickLists: this.state.knownPickLists
+            metaDictionary: this.props.expressionStore!.knownMetaDictionary,
+            cachedPickLists: this.props.expressionStore!.knownPickLists
         };
     }
 
@@ -74,7 +67,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     }
 
     handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number) {
-        let expression = this.state.expression;
+        let expression = this.props.expressionStore!.expression;
         let oldParent = this.getTargetNode(oldParentID, expression);
         let newParent = this.getTargetNode(newParentID, expression);
 
@@ -130,10 +123,10 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     replaceWithComplex(op: ExpressionOperator, child: IExpressionTreeNode) {
         if (child) {
-            const newComplexNode: Expression = {
+            const newComplexNode: IExpressionTreeNode = {
                 name: 'logic',
                 nodeId: AttrIdSingleton.NextUniqueNodeId,
-                operator: logic,
+                operator: op,
                 operands: [child]
             };
             this.setState({
@@ -143,14 +136,14 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     }
 
     render() {
-        if (!this.state.metaLoaded) {
+        if (!this.props.expressionStore!.metaLoaded) {
             return (<div>Loading Metabase</div>);
         }
         else {
-            let expression = this.state.expression;
+            let expression = this.props.expressionStore!.expression;
             if (expression) {
                 let buttons = (<div />);
-                if (!this.props.readOnly) {
+                if (!this.props.expressionStore!.readonly) {
                     buttons = (
                         <div>
                             <Button>Copy</Button>
@@ -164,7 +157,12 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
                         {buttons}
                         <div className="row expr-editor">
                             <div className="expr-canvas">
-                                <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} hoverCallback={this.handleHover} />
+                                <ExpressionItem 
+                                    node={expression} 
+                                    readOnly={this.props.expressionStore!.readonly} 
+                                    parent={this} 
+                                    hoverCallback={this.handleHover} 
+                                />
                             </div>
                         </div>
                     </div>

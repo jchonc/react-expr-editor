@@ -44,6 +44,9 @@ let testComplexExpression: IExpressionTreeNode = {
   ]
 };
 
+stores.expressionStore.moduleId = 1;
+stores.expressionStore.entityName = 'patient';
+
 stores.expressionStore.setExpressionTree(testComplexExpression);
 
 ReactDOM.render(

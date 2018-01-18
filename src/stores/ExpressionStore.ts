@@ -100,7 +100,7 @@ class ExpressionStore implements IExpressionStore {
 
     @action fetchStuff() {
         const dictionaryUrl = `/dictionary/${this.moduleId}/${this.entityName}`;
-        fetch(dictionaryUrl)
+        return fetch(dictionaryUrl)
             .then((res) => res.json())
             .then((resData) => {
                 const dictionray = resData;
@@ -135,6 +135,10 @@ class ExpressionStore implements IExpressionStore {
                     this.metaLoaded = true;
                 }
             });
+    }
+
+    @action validate() {
+        return true;
     }
 }
 

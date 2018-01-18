@@ -1,63 +1,14 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
-import { AttrIdSingleton } from '../constants/constants';
 import Button from 'antd/lib/button';
 
-/*
-let testExpression = {
-  name: 'compare',
-  attrId: '11001',
-  attrCaption: 'First Name',
-  operator: 'eq',
-  operands: ['Jian']
-};*/
-import { IExpressionTreeNode, IExpressionStore } from '../types/index';
+import { IExpressionStore } from '../types/index';
 import { inject, observer } from 'mobx-react';
 
-let testComplexExpression: IExpressionTreeNode = {
-  nodeId: AttrIdSingleton.NextUniqueNodeId,
-  name: 'logic',
-  operator: 'And',
-  operands: [
-    {
-      name: 'compare',
-      attrId: '11001',
-      nodeId: AttrIdSingleton.NextUniqueNodeId,
-      attrCaption: 'First Name',
-      operator: 'Equal',
-      operands: ['Jian']
-    },
-    {
-      name: 'compare',
-      attrId: '11003',
-      nodeId: AttrIdSingleton.NextUniqueNodeId,
-      attrCaption: 'Gender',
-      operator: 'NotEqual',
-      operands: ['GD_MALE']
-    },
-    {
-      name: 'compare',
-      attrId: '11004',
-      nodeId: AttrIdSingleton.NextUniqueNodeId,
-      attrCaption: 'Birthday',
-      operator: 'Equal',
-      operands: ['2011-12-12']
-    },
-    {
-      name: 'compare',
-      attrId: '11005',
-      nodeId: AttrIdSingleton.NextUniqueNodeId,
-      attrCaption: 'Owner',
-      operator: 'Equal',
-      operands: ['jzhou@rlsolutions.com(Jian Zhou)']
-    }
-  ]
-};
-
 interface AppProps {
-  expressionStore?:IExpressionStore
- }
+  expressionStore?: IExpressionStore;
+}
 
 @inject('expressionStore')
 @observer

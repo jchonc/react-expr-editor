@@ -27,6 +27,7 @@ import {
 import './expressionSimpleItem.css';
 import { ExpressionOperandKind } from '../types/index';
 import ValidatorFactory from '../factories/ValidatorFactory';
+import ExpressionValueLookup from './editors/ExpressionValueLookup';
 
 interface ExpressionSimpleItemState {
     attrMeta: any;
