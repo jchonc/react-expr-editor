@@ -7,6 +7,7 @@ const Option = Select.Option;
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 import { DragSource, DropTarget } from 'react-dnd';
+import classNames from 'classnames';
 
 import ExpressionValueText from './editors/ExpressionValueText';
 import ExpressionValueNumber from './editors/ExpressionValueNumber';
@@ -14,6 +15,7 @@ import ExpressionValueList from './editors/ExpressionValueList';
 import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
 import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
+import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, simpleSource, simpleTarget } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
 import { ExpressionOperandKind } from '../types/index';
@@ -36,12 +38,14 @@ interface ExpressionSimpleItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
+    hoverCallback: any;
 }
 
 const validCtrlKind: string[] = [
     'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
 ];
 
+<<<<<<< HEAD
 const ItemTypes = {
     Complex: 'Complex',
     Simple: 'Simple'
@@ -89,6 +93,8 @@ function dragCollect(connect: any, monitor: any) {
     };
 }
 
+=======
+>>>>>>> master
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, ExpressionSimpleItemState> {
 
     static contextTypes = {
@@ -219,10 +225,13 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         });
     }
 
+<<<<<<< HEAD
     // shouldComponentUpdate(nextProps: any, nextState: any) {
     // return nextProps.node.attrId !== this.props.node.attrId;
     // }
 
+=======
+>>>>>>> master
     render() {
 
         let options = this.context.metaDictionary.map(function (item: any) {
@@ -295,10 +304,18 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         }
 
         const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
+<<<<<<< HEAD
         return connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
             <div className="expr-simple-item">
                 <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
                 <Select
+=======
+        const drag = connectDragSource(<div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>)
+        return connectDropTargetComplex(connectDropTargetSimple(
+            <div className={classNames('expr-simple-item', {clone: this.props.node.isClone})}>
+                {drag}
+                <Select 
+>>>>>>> master
                     className="expr-simple-field"
                     // options={options}
                     // searchable={false}
@@ -329,7 +346,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                     {menu}
                 </div>
             </div>
-        )));
+        ));
     }
 
 }

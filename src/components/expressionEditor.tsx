@@ -2,7 +2,12 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
+<<<<<<< HEAD
 import Button from 'antd/lib/button';
+=======
+import { Button } from 'react-bootstrap';
+import { AttrIdSingleton } from '../constants/constants';
+>>>>>>> master
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -72,6 +77,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
+        this.handleHover = this.handleHover.bind(this);
     }
 
     getChildContext() {
@@ -83,6 +89,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     addSimpleChild() {
         this.setState({
+<<<<<<< HEAD
             expression: {
                 name: 'compare',
                 attrId: '',
@@ -90,8 +97,65 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
                 operator: 'And',
                 operands: ['']
             }
+=======
+            expression: { 
+                name: 'compare', 
+                attrId: '',  
+                nodeId: AttrIdSingleton.NextUniqueNodeId, 
+                attrCaption: '', 
+                operator: '', 
+                operands: [''] 
+            }
         });
     }
+
+    handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number){
+        let expression = this.state.expression;
+        let oldParent = this.getTargetNode(oldParentID, expression);
+        let newParent = this.getTargetNode(newParentID, expression);
+
+        let sourceIndex = oldParent.operands.findIndex((node: any) => node.nodeId == sourceID);
+        let source = oldParent.operands[sourceIndex];
+
+        if (sourceIndex.length < 0){
+            // input was not correct
+            return;
+        }
+
+        oldParent.operands.splice(sourceIndex, 1);
+
+        let targetIndex = newParentID === targetID ? -1 : 
+            newParent.operands.findIndex((node: any) => node.nodeId == targetID);
+
+        if ((newParentID !== targetID && targetIndex.length < 0)) {
+            return;
+        }
+
+        newParent.operands.splice(targetIndex + 1, 0, source);
+
+        this.setState({
+            expression: expression
+>>>>>>> master
+        });
+        
+    }
+
+     getTargetNode(targetID: number, expr: any){
+        
+        if (expr.nodeId === targetID){
+            return expr;
+        }
+
+        if (expr.name == 'logic') {
+            for (let i = 0; i < expr.operands.length; i++){
+                let node = expr.operands[i];
+                let result: any = this.getTargetNode(targetID, node);
+                if (result){
+                    return result;
+                }
+            }
+        }
+    }		
 
     removeChild(child: any) {
         this.addSimpleChild();
@@ -103,7 +167,12 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     replaceWithComplex(logic: ExpressionOperator, child: any) {
         if (child) {
+<<<<<<< HEAD
             const newComplexNode: Expression = {
+=======
+            const newComplexNode = {
+                nodeId: AttrIdSingleton.NextUniqueNodeId,
+>>>>>>> master
                 name: 'logic',
                 operator: logic,
                 operands: [child]
@@ -132,7 +201,11 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
                     {buttons}
                     <div className="row expr-editor">
                         <div className="expr-canvas">
+<<<<<<< HEAD
                             <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} />
+=======
+                            <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} hoverCallback={this.handleHover}/> 
+>>>>>>> master
                         </div>
                     </div>
                 </div>
