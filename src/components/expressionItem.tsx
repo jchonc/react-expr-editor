@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { ExpressionType } from '../constants/expression';
 import ExpressionSimpleItem from './expressionSimpleItem';
 import ExpressionComplexItem from './expressionComplexItem';
 import { Expression } from '../types/index';
@@ -29,7 +28,7 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
             return (<div>Empty</div>);
         }
         else {
-            if (node.name === ExpressionType.Logic) {
+            if (node.name === 'logic') {
                 return (
                     <ExpressionComplexItem node={node} parent={this.props.parent} readOnly={this.props.readOnly} hoverCallback={this.props.hoverCallback} />
                 );

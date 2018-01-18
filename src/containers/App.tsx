@@ -3,8 +3,6 @@ import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
 import { AttrIdSingleton } from '../constants/constants';
 import Button from 'antd/lib/button';
-<<<<<<< HEAD
-import { ExpressionType, ExpressionOperator, Expression } from '../constants/expression';
 
 /*
 let testExpression = {
@@ -14,9 +12,7 @@ let testExpression = {
   operator: 'eq',
   operands: ['Jian']
 };*/
-=======
 import { Expression } from '../types/index';
->>>>>>> e61fa2cc54548a5ace29e44413d49638b54f3f01
 
 let testComplexExpression: Expression = {
   nodeId: AttrIdSingleton.NextUniqueNodeId,
