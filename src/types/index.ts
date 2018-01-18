@@ -12,6 +12,7 @@ export interface ExpressionOperand {
 
 export type Expression = {
   name: 'logic' | 'compare',
+  nodeId: number,
   operator: ExpressionOperator,
   operands?: Expression[] | string[],
   attrId?: string,

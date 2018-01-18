@@ -15,7 +15,14 @@ import ExpressionValueList from './editors/ExpressionValueList';
 import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
 import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
-import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, simpleSource, simpleTarget } from '../constants/dragConstants';
+import {
+    ItemTypes,
+    dragCollect,
+    dropCollectComplex,
+    dropCollectSimple,
+    simpleSource,
+    simpleTarget
+} from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
 import { ExpressionOperandKind } from '../types/index';
@@ -45,56 +52,6 @@ const validCtrlKind: string[] = [
     'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
 ];
 
-<<<<<<< HEAD
-const ItemTypes = {
-    Complex: 'Complex',
-    Simple: 'Simple'
-};
-
-const simpleSource = {
-    beginDrag(props: any, monitor: any) {
-        return { node: props.node, parent: props.parent };
-    }
-};
-
-const simpleTarget = {
-    drop(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-        let condition = dragNodeInfo.node.name === 'logic' ?
-            !props.parent.isAncestor(dragNodeInfo.node) :
-            dragNodeInfo.node.attrId !== props.node.attrId;
-        if (condition) {
-            dragNodeInfo.parent.removeChild(dragNodeInfo.node);
-            props.parent.dragChildIn(props.node, dragNodeInfo.node);
-        }
-    }
-};
-
-function dropCollectComplex(connect: any, monitor: any) {
-    return {
-        connectDropTargetComplex: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dropCollectSimple(connect: any, monitor: any) {
-    return {
-        connectDropTargetSimple: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dragCollect(connect: any, monitor: any) {
-    return {
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
-    };
-}
-
-=======
->>>>>>> master
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, ExpressionSimpleItemState> {
 
     static contextTypes = {
@@ -225,13 +182,6 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         });
     }
 
-<<<<<<< HEAD
-    // shouldComponentUpdate(nextProps: any, nextState: any) {
-    // return nextProps.node.attrId !== this.props.node.attrId;
-    // }
-
-=======
->>>>>>> master
     render() {
 
         let options = this.context.metaDictionary.map(function (item: any) {
@@ -304,18 +254,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         }
 
         const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
-<<<<<<< HEAD
-        return connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
-            <div className="expr-simple-item">
-                <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
-                <Select
-=======
         const drag = connectDragSource(<div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>)
         return connectDropTargetComplex(connectDropTargetSimple(
             <div className={classNames('expr-simple-item', {clone: this.props.node.isClone})}>
                 {drag}
-                <Select 
->>>>>>> master
+                <Select
                     className="expr-simple-field"
                     // options={options}
                     // searchable={false}

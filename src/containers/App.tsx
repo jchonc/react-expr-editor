@@ -1,33 +1,19 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
-<<<<<<< HEAD
 import Button from 'antd/lib/button';
 import { Expression } from '../types/index';
-
-let testComplexExpression: Expression = {
-=======
 import { AttrIdSingleton } from '../constants/constants';
 
-/*
-let testExpression = {
-  name: 'compare',
-  attrId: '11001',
-  attrCaption: 'First Name',
-  operator: 'eq',
-  operands: ['Jian']
-};*/
-
-let testComplexExpression = {
-  nodeId: AttrIdSingleton.NextUniqueNodeId,
->>>>>>> master
+let testComplexExpression: Expression = {
   name: 'logic',
   operator: 'And',
+  nodeId: AttrIdSingleton.NextUniqueNodeId,
   operands: [
-<<<<<<< HEAD
     {
       name: 'compare',
       attrId: '11001',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'First Name',
       operator: 'Equal',
       operands: ['Jian']
@@ -35,6 +21,7 @@ let testComplexExpression = {
     {
       name: 'compare',
       attrId: '11003',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Gender',
       operator: 'NotEqual',
       operands: ['GD_MALE']
@@ -42,15 +29,11 @@ let testComplexExpression = {
     {
       name: 'compare',
       attrId: '11004',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Birthday',
       operator: 'Equal',
       operands: ['2011-12-12']
     }
-=======
-    {name: 'compare', attrId: '11001', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'First Name', operator: 'eq', operands: ['Jian'] },
-    {name: 'compare', attrId: '11003', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'Gender', operator: 'ne', operands: ['GD_MALE'] },
-    {name: 'compare', attrId: '11004', nodeId: AttrIdSingleton.NextUniqueNodeId, attrCaption: 'Birthday', operator: 'eq', operands: ['2011-12-12']}
->>>>>>> master
   ]
 };
 

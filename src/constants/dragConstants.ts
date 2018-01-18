@@ -58,7 +58,7 @@ export const simpleTarget = {
 export const complexSource = {
     beginDrag(props: any, monitor: any) {
         return {node: props.node, 
-                parentID: props.parent.props.node ? props.parent.props.node.nodeId: props.node.nodeId, 
+                parentID: props.parent.props.node ? props.parent.props.node.nodeId : props.node.nodeId, 
                 hoverCallback: props.hoverCallback
             };
     },
@@ -78,7 +78,11 @@ export const complexTarget = {
 
         if (condition && props.node.operands[0].nodeId !== dragNodeInfo.node.nodeId) {
             dragNodeInfo.node.isClone = true;
-            dragNodeInfo.hoverCallback(dragNodeInfo.parentID, props.node.nodeId, props.node.nodeId, dragNodeInfo.node.nodeId);
+            dragNodeInfo.hoverCallback(
+                dragNodeInfo.parentID, 
+                props.node.nodeId, 
+                props.node.nodeId, 
+                dragNodeInfo.node.nodeId);
             dragNodeInfo.parentID = props.node.nodeId;
         }
     },

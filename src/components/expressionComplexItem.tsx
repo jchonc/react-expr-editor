@@ -9,7 +9,14 @@ import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classNames from 'classnames';
 
 import { AttrIdSingleton } from '../constants/constants';
-import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, complexSource, complexTarget } from '../constants/dragConstants';
+import {
+    ItemTypes,
+    dragCollect,
+    dropCollectComplex,
+    dropCollectSimple,
+    complexSource,
+    complexTarget
+} from '../constants/dragConstants';
 
 import './expressionComplexItem.css';
 
@@ -29,71 +36,15 @@ interface ExpressionComplexItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
-<<<<<<< HEAD
-}
-
-const ItemTypes = {
-    Complex: 'Complex',
-    Simple: 'Simple'
-};
-
-const complexSource = {
-    beginDrag(props: any, monitor: any) {
-        return { node: props.node, parent: props.parent };
-    }
-};
-
-const complexTarget = {
-    drop(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
-
-        let condition = dragNodeInfo.node.name === 'logic' ?
-            dragNodeInfo.node !== props.node && !props.parent.isAncestor(dragNodeInfo.node)
-            : true;
-
-        if (condition) {
-            dragNodeInfo.parent.removeChild(dragNodeInfo.node);
-            props.node.operands.unshift(dragNodeInfo.node);
-        }
-    }
-};
-
-function dropCollectComplex(connect: any, monitor: any) {
-    return {
-        connectDropTargetComplex: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dropCollectSimple(connect: any, monitor: any) {
-    return {
-        connectDropTargetSimple: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    };
-}
-
-function dragCollect(connect: any, monitor: any) {
-    return {
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
-    };
-}
-
-class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, ExpressionComplexItemState> {
-
-=======
     hoverCallback: any;
 }
 
 class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, ExpressionComplexItemState> {
->>>>>>> master
     static contextTypes = {
         metaDictionary: PropTypes.any,
         cachedPickLists: PropTypes.any
     };
-    
+
     self: ExpressionComplexItem;
 
     constructor(props: any, context: any) {
@@ -105,7 +56,6 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
-        //his.props.node.self = this;
     }
 
     updateOperator(op: string) {
@@ -117,16 +67,12 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
 
     addSimpleChild() {
         const newElement = {
-<<<<<<< HEAD
-            name: 'compare', attrId: '', attrCaption: '', operator: '', operands: ['']
-=======
             name: 'compare',
-             attrId: '',
-             nodeId: AttrIdSingleton.NextUniqueNodeId, 
-             attrCaption: '', 
-             operator: '', 
-             operands: [''] 
->>>>>>> master
+            attrId: '',
+            nodeId: AttrIdSingleton.NextUniqueNodeId,
+            attrCaption: '',
+            operator: '',
+            operands: ['']
         };
         const newChildren = [...this.state.children, newElement];
         this.props.node.operands = newChildren;
@@ -192,13 +138,16 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         const props = this.props;
         const self = this;
         if (this.state.children && this.state.children.length) {
-<<<<<<< HEAD
             let nodes = this.state.children.map(function (n: any, i: number) {
-                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readonly} />);
-=======
-            let nodes = this.state.children.map(function(n: any, i: number) {
-                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readonly} hoverCallback={props.hoverCallback}/>);
->>>>>>> master
+                return (
+                    <ExpressionItem
+                        key={i}
+                        node={n}
+                        parent={self}
+                        readOnly={props.readonly}
+                        hoverCallback={props.hoverCallback}
+                    />
+                );
             });
 
             const options: any = [
@@ -239,7 +188,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                 </div>)));
 
             return (
-                <div className={classNames('expr-complex-item', {clone: this.props.node.isClone})}>
+                <div className={classNames('expr-complex-item', { clone: this.props.node.isClone })}>
                     {logicNode}
                     <div className="expr-children">
                         {nodes}
