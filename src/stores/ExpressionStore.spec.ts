@@ -5,6 +5,7 @@ let testExpression: IExpressionTreeNode = {
     name: 'logic',
     operator: 'And',
     nodeId: 1,
+    isClone: false,
     operands: [
         {
             name: 'compare',
@@ -12,7 +13,8 @@ let testExpression: IExpressionTreeNode = {
             nodeId: 2,
             attrCaption: 'First Name',
             operator: 'Equal',
-            operands: ['Jian']
+            operands: ['Jian'],
+            isClone: false,
         },
         {
             name: 'compare',
@@ -20,7 +22,8 @@ let testExpression: IExpressionTreeNode = {
             nodeId: 3,
             attrCaption: 'Gender',
             operator: 'NotEqual',
-            operands: ['GD_MALE']
+            operands: ['GD_MALE'],
+            isClone: false,
         },
         {
             name: 'compare',
@@ -28,7 +31,8 @@ let testExpression: IExpressionTreeNode = {
             nodeId: 4,
             attrCaption: 'Birthday',
             operator: 'Equal',
-            operands: ['2011-12-12']
+            operands: ['2011-12-12'],
+            isClone: false,
         }
     ]
 };

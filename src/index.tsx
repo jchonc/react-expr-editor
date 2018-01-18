@@ -16,6 +16,7 @@ let testComplexExpression: IExpressionTreeNode = {
   name: 'logic',
   operator: 'And',
   nodeId: AttrIdSingleton.NextUniqueNodeId,
+  isClone: false,
   operands: [
     {
       name: 'compare',
@@ -23,6 +24,7 @@ let testComplexExpression: IExpressionTreeNode = {
       nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'First Name',
       operator: 'Equal',
+      isClone: false,
       operands: ['Jian']
     },
     {
@@ -31,6 +33,7 @@ let testComplexExpression: IExpressionTreeNode = {
       nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Gender',
       operator: 'NotEqual',
+      isClone: false,
       operands: ['GD_MALE']
     },
     {
@@ -39,6 +42,7 @@ let testComplexExpression: IExpressionTreeNode = {
       nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Birthday',
       operator: 'Equal',
+      isClone: false,
       operands: ['2011-12-12']
     }
   ]

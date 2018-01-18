@@ -15,7 +15,6 @@ interface ExpressionValueDateProps {
 }
 
 class ExpressionValueDate extends React.Component<ExpressionValueDateProps, ExpressionValueDateState> {
-
     constructor(props: any) {
         super(props);
         this.onFocusChanged = this.onFocusChanged.bind(this);
@@ -33,18 +32,15 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
             date: v
         };
     }
-
     onFocusChanged(f: any) {
         this.setState(f);
     }
-
     onDateChanged(d: moment.Moment) {
         this.props.onChange(d.format('YYYY-MM-DD'));
         this.setState({
             date: d
         });
     }
-
     render() {
         return (
             <DatePicker

@@ -17,6 +17,8 @@ export interface IExpressionTreeNode {
   operands?: IExpressionTreeNode[] | string[];
   attrId?: string;
   attrCaption?: string;
+  isValid?: boolean;
+  isClone: boolean;
 }
 
 export interface IExpressionStore {
@@ -28,7 +30,8 @@ export interface IExpressionStore {
   knownMetaDictionary: any[];
   knownPickLists: any[];
   addSimpleChild: () => void;
-  validate: () => boolean;
+  validate: () => void;
+  reveal: () => void;
   fetchStuff: () => Promise<void>;
   metaLoaded: boolean;
 }

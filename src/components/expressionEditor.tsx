@@ -127,7 +127,8 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
                 name: 'logic',
                 nodeId: AttrIdSingleton.NextUniqueNodeId,
                 operator: op,
-                operands: [child]
+                operands: [child],
+                isClone: false
             };
             this.setState({
                 expression: newComplexNode

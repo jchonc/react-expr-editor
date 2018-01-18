@@ -87,6 +87,10 @@ class ExpressionStore implements IExpressionStore {
         return;
     }
 
+    @action getExpressionNode(id: string): IExpressionTreeNode {
+        return this.expressionMap[id];
+    }
+
     @action addSimpleChild() {
         this.expression = {
             name: 'compare',
@@ -94,7 +98,8 @@ class ExpressionStore implements IExpressionStore {
             nodeId: AttrIdSingleton.NextUniqueNodeId,
             attrCaption: '',
             operator: 'And',
-            operands: ['']
+            operands: [''],
+            isClone: false
         };
     }
 
@@ -138,8 +143,30 @@ class ExpressionStore implements IExpressionStore {
     }
 
     @action validate() {
-        return true;
+        let validateNode = (node: IExpressionTreeNode): node is IExpressionTreeNode => {
+            if (node.name === 'logic') {
+                let result = false;
+                if (node && node.operands) {
+                    for (let i = 0; i < node.operands!.length && result; i++) {
+                        result = result && validateNode((node.operands[i] as IExpressionTreeNode));
+                    }
+                }
+
+                return result;
+            } else {
+                return node.isValid!;
+            }
+        };
+
+        this.valid = validateNode(this.expression);
+        
     }
+
+    @action reveal() {
+        const result = JSON.stringify(this.expression);
+        document.getElementById('expr_value')!.innerHTML = result;
+    }
+
 }
 
 export default new ExpressionStore();
