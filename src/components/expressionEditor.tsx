@@ -37,7 +37,7 @@ const knownMetaDictionary = [{
     attrId: '11002',
     attrCaption: 'Last Name',
     attrDataType: 'string',
-    attrCtrlType: 'text',
+    attrCtrlType: 'number',
     attrCtrlParams: ''
 }, {
     attrId: '11003',

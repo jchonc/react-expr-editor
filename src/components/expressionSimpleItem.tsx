@@ -12,6 +12,7 @@ import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
 import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
 import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, simpleSource, simpleTarget } from '../constants/dragConstants';
+import ValidatorFactory  from '../factories/ValidatorFactory';
 
 import './expressionSimpleItem.css';
 import 'react-select/dist/react-select.css';
@@ -47,6 +48,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         cachedPickLists: PropTypes.any
     };
 
+    validatorFactory = new ValidatorFactory();
+    validator: any;
+
     constructor(props: any, context: any) {
         super(props, context);
         const expression = props.node;
@@ -64,12 +68,17 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             let meta = context.metaDictionary.find(function(elm: any) {
                 return elm.attrId === expression.attrId;
             });
+
+            let opKind = this.getOperandKind(meta, expression.operator);
+            this.validator = this.validatorFactory.GetValidator(opKind);
+            expression.isValid = this.validator(expression.operands);
+
             this.state = {
                 attrMeta: meta,
                 allowedOperators: this.getAllowedOperators(meta),
                 attrId: expression.attrId,
                 operator: expression.operator,
-                operandKind: this.getOperandKind(meta, expression.operator),
+                operandKind: opKind,
                 operands: expression.operands
             };
         }
@@ -84,11 +93,14 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         expression.attrId = elmId;
         expression.attrCaption = meta.attrCaption;
 
+        let opKind = this.getOperandKind(meta, expression.operator);
+        this.validator = this.validatorFactory.GetValidator(opKind)
+
         this.setState({
             attrMeta: meta,
             allowedOperators: this.getAllowedOperators(meta),
             attrId: elmId,
-            operandKind: this.getOperandKind(meta, expression.operator)    
+            operandKind: opKind  
         });
     }
 
@@ -103,10 +115,14 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
     }
 
     updateValue( ...values: any[]) {
-        this.props.node.operands = values;
+        
+        this.props.node.isValid = this.validator(values);
+        this.props.node.operands = [...values];
+        
         this.setState({
             operands: [...values]
-        });        
+        });  
+ 
         return;
     }
 
@@ -244,7 +260,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
         const drag = connectDragSource(<div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>)
         return connectDropTargetComplex(connectDropTargetSimple(
-            <div className={classNames('expr-simple-item', {clone: this.props.node.isClone})}>
+            <div className={classNames('expr-simple-item', {clone: this.props.node.isClone}, {'node-error': !this.props.node.isValid})}>
                 {drag}
                 <Select 
                     className="expr-simple-field"

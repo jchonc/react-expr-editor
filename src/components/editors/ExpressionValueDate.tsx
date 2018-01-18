@@ -39,7 +39,7 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
     }
 
     onDateChanged(d: moment.Moment) {
-        this.props.onChange([d.format('YYYY-MM-DD')]);
+        this.props.onChange(d.format('YYYY-MM-DD'));
         this.setState({
             date: d
         });
