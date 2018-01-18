@@ -22,6 +22,7 @@ import './expressionComplexItem.css';
 
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
+import { IExpressionTreeNode } from '../types/index';
 
 interface ExpressionComplexItemState {
     operator: string;
@@ -82,10 +83,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         });
     }
 
-    removeChild(child: any) {
+    removeChild(child: IExpressionTreeNode) {
         if (child) {
             let children = this.props.node.operands;
-            const idx = children.indexOf(child);
+            const idx = children.findIndex((node: IExpressionTreeNode) => node.nodeId === child.nodeId);
             if (idx >= 0) {
                 children.splice(idx, 1);
                 if (children.length === 0) {

@@ -145,7 +145,7 @@ class ExpressionStore implements IExpressionStore {
     @action validate() {
         let validateNode = (node: IExpressionTreeNode): node is IExpressionTreeNode => {
             if (node.name === 'logic') {
-                let result = false;
+                let result = true;
                 if (node && node.operands) {
                     for (let i = 0; i < node.operands!.length && result; i++) {
                         result = result && validateNode((node.operands[i] as IExpressionTreeNode));
