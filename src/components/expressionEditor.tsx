@@ -6,55 +6,20 @@ import Button from 'antd/lib/button';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import { Expression, ExpressionOperator } from '../types/index';
+import { ExpressionOperator, IExpressionTreeNode, IExpressionStore } from '../types/index';
 import { AttrIdSingleton } from '../constants/constants';
+import { inject, observer } from 'mobx-react';
 
 interface ExpressionEditorState {
-    expression: Expression;
+    expression: IExpressionTreeNode;
 }
 
 interface ExpressionEditorProps {
-    readOnly: boolean;
-    moduleId: number;
-    entityName: string;
-    expression: Expression;
+    expressionStore?: IExpressionStore;
 }
 
-const knownPickLists = [{
-    listName: 'Gender',
-    items: [
-        { value: 'GD_MALE', label: 'Male', description: 'Gentleman' },
-        { value: 'GD_FEMALE', label: 'Female', description: 'Lady' }
-    ]
-}];
-
-const knownMetaDictionary = [{
-    attrId: '11001',
-    attrCaption: 'First Name',
-    attrDataType: 'string',
-    attrCtrlType: 'text',
-    attrCtrlParams: ''
-}, {
-    attrId: '11002',
-    attrCaption: 'Last Name',
-    attrDataType: 'string',
-    attrCtrlType: 'text',
-    attrCtrlParams: ''
-}, {
-    attrId: '11003',
-    attrCaption: 'Gender',
-    attrDataType: 'string',
-    attrCtrlType: 'picklist',
-    attrCtrlParams: 'Gender'
-}, {
-    attrId: '11004',
-    attrCaption: 'Birthday',
-    attrDataType: 'date',
-    attrCtrlType: 'date',
-    attrCtrlParams: ''
-
-}];
-
+@inject('expressionStore')
+@observer
 class ExpressionEditor extends React.Component<ExpressionEditorProps, ExpressionEditorState> {
 
     static childContextTypes = {
@@ -67,10 +32,10 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            expression: props.expression
-        };
-        this.addSimpleChild = this.addSimpleChild.bind(this);
+        // this.state = {
+        //     expression: props.expression
+        // };
+        // this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
         this.handleHover = this.handleHover.bind(this);
@@ -78,28 +43,41 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     getChildContext() {
         return {
-            metaDictionary: knownMetaDictionary,
-            cachedPickLists: knownPickLists
+            metaDictionary: this.props.expressionStore!.knownMetaDictionary,
+            cachedPickLists: this.props.expressionStore!.knownPickLists
         };
     }
 
-    handleHover() {
+    handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number) {
+        let expression = this.state.expression;
+        let oldParent = this.getTargetNode(oldParentID, expression);
+        let newParent = this.getTargetNode(newParentID, expression);
 
-    }
+        let sourceIndex = oldParent.operands.findIndex((node: any) => node.nodeId === sourceID);
+        let source = oldParent.operands[sourceIndex];
 
-    addSimpleChild() {
+        if (sourceIndex.length < 0) {
+            // input was not correct
+            return;
+        }
+        oldParent.operands.splice(sourceIndex, 1);
+
+        let targetIndex = newParentID === targetID ? -1 :
+            newParent.operands.findIndex((node: any) => node.nodeId === targetID);
+
+        if ((newParentID !== targetID && targetIndex.length < 0)) {
+            return;
+        }
+
+        newParent.operands.splice(targetIndex + 1, 0, source);
+
         this.setState({
-            expression: {
-                name: 'compare',
-                attrId: '',
-                nodeId: AttrIdSingleton.NextUniqueNodeId,
-                attrCaption: '',
-                operator: 'And',
-                operands: ['']
-            }
+            expression: expression
         });
 
     }
+
+
 
     getTargetNode(targetID: number, expr: any) {
 
@@ -119,16 +97,16 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     }
 
     removeChild(child: any) {
-        this.addSimpleChild();
+        this.props.expressionStore!.addSimpleChild();
     }
 
     isAncestor(current: any) {
         return false;
     }
 
-    replaceWithComplex(op: ExpressionOperator, child: Expression) {
+    replaceWithComplex(op: ExpressionOperator, child: IExpressionTreeNode) {
         if (child) {
-            let newComplexNode: Expression = {
+            let newComplexNode: IExpressionTreeNode = {
                 nodeId: AttrIdSingleton.NextUniqueNodeId,
                 name: 'logic',
                 operator: op,
@@ -142,10 +120,10 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     }
 
     render() {
-        let expression = this.state.expression;
+        let { expression } = this.props.expressionStore!;
         if (expression) {
             let buttons = (<div />);
-            if (!this.props.readOnly) {
+            if (!this.props.expressionStore!.readonly) {
                 buttons = (
                     <div>
                         <Button>Copy</Button>
@@ -161,7 +139,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
                         <div className="expr-canvas">
                             <ExpressionItem
                                 node={expression}
-                                readOnly={this.props.readOnly}
+                                readOnly={this.props.expressionStore!.readonly}
                                 parent={this}
                                 hoverCallback={this.handleHover}
                             />

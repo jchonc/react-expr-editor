@@ -9,7 +9,7 @@ export class AttrIdSingleton {
         return this._instance || (this._instance = new this());
     }
 
-    public static get NextUniqueNodeId() {
+    public static get NextUniqueNodeId(): number {
         return this._nextUniqueNodeId++;
     }
 }

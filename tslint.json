@@ -17,7 +17,7 @@
         "eofline": false,
         "forin": true,
         "indent": [ true, "spaces" ],
-        "interface-name": [true, "never-prefix"],
+        "interface-name": [false],
         "jsdoc-format": true,
         "jsx-no-lambda": false,
         "jsx-no-multiline-js": false,
@@ -57,7 +57,6 @@
         "one-line": [
             true,
             "check-catch",
-            /*"check-else",*/
             "check-open-brace",
             "check-whitespace"
         ],
