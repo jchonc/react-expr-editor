@@ -49,7 +49,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
-        //his.props.node.self = this;
+        // this.props.node.self = this;
     }
 
     updateOperator(op: string) {
@@ -62,11 +62,11 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
     addSimpleChild() {
         const newElement = {
             name: 'compare',
-             attrId: '',
-             nodeId: AttrIdSingleton.NextUniqueNodeId, 
-             attrCaption: '', 
-             operator: '', 
-             operands: [''] 
+            attrId: '',
+            nodeId: AttrIdSingleton.NextUniqueNodeId, 
+            attrCaption: '', 
+            operator: '', 
+            operands: [''] 
         };
         const newChildren = [...this.state.children, newElement];
         this.props.node.operands = newChildren;

@@ -42,13 +42,19 @@ let testComplexExpression: Expression = {
       attrCaption: 'Birthday',
       operator: 'Equal',
       operands: ['2011-12-12']
+    },
+    {
+      name: 'compare',
+      attrId: '11005',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
+      attrCaption: 'Owner',
+      operator: 'Equal',
+      operands: ['jzhou@rlsolutions.com(Jian Zhou)']
     }
   ]
 };
 
-interface AppProps {
-
-}
+interface AppProps { }
 
 interface AppState {
   expression: any;
@@ -61,19 +67,6 @@ class App extends React.Component<AppProps, AppState> {
       expression: testComplexExpression
     };
   }
-
-  // componentDidMount() {
-  //   let r = new Request('/expressions/1');
-  //   fetch(r).then((response) => {
-  //     if (response.ok) {
-  //       response.json().then((exp: Expression) => {
-  //         this.setState({
-  //           expression: exp
-  //         });
-  //       });
-  //     }
-  //   });
-  // }
 
   reveal() {
     const result = JSON.stringify(this.state.expression);

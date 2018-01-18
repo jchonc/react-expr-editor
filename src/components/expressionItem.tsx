@@ -28,14 +28,15 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
             return (<div>Empty</div>);
         }
         else {
+            const { parent, readOnly, hoverCallback } = this.props;
             if (node.name === 'logic') {
                 return (
-                    <ExpressionComplexItem node={node} parent={this.props.parent} readOnly={this.props.readOnly} hoverCallback={this.props.hoverCallback} />
+                    <ExpressionComplexItem node={node} parent={parent} readOnly={readOnly} hoverCallback={hoverCallback} />
                 );
             } 
             else {
                 return (
-                    <ExpressionSimpleItem node={node} parent={this.props.parent} readOnly={this.props.readOnly} hoverCallback={this.props.hoverCallback} />
+                    <ExpressionSimpleItem node={node} parent={parent} readOnly={readOnly} hoverCallback={hoverCallback} />
                 );
             }
         }

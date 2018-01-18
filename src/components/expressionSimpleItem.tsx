@@ -15,11 +15,12 @@ import ExpressionValueList from './editors/ExpressionValueList';
 import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
 import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
+import ExpressionValueLookup from './editors/ExpressionValueLookup';
+
 import { ItemTypes, dragCollect, dropCollectComplex, dropCollectSimple, simpleSource, simpleTarget } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
 import { ExpressionOperandKind } from '../types/index';
-
 
 interface ExpressionSimpleItemState {
     attrMeta: any;
@@ -198,6 +199,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         }
 
         let OperandCtrlTag = null;
+        let OperandCtrlProps: any = {
+            values: this.state.operands,
+            readOnly: this.props.readOnly,
+            onChange: (...evt: any[]) => { this.updateValue(...evt); }
+        };
 
         switch (this.state.operandKind) {
             case 'text':
@@ -208,9 +214,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                 break;
             case 'pick':
                 OperandCtrlTag = ExpressionValueList;
+                OperandCtrlProps.options = listItems;
                 break;
             case 'multi-pick':
                 OperandCtrlTag = ExpressionValueMultiList;
+                OperandCtrlProps.options = listItems;
                 break;
             case 'date':
                 OperandCtrlTag = ExpressionValueDate;
@@ -218,20 +226,15 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
             case 'date-range':
                 OperandCtrlTag = ExpressionValueDateRange;
                 break;
+            case 'lookup':
+                OperandCtrlTag = ExpressionValueLookup;
+                OperandCtrlProps.lookupKind = meta.attrCtrlParams;
+                break;
             default:
                 break;
         }
 
-        let OperandCtrl = OperandCtrlTag ? (
-            <OperandCtrlTag
-                values={this.state.operands}
-                readOnly={this.props.readOnly}
-                options={listItems}
-                onChange={(...evt: any[]) => { this.updateValue(...evt); }}
-            />
-        ) : (
-                <div>Empty</div>
-            );
+        let OperandCtrl = OperandCtrlTag ? ( <OperandCtrlTag {...OperandCtrlProps}/> ) : ( <div>Empty</div> );
 
         let menu = (<span>&nbsp;</span>);
         if (!this.props.readOnly) {
@@ -252,9 +255,6 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                 <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
                 <Select
                     className="expr-simple-field"
-                    // options={options}
-                    // searchable={false}
-                    // clearable={false}
                     disabled={this.props.readOnly}
                     value={this.state.attrId}
                     onChange={(value: any) => { this.updateMetaReference(value); }}
@@ -263,9 +263,6 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                 </Select>
                 <Select
                     className="expr-simple-field"
-                    // options={}
-                    // searchable={false}
-                    // clearable={false}
                     disabled={this.props.readOnly}
                     value={this.state.operator}
                     onChange={(value: any) => { this.updateOperator(value); }}

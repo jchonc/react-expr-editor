@@ -31,7 +31,12 @@ let dictionary = [
                 attrDataType: 'date',
                 attrCtrlType: 'date',
                 attrCtrlParams: ''
-
+            }, {
+                attrId: '11005',
+                attrCaption: 'Owner',
+                attrDataType: 'user',
+                attrCtrlType: 'lookup',
+                attrCtrlParams: 'users'
             }]
         }]
     }
