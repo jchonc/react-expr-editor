@@ -23,7 +23,7 @@ class ExpressionValueText extends React.Component<ExpressionValueTextProps, Expr
                 className="expr-simple-value" 
                 readOnly={this.props.readOnly}
                 value={v} 
-                onChange={(e) => { this.props.onChange(e.target.value); }}
+                onChange={(evt) => { this.props.onChange(evt.target.value); }}
             />
         );
     }

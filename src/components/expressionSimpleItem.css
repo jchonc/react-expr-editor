@@ -8,6 +8,12 @@
     border-radius: 5px;
     position: relative;
 }
+
+.node-error{
+    border: solid 2px red;
+    margin: 8px;
+}
+
 .expr-simple-part {display: table-cell; width: 20px;}
 .expr-simple-field {display: table-cell; width: 120px;}
 .expr-simple-value {display: table-cell; }

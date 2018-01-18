@@ -11,6 +11,7 @@ interface AppProps {
 
 interface AppState {
   expression: any;
+  valid: boolean;
 }
 
 @inject('expressionStore')
@@ -20,6 +21,23 @@ class App extends React.Component<AppProps, AppState> {
   reveal() {
     const result = JSON.stringify(this.props.expressionStore!.expression);
     document.getElementById('expr_value')!.innerHTML = result;
+  }
+
+  validate() {
+
+    let validateNode = (node: any): boolean => {
+      if (node.name === 'logic') {
+        let result = true;
+        for (let i = 0; i < node.operands.length && result; i++) {
+          result = result && validateNode(node.operands[i]);
+        }
+        return result;
+      } else {
+        return node.isValid;
+      }
+    };
+
+    this.setState({ valid: validateNode(this.state.expression) });
   }
 
   render() {
@@ -36,8 +54,10 @@ class App extends React.Component<AppProps, AppState> {
           expression={this.props.expressionStore!.expression}
         />
         <hr />
+        {!this.state.valid && <div className="error">There is an error</div>}
         <div>
-          <Button type="primary" onClick={() => { this.reveal(); }}>Reveal</Button>
+          <Button onClick={() => { this.reveal(); }}>Reveal</Button>
+          <Button onClick={() => { this.validate(); }}>validate</Button>
           <div id="expr_value" />
         </div>
       </div>
