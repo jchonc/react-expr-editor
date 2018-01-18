@@ -24,7 +24,7 @@ export interface IExpressionStore {
   moduleId: number;
   entityName: string;
   readonly: boolean;
-
+  valid: boolean;
   knownMetaDictionary: any[];
   knownPickLists: any[];
   addSimpleChild: () => void;

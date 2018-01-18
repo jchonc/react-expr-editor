@@ -77,8 +77,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     }
 
-
-
     getTargetNode(targetID: number, expr: any) {
 
         if (expr.nodeId === targetID) {

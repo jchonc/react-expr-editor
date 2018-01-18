@@ -9,14 +9,9 @@ interface AppProps {
   expressionStore?: IExpressionStore;
 }
 
-interface AppState {
-  expression: any;
-  valid: boolean;
-}
-
 @inject('expressionStore')
 @observer
-class App extends React.Component<AppProps, AppState> {
+class App extends React.Component<AppProps> {
 
   reveal() {
     const result = JSON.stringify(this.props.expressionStore!.expression);
@@ -37,7 +32,7 @@ class App extends React.Component<AppProps, AppState> {
       }
     };
 
-    this.setState({ valid: validateNode(this.state.expression) });
+    this.setState({ valid: validateNode(this.props.expressionStore!.expression) });
   }
 
   render() {
@@ -54,7 +49,7 @@ class App extends React.Component<AppProps, AppState> {
           expression={this.props.expressionStore!.expression}
         />
         <hr />
-        {!this.state.valid && <div className="error">There is an error</div>}
+        {!this.props.expressionStore!.valid && <div className="error">There is an error</div>}
         <div>
           <Button onClick={() => { this.reveal(); }}>Reveal</Button>
           <Button onClick={() => { this.validate(); }}>validate</Button>

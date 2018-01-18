@@ -3,6 +3,7 @@ import { observable, ObservableMap, action } from 'mobx';
 import { AttrIdSingleton } from '../constants/constants';
 
 class ExpressionStore implements IExpressionStore {
+    @observable valid: boolean = true;
     @observable expression: IExpressionTreeNode;
     expressionMap: ObservableMap<IExpressionTreeNode> = observable.map();
     entityName: string;
