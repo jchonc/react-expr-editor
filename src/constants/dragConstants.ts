@@ -58,7 +58,7 @@ export const simpleTarget = {
 export const complexSource = {
     beginDrag(props: any, monitor: any) {
         return {node: props.node, 
-                parentID: props.parent.props.node ? props.parent.props.node.nodeId : props.node.nodeId, 
+                parentID: props.parent ? props.parent.props.node.nodeId : props.node.nodeId, 
                 hoverCallback: props.hoverCallback
             };
     },

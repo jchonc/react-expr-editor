@@ -28,4 +28,6 @@ export interface IExpressionStore {
   knownMetaDictionary: any[];
   knownPickLists: any[];
   addSimpleChild: () => void;
+  fetchStuff: () => Promise<void>;
+  metaLoaded: boolean;
 }

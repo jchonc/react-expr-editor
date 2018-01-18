@@ -3,6 +3,8 @@ import { observable, ObservableMap, action } from 'mobx';
 import { AttrIdSingleton } from '../constants/constants';
 
 class ExpressionStore implements IExpressionStore {
+    @observable metaLoaded: boolean = false;
+
     @observable valid: boolean = true;
     @observable expression: IExpressionTreeNode;
     expressionMap: ObservableMap<IExpressionTreeNode> = observable.map();
@@ -94,6 +96,45 @@ class ExpressionStore implements IExpressionStore {
             operator: 'And',
             operands: ['']
         };
+    }
+
+    @action fetchStuff() {
+        const dictionaryUrl = `/dictionary/${this.moduleId}/${this.entityName}`;
+        fetch(dictionaryUrl)
+            .then((res) => res.json())
+            .then((resData) => {
+                const dictionray = resData;
+                let usedLists: string[] = [];
+                resData.map(function (attr: any) {
+                    if (attr.attrCtrlType === 'picklist' && attr.attrCtrlParams) {
+                        if (usedLists.indexOf(attr.attrCtrlParams) < 0) {
+                            usedLists.push(attr.attrCtrlParams);
+                        }
+                    }
+                });
+                if (usedLists && usedLists.length) {
+                    const picklistUrl = '/picklists';
+                    fetch(picklistUrl, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        method: 'POST',
+                        body: JSON.stringify(usedLists)
+                    })
+                        .then((res) => res.json())
+                        .then((resLists) => {
+                            this.knownMetaDictionary = dictionray;
+                            this.knownPickLists = resLists;
+                            this.metaLoaded = true;
+                        });
+                }
+                else {
+                    this.knownMetaDictionary = dictionray;
+                    this.knownPickLists = [];
+                    this.metaLoaded = true;
+                }
+            });
     }
 }
 

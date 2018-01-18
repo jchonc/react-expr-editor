@@ -2,16 +2,20 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
+
+import { AttrIdSingleton } from '../constants/constants';
 import Button from 'antd/lib/button';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { ExpressionOperator, IExpressionTreeNode, IExpressionStore } from '../types/index';
-import { AttrIdSingleton } from '../constants/constants';
 import { inject, observer } from 'mobx-react';
 
 interface ExpressionEditorState {
     expression: IExpressionTreeNode;
+    knownMetaDictionary: any;
+    knownPickLists: any;
+    metaLoaded: boolean;
 }
 
 interface ExpressionEditorProps {
@@ -32,20 +36,41 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     constructor(props: any) {
         super(props);
-        // this.state = {
-        //     expression: props.expression
-        // };
+        this.state = {
+            expression: props.expression,
+            knownMetaDictionary: null,
+            knownPickLists: null,
+            metaLoaded: false
+        };
         // this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
         this.handleHover = this.handleHover.bind(this);
     }
 
+    componentDidMount() {
+        this.props.expressionStore!.fetchStuff();
+
+    }
+
     getChildContext() {
         return {
-            metaDictionary: this.props.expressionStore!.knownMetaDictionary,
-            cachedPickLists: this.props.expressionStore!.knownPickLists
+            metaDictionary: this.state.knownMetaDictionary,
+            cachedPickLists: this.state.knownPickLists
         };
+    }
+
+    addSimpleChild() {
+        this.setState({
+            expression: {
+                name: 'compare',
+                attrId: '',
+                attrCaption: '',
+                nodeId: AttrIdSingleton.NextUniqueNodeId, 
+                operator: 'And',
+                operands: ['']
+            }
+        });
     }
 
     handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number) {
@@ -60,9 +85,10 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
             // input was not correct
             return;
         }
+
         oldParent.operands.splice(sourceIndex, 1);
 
-        let targetIndex = newParentID === targetID ? -1 :
+        let targetIndex = newParentID === targetID ? -1 : 
             newParent.operands.findIndex((node: any) => node.nodeId === targetID);
 
         if ((newParentID !== targetID && targetIndex.length < 0)) {
@@ -77,8 +103,8 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     }
 
-    getTargetNode(targetID: number, expr: any) {
-
+     getTargetNode(targetID: number, expr: any) {
+        
         if (expr.nodeId === targetID) {
             return expr;
         }
@@ -104,12 +130,11 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
 
     replaceWithComplex(op: ExpressionOperator, child: IExpressionTreeNode) {
         if (child) {
-            let newComplexNode: IExpressionTreeNode = {
-                nodeId: AttrIdSingleton.NextUniqueNodeId,
+            const newComplexNode: Expression = {
                 name: 'logic',
-                operator: op,
-                operands: [child],
-
+                nodeId: AttrIdSingleton.NextUniqueNodeId,
+                operator: logic,
+                operands: [child]
             };
             this.setState({
                 expression: newComplexNode
@@ -118,36 +143,36 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps, Expression
     }
 
     render() {
-        let { expression } = this.props.expressionStore!;
-        if (expression) {
-            let buttons = (<div />);
-            if (!this.props.expressionStore!.readonly) {
-                buttons = (
+        if (!this.state.metaLoaded) {
+            return (<div>Loading Metabase</div>);
+        }
+        else {
+            let expression = this.state.expression;
+            if (expression) {
+                let buttons = (<div />);
+                if (!this.props.readOnly) {
+                    buttons = (
+                        <div>
+                            <Button>Copy</Button>
+                            <Button>Paste</Button>
+                            <Button>Clear</Button>
+                        </div>
+                    );
+                }
+                return (
                     <div>
-                        <Button>Copy</Button>
-                        <Button>Paste</Button>
-                        <Button>Clear</Button>
+                        {buttons}
+                        <div className="row expr-editor">
+                            <div className="expr-canvas">
+                                <ExpressionItem node={expression} readOnly={this.props.readOnly} parent={this} hoverCallback={this.handleHover} />
+                            </div>
+                        </div>
                     </div>
                 );
             }
-            return (
-                <div>
-                    {buttons}
-                    <div className="row expr-editor">
-                        <div className="expr-canvas">
-                            <ExpressionItem
-                                node={expression}
-                                readOnly={this.props.expressionStore!.readonly}
-                                parent={this}
-                                hoverCallback={this.handleHover}
-                            />
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-        else {
-            return (<div>Expression Editor</div>);
+            else {
+                return (<div>Expression Editor</div>);
+            }
         }
     }
 }

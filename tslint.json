@@ -17,12 +17,12 @@
         "eofline": false,
         "forin": true,
         "indent": [ true, "spaces" ],
-        "interface-name": [false],
+        "interface-name": [true, "never-prefix"],
         "jsdoc-format": true,
         "jsx-no-lambda": false,
         "jsx-no-multiline-js": false,
         "label-position": true,
-        "max-line-length": [ true, 120 ],
+        "max-line-length": [ true, 150 ],
         "member-ordering": [
             true,
             "public-before-private",
@@ -57,6 +57,7 @@
         "one-line": [
             true,
             "check-catch",
+            /*"check-else",*/
             "check-open-brace",
             "check-whitespace"
         ],

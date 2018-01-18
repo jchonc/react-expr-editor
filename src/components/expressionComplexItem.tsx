@@ -56,6 +56,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
+        // this.props.node.self = this;
     }
 
     updateOperator(op: string) {
@@ -69,10 +70,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         const newElement = {
             name: 'compare',
             attrId: '',
-            nodeId: AttrIdSingleton.NextUniqueNodeId,
-            attrCaption: '',
-            operator: '',
-            operands: ['']
+            nodeId: AttrIdSingleton.NextUniqueNodeId, 
+            attrCaption: '', 
+            operator: '', 
+            operands: [''] 
         };
         const newChildren = [...this.state.children, newElement];
         this.props.node.operands = newChildren;
@@ -138,16 +139,8 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         const props = this.props;
         const self = this;
         if (this.state.children && this.state.children.length) {
-            let nodes = this.state.children.map(function (n: any, i: number) {
-                return (
-                    <ExpressionItem
-                        key={i}
-                        node={n}
-                        parent={self}
-                        readOnly={props.readonly}
-                        hoverCallback={props.hoverCallback}
-                    />
-                );
+            let nodes = this.state.children.map(function(n: any, i: number) {
+                return (<ExpressionItem key={i} node={n} parent={self} readOnly={props.readonly} hoverCallback={props.hoverCallback}/>);
             });
 
             const options: any = [
