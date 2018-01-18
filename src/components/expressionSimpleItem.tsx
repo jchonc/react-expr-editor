@@ -27,7 +27,6 @@ import {
 import './expressionSimpleItem.css';
 import { ExpressionOperandKind } from '../types/index';
 
-
 interface ExpressionSimpleItemState {
     attrMeta: any;
     allowedOperators: any;
@@ -254,7 +253,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
         }
 
         const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
-        const drag = connectDragSource(<div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>)
+        const drag = connectDragSource(
+            <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
+        );
         return connectDropTargetComplex(connectDropTargetSimple(
             <div className={classNames('expr-simple-item', {clone: this.props.node.isClone})}>
                 {drag}
