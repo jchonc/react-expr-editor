@@ -1,10 +1,8 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import { Select } from 'antd';
+import { Menu, Dropdown, Button, Icon, Select } from 'antd';
 const Option = Select.Option;
-
-import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 import { DragSource, DropTarget } from 'react-dnd';
 import classNames from 'classnames';
@@ -78,6 +76,26 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
                 operandKind: this.getOperandKind(meta, expression.operator),
                 operands: expression.operands
             };
+        }
+        this.handleMenuClick = this.handleMenuClick.bind(this);
+    }
+
+    handleMenuClick(e: any) {
+        switch (e.key) {
+            case 'ADD_AND': 
+                this.replaceWithComplex('and'); 
+                break;
+            case 'ADD_OR':
+                this.replaceWithComplex('or');
+                break;
+            case 'NEW_LINE':
+                this.addSibling();
+                break;
+            case 'REMOVE':
+                this.removeSelf();
+                break;
+            default: 
+                break;
         }
     }
 
@@ -238,14 +256,19 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps, Ex
 
         let menu = (<span>&nbsp;</span>);
         if (!this.props.readOnly) {
+            const dropdownMenu = (
+                <Menu onClick={this.handleMenuClick}>
+                  <Menu.Item key="ADD_AND">AND</Menu.Item>
+                  <Menu.Item key="ADD_OR">OR</Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item key="NEW_LINE">New Line</Menu.Item>
+                  <Menu.Item key="REMOVE">Remove</Menu.Item>
+                </Menu>
+              );
             menu = (
-                <DropdownButton id="menu-simple-dropdown" title="">
-                    <MenuItem onClick={() => { this.replaceWithComplex('and'); }}>AND</MenuItem>
-                    <MenuItem onClick={() => { this.replaceWithComplex('or'); }}>OR</MenuItem>
-                    <MenuItem onClick={() => { this.addSibling(); }}>New Line</MenuItem>
-                    <MenuItem divider={true} />
-                    <MenuItem onClick={() => { this.removeSelf(); }}>Remove</MenuItem>
-                </DropdownButton>
+                <Dropdown overlay={dropdownMenu}>
+                    <Button style={{ marginLeft: 8 }}><Icon type="down" /></Button>
+                </Dropdown>
             );
         }
 

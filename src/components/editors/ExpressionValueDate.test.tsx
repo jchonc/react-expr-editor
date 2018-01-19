@@ -1,20 +1,20 @@
 import * as React from 'react';
-import ExpressionValueText from './ExpressionValueText';
+import ExpressionValueDate from './ExpressionValueDate';
 
 import { configure, shallow, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-describe('Expression Simple Editor - Text', function() {
+describe('Expression Simple Editor - Date', function() {
 
     beforeAll(function() {
         configure({ adapter: new Adapter() }); 
     });
 
     test('Should Render', function() {
-        const values = ['someString'];
+        const values = ['2011-12-12'];
         const onChanged = () => undefined;
         const component = shallow(
-            <ExpressionValueText 
+            <ExpressionValueDate 
                 values={values}
                 readOnly={false}
                 onChange={onChanged}
@@ -26,8 +26,21 @@ describe('Expression Simple Editor - Text', function() {
     test('Should Render If Empty', function() {
         const values: any = [];
         const onChanged = () => undefined;
-        const component = shallow(
-            <ExpressionValueText 
+        const component = mount(
+            <ExpressionValueDate 
+                values={values}
+                readOnly={false}
+                onChange={onChanged}
+            />          
+        );    
+        expect(component !== null);    
+    });
+
+    test('Should Render If Invalid', function() {
+        const values: any = ['1999/99/99'];
+        const onChanged = () => undefined;
+        const component = mount(
+            <ExpressionValueDate 
                 values={values}
                 readOnly={false}
                 onChange={onChanged}
@@ -37,10 +50,10 @@ describe('Expression Simple Editor - Text', function() {
     });
 
     test('Should Render - ReadOnly', function() {
-        const values = ['someString'];
+        const values = ['2011-12-12'];
         const onChanged = () => undefined;
         const component = mount(
-            <ExpressionValueText 
+            <ExpressionValueDate 
                 values={values}
                 readOnly={true}
                 onChange={onChanged}
@@ -52,8 +65,8 @@ describe('Expression Simple Editor - Text', function() {
     });
 
     test('Can Update Value', function() {        
-        const values = ['someString'];
-        const newValue = 'something else';
+        const values = ['2011-12-12'];
+        const newValue = '2013-12-12';
         const onChanged = function(vs: any) {
             expect(vs).not.toBeNull();
             expect(Array.isArray(vs)).toBe(true);
@@ -61,7 +74,7 @@ describe('Expression Simple Editor - Text', function() {
             expect(vs[0]).toBe(newValue);
         };
         const component = mount(
-            <ExpressionValueText 
+            <ExpressionValueDate 
                 values={values}
                 readOnly={false}
                 onChange={onChanged}
@@ -75,11 +88,11 @@ describe('Expression Simple Editor - Text', function() {
     });
   
     test('Cannot Update Value if ReadOnly', function() {
-        const values = ['someString'];
-        const newValue = 'something else';
+        const values = ['2011-12-12'];
+        const newValue = '2013-12-12';
         const onChanged = jest.fn();
         const component = mount(
-            <ExpressionValueText 
+            <ExpressionValueDate 
                 values={values}
                 readOnly={true}
                 onChange={onChanged}

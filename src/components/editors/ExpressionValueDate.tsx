@@ -20,7 +20,7 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
         this.onDateChanged = this.onDateChanged.bind(this);
         let v;
         if (this.props.values && this.props.values.length) {
-            v = moment(props.values[0]);
+            v = moment(props.values[0], 'YYYY-MM-DD');
             if (!v.isValid) {
                 v = undefined;
             }
@@ -30,15 +30,11 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
         };
     }
 
-    onDateChanged(d: moment.Moment) {
-        if (!this.props.readOnly) {
-            if (d) {
-                this.props.onChange([d.format('YYYY-MM-DD')]);
-                this.setState({
-                    date: d
-                });
-            }
-        }
+    onDateChanged(d: moment.Moment, ds: string) {
+        this.props.onChange([ds]);
+        this.setState({
+            date: d
+        });
     }
 
     render() {

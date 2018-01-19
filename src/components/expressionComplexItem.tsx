@@ -2,10 +2,9 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from './expressionItem';
 
-import { Select } from 'antd';
+import { Menu, Dropdown, Button, Icon, Select } from 'antd';
 const Option = Select.Option;
 
-import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classNames from 'classnames';
 
 import { AttrIdSingleton } from '../constants/constants';
@@ -49,7 +48,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
-        // this.props.node.self = this;
+        this.handleMenuClick = this.handleMenuClick.bind(this);
     }
 
     updateOperator(op: string) {
@@ -128,6 +127,19 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
         });
     }
 
+    handleMenuClick(e: any) {
+        switch (e.key) {
+            case 'NEW_LINE':
+                this.addSimpleChild();
+                break;
+            case 'REMOVE':
+                this.removeSelf();
+                break;
+            default:
+                break;
+        }
+    }
+
     render() {
         const props = this.props;
         const self = this;
@@ -143,13 +155,18 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
 
             let menu = (<span>&nbsp;</span>);
             if (!this.props.readonly) {
+                const dropdownMenu = (
+                    <Menu onClick={this.handleMenuClick}>
+                      <Menu.Item key="NEW_LINE">NewLine</Menu.Item>
+                      <Menu.Item key="SOMETHING">Another Link</Menu.Item>
+                      <Menu.Divider />
+                      <Menu.Item key="REMOVE">Remove Group</Menu.Item>
+                    </Menu>
+                  );
                 menu = (
-                    <DropdownButton id="menu-simple-dropdown" title="">
-                        <MenuItem onClick={() => { this.addSimpleChild(); }}>New Line</MenuItem>
-                        <MenuItem divider={true} />
-                        <MenuItem eventKey="3">Another Link</MenuItem>
-                        <MenuItem onClick={() => { this.removeSelf(); }}>Remove Group</MenuItem>
-                    </DropdownButton>
+                    <Dropdown overlay={dropdownMenu}>
+                        <Button><Icon type="down" /></Button>
+                    </Dropdown>
                 );
             }
             const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
@@ -159,9 +176,6 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps, 
                     <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
                     <Select
                         className="expr-logic-operator"
-                        // options={options}
-                        // searchable={false}
-                        // clearable={false}
                         disabled={this.props.readonly}
                         value={this.state.operator}
                         onChange={(evt: any) => { this.updateOperator(evt.value); }}
