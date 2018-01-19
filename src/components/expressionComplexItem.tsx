@@ -92,20 +92,8 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     }
 
     removeChild(child: any) {
-        // if (child) {
-        //     let children = this.props.node.operands;
-        //     const idx = children.indexOf(child);
-        //     if (idx >= 0) {
-        //         children.splice(idx, 1);
-        //         if (children.length === 0) {
-        //             this.removeSelf();
-        //         } else {
-        //             this.setState({
-        //                 children: children
-        //             });
-        //         }
-        //     }
-        // }
+        this.props.expressionStore!.removeChild(this.node);
+
     }
 
     removeSelf() {
