@@ -25,7 +25,7 @@ import {
 } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
-import { IExpressionStore, ExpressionOperator } from '../types/index';
+import { IExpressionStore, ExpressionOperator, IExpressionTreeNode, ExpressionBooleanLogic } from '../types/index';
 import ValidatorFactory from '../factories/ValidatorFactory';
 import ExpressionValueLookup from './editors/ExpressionValueLookup';
 import { observer, inject } from 'mobx-react';
@@ -53,6 +53,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
     validatorFactory = new ValidatorFactory();
     validator: any;
+    node: IExpressionTreeNode;
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -67,86 +68,67 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             };
         }
         else {
-            let node = this.props.expressionStore!.getNode(expression);
+            this.node = this.props.expressionStore!.getNode(expression)!;
             let meta = this.props.expressionStore!.getMeta(expression);
-            let opKind = this.props.expressionStore!.getOperandKind(meta, node!.operator);
+            let opKind = this.props.expressionStore!.getOperandKind(meta, this.node!.operator);
             this.validator = this.validatorFactory.GetValidator(opKind);
-            node!.isValid = this.validator(node!.operands);
+            this.node!.isValid = this.validator(this.node!.operands);
 
         }
     }
 
     updateMetaReference(elmId: string) {
-        const expression = this.props.expressionStore!.getNode(elmId);
+        const expression = this.node;
         let meta = this.props.expressionStore!.getMeta(elmId);
         if (expression && meta) {
             expression.attrId = elmId;
             expression.attrCaption = meta.attrCaption;
 
             let opKind = this.props.expressionStore!.getOperandKind(meta, expression.operator);
-            // this.validator = this.validatorFactory.GetValidator(opKind);
+            this.validator = this.validatorFactory.GetValidator(opKind);
 
-            this.setState({
-                allowedOperators: this.props.expressionStore!.getAllowedOperators(meta),
-                attrId: elmId,
-                operandKind: opKind
-            });
+            // this.setState({
+            //     allowedOperators: this.props.expressionStore!.getAllowedOperators(meta),
+            //     attrId: elmId,
+            //     operandKind: opKind
+            // });
         }
     }
 
     updateOperator(operator: ExpressionOperator) {
-        const expression = this.props.expressionStore!.getNode(this.props.node.toString());
-        if (expression) {
-            expression.operator = operator;
-            let meta = this.props.expressionStore!.getMeta(expression.attrId!);
+        if (this.node) {
+            this.node.operator = operator;
+            let meta = this.props.expressionStore!.getMeta(this.node.attrId!);
 
             this.setState({
                 operator: operator,
-                operandKind: this.props.expressionStore!.getOperandKind(meta, expression.operator)
+                operandKind: this.props.expressionStore!.getOperandKind(meta, this.node.operator)
             });
         }
     }
 
     updateValue(...values: any[]) {
-        const expression = this.props.expressionStore!.getNode(this.props.node.toString());
+        const expression = this.node;
 
         expression!.isValid = this.validator(values);
         expression!.operands = [...values];
-
-        this.setState({
-            operands: [...values]
-        });
-
-        return;
     }
 
     removeSelf() {
-        // this.props.parent.removeChild(this.props.node);
+        this.props.expressionStore!.removeChild(this.node);
     }
 
-    replaceWithComplex(logic: string) {
-        // this.props.parent.replaceWithComplex(logic, this.props.node);
+    replaceWithComplex(logic: ExpressionBooleanLogic) {
+        this.props.expressionStore!.replaceWithComplex(logic, this.node);
     }
 
     addSibling() {
-        // this.props.parent.addSimpleChild();
+        this.props.expressionStore!.addSimpleChild(this.node!.parent!.toString());
     }
-
-    // componentWillReceiveProps(newProps: any) {
-    //     let expression = newProps.node;
-    //     let meta = this.props.expressionStore!.getMeta(expression.attrId);
-    //     this.setState({
-    //         allowedOperators: this.props.expressionStore!.getAllowedOperators(meta),
-    //         attrId: expression.attrId,
-    //         operator: expression.operator,
-    //         operandKind: this.props.expressionStore!.getOperandKind(meta, expression.operator),
-    //         operands: expression.operands
-    //     });
-    // }
 
     render() {
 
-        let expression = this.props.expressionStore!.getNode(this.props.node.toString());
+        let expression = this.node;
         if (expression) {
             let options = this.context.metaDictionary.map(function (item: any) {
                 return {
@@ -206,14 +188,18 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                     break;
             }
 
-            let OperandCtrl = OperandCtrlTag ? (<OperandCtrlTag {...OperandCtrlProps} />) : (<div>Empty</div>);
+            let OperandCtrl = OperandCtrlTag ? (
+                <OperandCtrlTag {...OperandCtrlProps} />
+            ) : (
+                    <div>Empty</div>
+                );
 
             let menu = (<span>&nbsp;</span>);
             if (!this.props.readOnly) {
                 menu = (
                     <DropdownButton id="menu-simple-dropdown" title="">
-                        <MenuItem onClick={() => { this.replaceWithComplex('and'); }}>AND</MenuItem>
-                        <MenuItem onClick={() => { this.replaceWithComplex('or'); }}>OR</MenuItem>
+                        <MenuItem onClick={() => { this.replaceWithComplex('And'); }}>AND</MenuItem>
+                        <MenuItem onClick={() => { this.replaceWithComplex('Or'); }}>OR</MenuItem>
                         <MenuItem onClick={() => { this.addSibling(); }}>New Line</MenuItem>
                         <MenuItem divider={true} />
                         <MenuItem onClick={() => { this.removeSelf(); }}>Remove</MenuItem>

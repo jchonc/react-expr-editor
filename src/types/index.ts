@@ -1,9 +1,10 @@
 import { ObservableMap } from "mobx";
 
-
 export type ExpressionType = 'logic' | 'compare';
 
-export type ExpressionOperator = 'And' | 'Or' | 'Equal' | 'NotEqual' | 'IsBetween' | 'IsNotBetween';
+export type ExpressionBooleanLogic = 'And' | 'Or';
+
+export type ExpressionOperator = ExpressionBooleanLogic | 'Equal' | 'NotEqual' | 'IsBetween' | 'IsNotBetween';
 
 export type ExpressionOperandKind =
   'none' | 'text' | 'number' | 'date' | 'time' | 'datetime' | 'date-range' | 'pick' | 'multi-pick' | 'lookup';
@@ -36,17 +37,19 @@ export interface IExpressionStore {
   knownMetaDictionary: any[];
   knownPickLists: any[];
   getNode: (nodeId: string) => IExpressionTreeNode | undefined;
-  getMeta: (attrId: string) =>  IMetaDictionaryElement|undefined;
+  getMeta: (attrId: string) => IMetaDictionaryElement | undefined;
   addSimpleChild: (parentId: string) => void;
+  removeChild: (node: IExpressionTreeNode) => void;
   validate: () => void;
   reveal: () => void;
   fetchStuff: () => Promise<void>;
   getAllowedOperators: (meta: any) => { value: string; label: string }[];
   getOperandKind: (meta: any, operator: any) => ExpressionOperandKind;
+  replaceWithComplex: (logic: ExpressionBooleanLogic, node: IExpressionTreeNode) => void;
   metaLoaded: boolean;
 }
 
-export interface IMetaDictionaryElement { 
+export interface IMetaDictionaryElement {
   attrId: string;
   attrCaption: string;
   attrDataType: string;

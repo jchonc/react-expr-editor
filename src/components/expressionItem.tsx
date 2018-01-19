@@ -19,18 +19,10 @@ interface ExpressionItemProps {
 @observer
 export default class ExpressionItem extends React.Component<ExpressionItemProps, ExpressionItemState> {
 
-    componentWillReceiveProps(newProps: any) {
-        if (newProps.node.isClone === undefined) {
-            newProps.node.isClone = false;
-        }
-    }
-
     render(): JSX.Element {
         let node = this.props.expressionStore!.getNode(this.props.node.toString());
         if (!node) {
-            return (
-                <div>Empty</div>
-            );
+            return <div>Empty</div>;
         }
         else {
             const { readOnly, hoverCallback } = this.props;

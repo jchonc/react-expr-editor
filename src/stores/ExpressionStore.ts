@@ -1,4 +1,4 @@
-import { IExpressionTreeNode, IExpressionStore, IMetaDictionaryElement } from '../types/index';
+import { IExpressionTreeNode, IExpressionStore, IMetaDictionaryElement, ExpressionBooleanLogic } from '../types/index';
 import { observable, ObservableMap, action } from 'mobx';
 import { AttrIdSingleton } from '../constants/constants';
 
@@ -53,28 +53,25 @@ class ExpressionStore implements IExpressionStore {
     }];
 
     @action setExpressionMapNode(this: any, id: string, expressionNode: IExpressionTreeNode, parentId: number) {
-
-        this.expressionMap!.set(
-            expressionNode.nodeId.toString(),
-            expressionNode);
-
         expressionNode.parent = parentId;
 
-        if (expressionNode.name === 'logic') {
-            if (expressionNode.operands && expressionNode.operands.length) {
-
-                for (let node of (expressionNode.operands as IExpressionTreeNode[])) {
-                    if (node) {
-                        this.setExpressionMapNode(node.nodeId.toString(), node);
-                        if (expressionNode.children) {
-                            expressionNode.children.push(node.nodeId);
-                        } else {
-                            expressionNode.children = [node.nodeId];
-                        }
+        if (expressionNode.name === 'logic' &&
+            expressionNode.operands && expressionNode.operands.length) {
+            for (let node of (expressionNode.operands as IExpressionTreeNode[])) {
+                if (node) {
+                    this.setExpressionMapNode(node.nodeId.toString(), node);
+                    if (expressionNode.children) {
+                        expressionNode.children.push(node.nodeId);
+                    } else {
+                        expressionNode.children = [node.nodeId];
                     }
                 }
             }
         }
+
+        this.expressionMap!.set(
+            expressionNode.nodeId.toString(),
+            expressionNode);
 
     }
 
@@ -91,7 +88,7 @@ class ExpressionStore implements IExpressionStore {
             if (expressionTree.operands && expressionTree.operands.length) {
                 for (let node of (expressionTree.operands as IExpressionTreeNode[])) {
                     if (node) {
-                        this.setExpressionMapNode.call(this, node.nodeId.toString(), node, node.nodeId);
+                        this.setExpressionMapNode.call(this, node.nodeId.toString(), node, expressionTree.nodeId);
                     }
                 }
             }
@@ -117,9 +114,10 @@ class ExpressionStore implements IExpressionStore {
             attrId: '',
             nodeId: AttrIdSingleton.NextUniqueNodeId,
             attrCaption: '',
-            operator: 'And',
+            operator: 'Equal',
             operands: [''],
-            isClone: false
+            isClone: false,
+            parent: parseInt(parentId, 10)
         };
 
         if (parentId) {
@@ -133,6 +131,22 @@ class ExpressionStore implements IExpressionStore {
                 this.expressionMap.set(newNode.nodeId.toString(), newNode);
             }
         }
+    }
+    @action removeChild(node: IExpressionTreeNode) {
+        let parent = this.getNode(node.parent!.toString());
+        if (parent) {
+            let index = parent.children!.findIndex(x => x === node.nodeId);
+            parent.children!.splice(index, 1);
+        }
+        this.expressionMap.delete(node.nodeId.toString());
+        if (node.name === 'logic') {
+            for (let c of node.children!) {
+                if (c) {
+                    this.removeChild(this.getNode(c.toString())!);
+                }
+            }
+        }
+
     }
 
     @action fetchStuff() {
@@ -235,6 +249,31 @@ class ExpressionStore implements IExpressionStore {
         return this.knownMetaDictionary.find(function (elm: any) {
             return elm.attrId === attrId;
         });
+    }
+
+    @action replaceWithComplex(logic: ExpressionBooleanLogic, child: IExpressionTreeNode) {
+        if (child) {
+            let parentId = child.parent;
+            const newComplexNode: IExpressionTreeNode = {
+                nodeId: AttrIdSingleton.NextUniqueNodeId,
+                name: 'logic',
+                operator: logic,
+                operands: [child],
+                children: [child.nodeId],
+                parent: parentId,
+                isClone: false
+            };
+            this.expressionMap.set(newComplexNode.nodeId.toString(), newComplexNode);
+
+            let parent = this.getNode(parentId!.toString());
+            if (parent) {
+
+                let index = parent.children!.findIndex(x => x === child.nodeId);
+                parent.children!.splice(index, 1, newComplexNode.nodeId);
+            }
+
+            child.parent = newComplexNode.nodeId;
+        }
     }
 
 }

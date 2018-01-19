@@ -22,7 +22,7 @@ import './expressionComplexItem.css';
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
 import { inject, observer } from 'mobx-react';
-import { IExpressionStore,  ExpressionOperator } from '../types/index';
+import { IExpressionStore, ExpressionBooleanLogic, IExpressionTreeNode } from '../types/index';
 
 interface ExpressionComplexItemProps {
     node: number;
@@ -44,7 +44,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
         cachedPickLists: PropTypes.any
     };
 
-    self: ExpressionComplexItem;
+    node: IExpressionTreeNode;
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -55,7 +55,12 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
+        this.node = this.props.expressionStore!.getNode(this.props.node.toString())!;
         // this.props.node.self = this;
+    }
+
+    replaceWithComplex(logic: ExpressionBooleanLogic) {
+        this.props.expressionStore!.replaceWithComplex(logic, this.node);
     }
 
     updateOperator(op: string) {
@@ -104,29 +109,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     }
 
     removeSelf() {
-        this.props.parent.removeChild(this.props.node);
-    }
-
-    replaceWithComplex(logic: ExpressionOperator, child: any) {
-        // if (child) {
-        //     const operands = (this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]);
-        //     const idx = operands.indexOf(child);
-        //     if (idx >= 0) {
-        //         const newComplexNode: IExpressionTreeNode = {
-        //             nodeId: AttrIdSingleton.NextUniqueNodeId,
-        //             name: 'logic',
-        //             operator: logic,
-        //             operands: [child],
-        //             isClone: false
-        //         };
-        //         const newChildren = operands;
-        //         newChildren[idx] = newComplexNode;
-        //         this.props.node.operands = newChildren;
-        //         this.setState({
-        //             children: newChildren
-        //         });
-        //     }
-        // }
+        this.props.expressionStore!.removeChild(this.node);
     }
 
     isAncestor(connector: any) {

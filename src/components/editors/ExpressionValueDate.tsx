@@ -27,7 +27,7 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
 
         let v;
         if (this.props.values && this.props.values.length) {
-            v = moment(props.values[0]);
+            v = props.values[0] ? moment(props.values[0]) : moment();
             if (!v.isValid) {
                 v = undefined;
             }
