@@ -22,6 +22,7 @@
     "postcss-loader": "2.0.8",
     "promise": "8.0.1",
     "prop-types": "^15.6.0",
+    "raf": "3.4.0",
     "react": "^16.2.0",
     "react-addons-shallow-compare": "^15.6.2",
     "react-bootstrap": "^0.31.5",
@@ -59,10 +60,10 @@
     "@types/react-bootstrap": "^0.31.9",
     "@types/react-dnd": "^2.0.34",
     "@types/throttle-debounce": "^1.0.0",
+    "@types/jest": "^22.0.1",
+    "@types/node": "^9.3.0",
     "@types/enzyme": "^3.1.6",
     "@types/enzyme-adapter-react-16": "^1.0.1",
-    "@types/jest": "^22.0.1",
-    "@types/node": "^8.5.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "jest": "20.0.4",
@@ -79,7 +80,6 @@
     "serve-favicon": "~2.4.5"
   },
   "jest": {
-    "mapCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}"
     ],
