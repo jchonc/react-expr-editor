@@ -38,7 +38,7 @@ describe('Expression Simple Editor - Text', function() {
         expect((input.instance() as any).readOnly).toBeTruthy();
     });
 
-    test('Can Update Value', function() {
+    test('Can Update Value', function() {        
         let values = ['someString'];
         const newValue = 'something else';
         const onChanged = function(values: any) {
@@ -65,10 +65,10 @@ describe('Expression Simple Editor - Text', function() {
         let values = ['someString'];
         const newValue = 'something else';
         const onChanged = function(values: any) {
+            debugger;
             expect(values).not.toBeNull();
             expect(Array.isArray(values)).toBe(true);
             expect(values.length).toBe(1);
-            debugger;
             expect(values[0]).not.toBe(newValue);
         };
         const component = mount(

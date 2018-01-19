@@ -15,6 +15,7 @@
             "type": "node",
             "request": "launch",
             "program": "${workspaceFolder}\\scripts\\test.js",
+            "sourceMaps": true
           }
     ]
 }

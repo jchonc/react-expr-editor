@@ -23,5 +23,7 @@ if (!process.env.CI && argv.indexOf('--coverage') < 0) {
   argv.push('--watchAll');
 }
 argv.push('--env=jsdom');
+argv.push('--runInBand');
+argv.push('--no-cache');
 
 jest.run(argv);
