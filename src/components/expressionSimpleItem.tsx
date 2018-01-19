@@ -38,11 +38,9 @@ interface ExpressionSimpleItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
-    hoverCallback: any;
     expressionStore?: IExpressionStore;
 }
 
-@inject('expressionStore')
 @observer
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
@@ -69,7 +67,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         }
         else {
             this.node = this.props.expressionStore!.getNode(expression)!;
-            let meta = this.props.expressionStore!.getMeta(expression);
+            let meta = this.props.expressionStore!.getMeta(this.node.attrId!);
             let opKind = this.props.expressionStore!.getOperandKind(meta, this.node!.operator);
             this.validator = this.validatorFactory.GetValidator(opKind);
             this.node!.isValid = this.validator(this.node!.operands);
@@ -87,11 +85,6 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let opKind = this.props.expressionStore!.getOperandKind(meta, expression.operator);
             this.validator = this.validatorFactory.GetValidator(opKind);
 
-            // this.setState({
-            //     allowedOperators: this.props.expressionStore!.getAllowedOperators(meta),
-            //     attrId: elmId,
-            //     operandKind: opKind
-            // });
         }
     }
 
@@ -124,6 +117,10 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
     addSibling() {
         this.props.expressionStore!.addSimpleChild(this.node!.parent!.toString());
+    }
+
+    componentWillReceiveProps(newProps: any) {
+        this.node = newProps.expressionStore!.getNode(newProps.node);
     }
 
     render() {
@@ -248,8 +245,10 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 }
 
 export default
+inject('expressionStore')(
     DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
         DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
             DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
         )
-    );
+    )
+);

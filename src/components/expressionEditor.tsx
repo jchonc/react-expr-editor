@@ -33,7 +33,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
 
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
-        this.handleHover = this.handleHover.bind(this);
     }
 
     componentDidMount() {
@@ -45,53 +44,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
             metaDictionary: this.props.expressionStore!.knownMetaDictionary,
             cachedPickLists: this.props.expressionStore!.knownPickLists
         };
-    }
-
-    handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number) {
-        let expression = this.props.expressionStore!.expression;
-        let oldParent = this.getTargetNode(oldParentID, expression);
-        let newParent = this.getTargetNode(newParentID, expression);
-
-        let sourceIndex = oldParent.operands.findIndex((node: any) => node.nodeId === sourceID);
-        let source = oldParent.operands[sourceIndex];
-
-        if (sourceIndex.length < 0) {
-            // input was not correct
-            return;
-        }
-
-        oldParent.operands.splice(sourceIndex, 1);
-
-        let targetIndex = newParentID === targetID ? -1 : 
-            newParent.operands.findIndex((node: any) => node.nodeId === targetID);
-
-        if ((newParentID !== targetID && targetIndex.length < 0)) {
-            return;
-        }
-
-        newParent.operands.splice(targetIndex + 1, 0, source);
-
-        this.setState({
-            expression: expression
-        });
-
-    }
-
-     getTargetNode(targetID: number, expr: any) {
-        
-        if (expr.nodeId === targetID) {
-            return expr;
-        }
-
-        if (expr.name === 'logic') {
-            for (let i = 0; i < expr.operands.length; i++) {
-                let node = expr.operands[i];
-                let result: any = this.getTargetNode(targetID, node);
-                if (result) {
-                    return result;
-                }
-            }
-        }
     }
 
     removeChild(child: any) {
@@ -142,7 +94,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
                                 <ExpressionItem 
                                     node={this.props.root}
                                     readOnly={this.props.expressionStore!.readonly} 
-                                    hoverCallback={this.handleHover} 
                                 />
                             </div>
                         </div>

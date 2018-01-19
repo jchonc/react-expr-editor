@@ -276,6 +276,23 @@ class ExpressionStore implements IExpressionStore {
         }
     }
 
+    @action isAncestor(targetParentId: number, childId: number) {
+        let child = this.getNode(childId.toString());
+        if (!child!.parent){
+            return false;
+        }
+
+        let bubbleUp = (currentId?: number): boolean => {
+            let current = this.getNode(currentId!.toString());
+            if (!current!.parent){
+                return false;
+            }
+            return targetParentId === current!.parent ? true : bubbleUp(current!.parent);
+        }
+
+        return targetParentId === child!.parent ? true : bubbleUp(child!.parent);
+    }
+
 }
 
 export default new ExpressionStore();

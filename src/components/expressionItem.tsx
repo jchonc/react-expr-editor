@@ -11,7 +11,6 @@ interface ExpressionItemState {
 interface ExpressionItemProps {
     node: number;
     readOnly: boolean;
-    hoverCallback: any;
     expressionStore?: IExpressionStore;
 }
 
@@ -25,7 +24,7 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
             return <div>Empty</div>;
         }
         else {
-            const { readOnly, hoverCallback } = this.props;
+            const { readOnly } = this.props;
             const { parent } = node;
             if (node.name === 'logic') {
                 return (
@@ -33,7 +32,6 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
                         node={node.nodeId}
                         parent={parent}
                         readOnly={readOnly}
-                        hoverCallback={hoverCallback}
                     />
                 );
             }
@@ -43,7 +41,6 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
                         node={node.nodeId}
                         parent={parent}
                         readOnly={readOnly}
-                        hoverCallback={hoverCallback}
                     />
                 );
             }
