@@ -2,19 +2,17 @@ import * as React from 'react';
 
 import ExpressionSimpleItem from './expressionSimpleItem';
 import ExpressionComplexItem from './expressionComplexItem';
-import { IExpressionTreeNode, IExpressionStore } from '../types/index';
+import { IExpressionStore } from '../types/index';
 import { observer, inject } from 'mobx-react';
 
 interface ExpressionItemState {
 }
 
 interface ExpressionItemProps {
-    node: IExpressionTreeNode;
-    parent: any;
+    node: number;
     readOnly: boolean;
     hoverCallback: any;
     expressionStore?: IExpressionStore;
-
 }
 
 @inject('expressionStore')
@@ -28,18 +26,19 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
     }
 
     render(): JSX.Element {
-        let node = this.props.node;
+        let node = this.props.expressionStore!.getNode(this.props.node.toString());
         if (!node) {
             return (
                 <div>Empty</div>
             );
         }
         else {
-            const { parent, readOnly, hoverCallback } = this.props;
+            const { readOnly, hoverCallback } = this.props;
+            const { parent } = node;
             if (node.name === 'logic') {
                 return (
                     <ExpressionComplexItem
-                        node={node}
+                        node={node.nodeId}
                         parent={parent}
                         readOnly={readOnly}
                         hoverCallback={hoverCallback}
@@ -49,7 +48,7 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
             else {
                 return (
                     <ExpressionSimpleItem
-                        node={node}
+                        node={node.nodeId}
                         parent={parent}
                         readOnly={readOnly}
                         hoverCallback={hoverCallback}

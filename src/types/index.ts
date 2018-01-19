@@ -1,3 +1,5 @@
+import { ObservableMap } from "mobx";
+
 
 export type ExpressionType = 'logic' | 'compare';
 
@@ -19,13 +21,15 @@ export interface IExpressionTreeNode {
   attrCaption?: string;
   isValid?: boolean;
   isClone: boolean;
-  parent?: IExpressionTreeNode;
-  children?: IExpressionTreeNode[];
+  parent?: number;
+  children?: number[];
 }
 
 export interface IExpressionStore {
   expression: IExpressionTreeNode;
+  expressionMap: ObservableMap<IExpressionTreeNode>;
   moduleId: number;
+  rootId: number;
   entityName: string;
   readonly: boolean;
   valid: boolean;
@@ -33,7 +37,7 @@ export interface IExpressionStore {
   knownPickLists: any[];
   getNode: (nodeId: string) => IExpressionTreeNode | undefined;
   getMeta: (attrId: string) =>  IMetaDictionaryElement|undefined;
-  addSimpleChild: () => void;
+  addSimpleChild: (parentId: string) => void;
   validate: () => void;
   reveal: () => void;
   fetchStuff: () => Promise<void>;

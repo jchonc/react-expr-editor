@@ -13,6 +13,7 @@ import { inject, observer } from 'mobx-react';
 
 interface ExpressionEditorProps {
     expressionStore?: IExpressionStore;
+    root: number;
 }
 
 @inject('expressionStore')
@@ -29,13 +30,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            expression: props.expression,
-            knownMetaDictionary: null,
-            knownPickLists: null,
-            metaLoaded: false
-        };
-        // this.addSimpleChild = this.addSimpleChild.bind(this);
+
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
         this.handleHover = this.handleHover.bind(this);
@@ -43,7 +38,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
 
     componentDidMount() {
         this.props.expressionStore!.fetchStuff();
-
     }
 
     getChildContext() {
@@ -51,19 +45,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
             metaDictionary: this.props.expressionStore!.knownMetaDictionary,
             cachedPickLists: this.props.expressionStore!.knownPickLists
         };
-    }
-
-    addSimpleChild() {
-        this.setState({
-            expression: {
-                name: 'compare',
-                attrId: '',
-                attrCaption: '',
-                nodeId: AttrIdSingleton.NextUniqueNodeId, 
-                operator: 'And',
-                operands: ['']
-            }
-        });
     }
 
     handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number) {
@@ -114,7 +95,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
     }
 
     removeChild(child: any) {
-        this.props.expressionStore!.addSimpleChild();
+        this.props.expressionStore!.addSimpleChild(child.parent.nodeId);
     }
 
     isAncestor(current: any) {
@@ -138,10 +119,10 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
 
     render() {
         if (!this.props.expressionStore!.metaLoaded) {
-            return (<div>Loading Metabase</div>);
+            return <div>Loading Metabase</div>;
         }
         else {
-            let expression = this.props.expressionStore!.expression;
+            let expression = this.props.expressionStore!.expressionMap;
             if (expression) {
                 let buttons = (<div />);
                 if (!this.props.expressionStore!.readonly) {
@@ -159,9 +140,8 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
                         <div className="row expr-editor">
                             <div className="expr-canvas">
                                 <ExpressionItem 
-                                    node={expression} 
+                                    node={this.props.root}
                                     readOnly={this.props.expressionStore!.readonly} 
-                                    parent={this} 
                                     hoverCallback={this.handleHover} 
                                 />
                             </div>

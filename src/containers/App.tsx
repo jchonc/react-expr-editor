@@ -23,10 +23,7 @@ class App extends React.Component<AppProps> {
             <h2>Welcome to React</h2>
           </div>
           <ExpressionEditor
-            readOnly={expressionStore.readonly}
-            moduleId={expressionStore.moduleId}
-            entityName={expressionStore.entityName}
-            expression={expressionStore.expression}
+            root={expressionStore.expression.nodeId}
           />
           <hr />
           {!expressionStore.valid && <div className="error">There is an error</div>}

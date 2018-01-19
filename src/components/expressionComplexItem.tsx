@@ -8,7 +8,6 @@ const Option = Select.Option;
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classNames from 'classnames';
 
-import { AttrIdSingleton } from '../constants/constants';
 import {
     ItemTypes,
     dragCollect,
@@ -23,11 +22,11 @@ import './expressionComplexItem.css';
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
 import { inject, observer } from 'mobx-react';
-import { IExpressionStore, IExpressionTreeNode, ExpressionOperator } from '../types/index';
+import { IExpressionStore,  ExpressionOperator } from '../types/index';
 
 interface ExpressionComplexItemProps {
-    node: any;
-    parent: any;
+    node: number;
+    parent?: any;
     readonly: boolean;
     connectDragSource: any;
     connectDropTargetComplex: any;
@@ -60,46 +59,48 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     }
 
     updateOperator(op: string) {
-        this.props.node.operator = op;
-        this.setState({
-            operator: this.props.node.operator
-        });
+        // this.props.node.operator = op;
+        // this.setState({
+        //     operator: this.props.node.operator
+        // });
     }
 
     addSimpleChild() {
-        const newElement = {
-            name: 'compare',
-            attrId: '',
-            nodeId: AttrIdSingleton.NextUniqueNodeId,
-            attrCaption: '',
-            operator: '',
-            operands: ['']
-        };
-        const newChildren = [
-            ...(this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]), 
-            newElement
-        ];
-        this.props.node.operands = newChildren;
-        this.setState({
-            children: newChildren
-        });
+        this.props.expressionStore!.addSimpleChild(this.props.node.toString());
+
+        // const newElement = {
+        //     name: 'compare',
+        //     attrId: '',
+        //     nodeId: AttrIdSingleton.NextUniqueNodeId,
+        //     attrCaption: '',
+        //     operator: '',
+        //     operands: ['']
+        // };
+        // const newChildren = [
+        //     ...(this.props.expressionStore!.getNode()!.operands as IExpressionTreeNode[]), 
+        //     newElement
+        // ];
+        // this.props.node.operands = newChildren;
+        // this.setState({
+        //     children: newChildren
+        // });
     }
 
     removeChild(child: any) {
-        if (child) {
-            let children = this.props.node.operands;
-            const idx = children.indexOf(child);
-            if (idx >= 0) {
-                children.splice(idx, 1);
-                if (children.length === 0) {
-                    this.removeSelf();
-                } else {
-                    this.setState({
-                        children: children
-                    });
-                }
-            }
-        }
+        // if (child) {
+        //     let children = this.props.node.operands;
+        //     const idx = children.indexOf(child);
+        //     if (idx >= 0) {
+        //         children.splice(idx, 1);
+        //         if (children.length === 0) {
+        //             this.removeSelf();
+        //         } else {
+        //             this.setState({
+        //                 children: children
+        //             });
+        //         }
+        //     }
+        // }
     }
 
     removeSelf() {
@@ -107,25 +108,25 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     }
 
     replaceWithComplex(logic: ExpressionOperator, child: any) {
-        if (child) {
-            const operands = (this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]);
-            const idx = operands.indexOf(child);
-            if (idx >= 0) {
-                const newComplexNode: IExpressionTreeNode = {
-                    nodeId: AttrIdSingleton.NextUniqueNodeId,
-                    name: 'logic',
-                    operator: logic,
-                    operands: [child],
-                    isClone: false
-                };
-                const newChildren = operands;
-                newChildren[idx] = newComplexNode;
-                this.props.node.operands = newChildren;
-                this.setState({
-                    children: newChildren
-                });
-            }
-        }
+        // if (child) {
+        //     const operands = (this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]);
+        //     const idx = operands.indexOf(child);
+        //     if (idx >= 0) {
+        //         const newComplexNode: IExpressionTreeNode = {
+        //             nodeId: AttrIdSingleton.NextUniqueNodeId,
+        //             name: 'logic',
+        //             operator: logic,
+        //             operands: [child],
+        //             isClone: false
+        //         };
+        //         const newChildren = operands;
+        //         newChildren[idx] = newComplexNode;
+        //         this.props.node.operands = newChildren;
+        //         this.setState({
+        //             children: newChildren
+        //         });
+        //     }
+        // }
     }
 
     isAncestor(connector: any) {
@@ -141,9 +142,9 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     }
 
     render() {
+        const node = this.props.expressionStore!.getNode(this.props.node.toString());
         const props = this.props;
-        const self = this;
-        const operands = (this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]);
+        const operands = node!.children;
 
         if (operands && operands.length) {
             let nodes = operands.map(function (n: any, i: number) {
@@ -151,7 +152,6 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                     <ExpressionItem
                         key={i}
                         node={n}
-                        parent={self}
                         readOnly={props.readonly}
                         hoverCallback={props.hoverCallback}
                     />);
@@ -184,7 +184,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                         // searchable={false}
                         // clearable={false}
                         disabled={this.props.readonly}
-                        value={this.props.node.operator}
+                        value={node!.operator}
                         onChange={(evt: any) => { this.updateOperator(evt.value); }}
                     >
                         {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
@@ -195,7 +195,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                 </div>)));
 
             return (
-                <div className={classNames('expr-complex-item', { clone: this.props.node.isClone })}>
+                <div className={classNames('expr-complex-item', { clone: node!.isClone })}>
                     {logicNode}
                     <div className="expr-children">
                         {nodes}
