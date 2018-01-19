@@ -75,7 +75,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
             operator: '',
             operands: ['']
         };
-        const newChildren = [...(this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]), newElement];
+        const newChildren = [
+            ...(this.props.expressionStore!.getNode(this.props.node.nodeId)!.operands as IExpressionTreeNode[]), 
+            newElement
+        ];
         this.props.node.operands = newChildren;
         this.setState({
             children: newChildren

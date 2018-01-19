@@ -1,6 +1,10 @@
-import { IExpressionTreeNode, IExpressionStore } from '../types/index';
+import { IExpressionTreeNode, IExpressionStore, IMetaDictionaryElement } from '../types/index';
 import { observable, ObservableMap, action } from 'mobx';
 import { AttrIdSingleton } from '../constants/constants';
+
+export const validCtrlKind: string[] = [
+    'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
+];
 
 class ExpressionStore implements IExpressionStore {
     @observable metaLoaded: boolean = false;
@@ -20,7 +24,7 @@ class ExpressionStore implements IExpressionStore {
         ]
     }];
 
-    @observable knownMetaDictionary = [{
+    @observable knownMetaDictionary: IMetaDictionaryElement[] = [{
         attrId: '11001',
         attrCaption: 'First Name',
         attrDataType: 'string',
@@ -87,7 +91,7 @@ class ExpressionStore implements IExpressionStore {
         return;
     }
 
-    @action getNode(id: string): IExpressionTreeNode| undefined {
+    @action getNode(id: string): IExpressionTreeNode | undefined {
         return this.expressionMap.get(id);
     }
 
@@ -165,6 +169,44 @@ class ExpressionStore implements IExpressionStore {
     @action reveal() {
         const result = JSON.stringify(this.expression);
         document.getElementById('expr_value')!.innerHTML = result;
+    }
+
+    @action getAllowedOperators(meta: any) {
+        // gt; ge; lt; le; between; is-one-of; 
+        let results = [
+            { value: 'eq', label: 'equals to' },
+            { value: 'ne', label: 'not equal to' }
+        ];
+        if (meta) {
+            if (meta.attrCtrlType === 'picklist') {
+                results.push({ value: 'is-one-of', label: 'is one of' });
+            }
+            if (meta.attrCtrlType === 'date') {
+                results.push({ value: 'between', label: 'between' });
+            }
+        }
+        return results;
+    }
+
+    @action getOperandKind(meta: any, operator: string) {
+        if (meta) {
+            if (meta.attrCtrlType === 'date' && operator === 'between') {
+                return 'date-range';
+            }
+            if (meta.attrCtrlType === 'picklist') {
+                return (operator === 'is-one-of') ? 'multi-pick' : 'pick';
+            }
+            if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
+                return meta.attrCtrlType;
+            }
+        }
+        return 'none';
+    }
+
+    @action getMeta(attrId: string): IMetaDictionaryElement|undefined {
+        return this.knownMetaDictionary.find(function (elm: any) {
+            return elm.attrId === attrId;
+        });
     }
 
 }

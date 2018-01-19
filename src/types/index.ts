@@ -31,10 +31,21 @@ export interface IExpressionStore {
   valid: boolean;
   knownMetaDictionary: any[];
   knownPickLists: any[];
-  getNode: (nodeId: string) => IExpressionTreeNode|undefined;
+  getNode: (nodeId: string) => IExpressionTreeNode | undefined;
+  getMeta: (attrId: string) =>  IMetaDictionaryElement|undefined;
   addSimpleChild: () => void;
   validate: () => void;
   reveal: () => void;
   fetchStuff: () => Promise<void>;
+  getAllowedOperators: (meta: any) => { value: string; label: string }[];
+  getOperandKind: (meta: any, operator: any) => ExpressionOperandKind;
   metaLoaded: boolean;
+}
+
+export interface IMetaDictionaryElement { 
+  attrId: string;
+  attrCaption: string;
+  attrDataType: string;
+  attrCtrlType: string;
+  attrCtrlParams: string;
 }
