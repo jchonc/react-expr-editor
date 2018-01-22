@@ -4,7 +4,7 @@ import ExpressionSimpleItem from './expressionSimpleItem';
 import ExpressionComplexItem from './expressionComplexItem';
 import { ExpressionStore } from '../stores/ExpressionStore';
 import { observer, inject } from 'mobx-react';
-import { AbstractNode } from '../types/index';
+import { AbstractNode, LogicNode, CompareNode } from '../types/index';
 
 interface ExpressionItemState {
 }
@@ -26,10 +26,10 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
         }
         else {
             const { readOnly } = this.props;
-            if (node.name === 'logic') {
+            if (node instanceof LogicNode) {
                 return (
                     <ExpressionComplexItem
-                        node={node}
+                        node={node as LogicNode}
                         readOnly={readOnly}
                     />
                 );
@@ -37,7 +37,7 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
             else {
                 return (
                     <ExpressionSimpleItem
-                        node={node}
+                        node={node as CompareNode}
                         readOnly={readOnly}
                     />
                 );

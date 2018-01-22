@@ -6,13 +6,12 @@ import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import expressionStore from './stores/ExpressionStore';
 import { AttrIdSingleton } from './constants/constants';
-import { IExpressionTreeNode } from './types/index';
 
 const stores = {
   expressionStore
 };
 
-let testComplexExpression: IExpressionTreeNode = {
+let testComplexExpression: any = {
   name: 'logic',
   operator: 'And',
   nodeId: AttrIdSingleton.NextUniqueNodeId,
@@ -51,7 +50,7 @@ let testComplexExpression: IExpressionTreeNode = {
 stores.expressionStore.moduleId = 1;
 stores.expressionStore.entityName = 'patient';
 
-stores.expressionStore.setExpressionTree(testComplexExpression);
+stores.expressionStore.setExpression(testComplexExpression);
 
 ReactDOM.render(
   <Provider {...stores}>

@@ -3,12 +3,11 @@ import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
 
-import { AttrIdSingleton } from '../constants/constants';
 import Button from 'antd/lib/button';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import { ExpressionOperator, IExpressionTreeNode, NodeOwner } from '../types/index';
+import { NodeOwner, AbstractNode, CompareNode } from '../types/index';
 import { inject, observer } from 'mobx-react';
 import { ExpressionStore } from '../stores/ExpressionStore';
 
@@ -19,7 +18,7 @@ interface ExpressionEditorProps {
 
 @inject('expressionStore')
 @observer
-class ExpressionEditor extends React.Component<ExpressionEditorProps> {
+class ExpressionEditor extends React.Component<ExpressionEditorProps> implements NodeOwner {
 
     static childContextTypes = {
         metaDictionary: PropTypes.any,
@@ -32,8 +31,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
     constructor(props: any) {
         super(props);
 
-        this.removeChild = this.removeChild.bind(this);
-        this.replaceWithComplex = this.replaceWithComplex.bind(this);
     }
 
     componentDidMount() {
@@ -47,35 +44,29 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
         };
     }
 
-    removeChild(child: any) {
-        this.props.root.addSimpleChild();
-    }
-
     isAncestor(current: any) {
         return false;
     }
 
-    replaceWithComplex(op: ExpressionOperator, child: IExpressionTreeNode) {
-        if (child) {
-            const newComplexNode: IExpressionTreeNode = {
-                name: 'logic',
-                nodeId: AttrIdSingleton.NextUniqueNodeId,
-                operator: op,
-                operands: [child],
-                isClone: false
-            };
-            this.setState({
-                expression: newComplexNode
-            });
-        }
+    addSimpleChild(node: AbstractNode): void {
+        this.removeNode(node);
     }
+
+    removeNode(node: AbstractNode): void {
+        const newExp = new CompareNode();
+        this.props.expressionStore!.expression = newExp;
+    }
+
+    replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void {
+        this.props.expressionStore!.expression = newNode;
+        }
 
     render() {
         if (!this.props.expressionStore!.metaLoaded) {
             return <div>Loading Metabase</div>;
         }
         else {
-            let expression = this.props.expressionStore!.expressionMap;
+            let expression = this.props.expressionStore!.expression;
             if (expression) {
                 let buttons = (<div />);
                 if (!this.props.expressionStore!.readonly) {
@@ -92,9 +83,9 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
                         {buttons}
                         <div className="row expr-editor">
                             <div className="expr-canvas">
-                                <ExpressionItem 
-                                    node={this.props.root}
-                                    readOnly={this.props.expressionStore!.readonly} 
+                                <ExpressionItem
+                                    node={expression}
+                                    readOnly={this.props.expressionStore!.readonly}
                                 />
                             </div>
                         </div>

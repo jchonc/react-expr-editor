@@ -1,18 +1,13 @@
-import { IExpressionTreeNode, IMetaDictionaryElement, ExpressionBooleanLogic, NodeFactory, AbstractNode } from '../types/index';
-import { observable, ObservableMap, action } from 'mobx';
-import { AttrIdSingleton } from '../constants/constants';
-
-export const validCtrlKind: string[] = [
-    'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
-];
+import { NodeFactory, AbstractNode } from '../types/index';
+import { observable, action } from 'mobx';
 
 export class ExpressionStore {
     @observable metaLoaded: boolean = false;
 
     @observable valid: boolean = true;
     @observable expression: AbstractNode | null;
-    @observable expressionMap: ObservableMap<IExpressionTreeNode> = observable.map();
-    rootId: number;
+    // @observable expressionMap: ObservableMap<IExpressionTreeNode> = observable.map();
+    // rootId: number;
     entityName: string;
     moduleId: number;
     readonly: boolean;
@@ -25,7 +20,7 @@ export class ExpressionStore {
         ]
     }];
 
-    @observable knownMetaDictionary: IMetaDictionaryElement[] = [{
+    @observable knownMetaDictionary: any[] = [{
         attrId: '11001',
         attrCaption: 'First Name',
         attrDataType: 'string',
@@ -101,17 +96,6 @@ export class ExpressionStore {
 
     @action setExpression(expression: any) {
         this.expression = NodeFactory.LoadExpression(expression);
-    }
-
-    @action getExpressionMap(): any {
-        if (this.expressionMap) {
-            return this.expressionMap;
-        }
-        return;
-    }
-
-    @action getNode(id: string): IExpressionTreeNode | undefined {
-        return this.expressionMap.get(id);
     }
 
     // @action addSimpleChild(parentId: string) {
@@ -194,96 +178,39 @@ export class ExpressionStore {
             });
     }
 
-    @action validate() {
-        let validateNode = (node: IExpressionTreeNode): node is IExpressionTreeNode => {
-            if (node) {
-                if (node.name === 'logic') {
-                    let result = true;
-                    if (node && node.operands) {
-                        for (let i = 0; i < node.operands!.length && result; i++) {
-                            result = result && validateNode((node.operands[i] as IExpressionTreeNode));
-                        }
-                    }
+    // @action validate() {
+    //     let validateNode = (node: IExpressionTreeNode): node is IExpressionTreeNode => {
+    //         if (node) {
+    //             if (node.name === 'logic') {
+    //                 let result = true;
+    //                 if (node && node.operands) {
+    //                     for (let i = 0; i < node.operands!.length && result; i++) {
+    //                         result = result && validateNode((node.operands[i] as IExpressionTreeNode));
+    //                     }
+    //                 }
 
-                    return result;
-                } else {
-                    return node.isValid!;
-                }
-            }
-            return false;
-        };
+    //                 return result;
+    //             } else {
+    //                 return node.isValid!;
+    //             }
+    //         }
+    //         return false;
+    //     };
 
-        this.valid = validateNode(this.expression);
+    //     this.valid = validateNode(this.expression);
 
-    }
+    // }
 
     @action reveal() {
         const result = JSON.stringify(this.expression);
         document.getElementById('expr_value')!.innerHTML = result;
     }
 
-    @action getAllowedOperators(meta: any) {
-        // gt; ge; lt; le; between; is-one-of; 
-        let results = [
-            { value: 'eq', label: 'equals to' },
-            { value: 'ne', label: 'not equal to' }
-        ];
-        if (meta) {
-            if (meta.attrCtrlType === 'picklist') {
-                results.push({ value: 'is-one-of', label: 'is one of' });
-            }
-            if (meta.attrCtrlType === 'date') {
-                results.push({ value: 'between', label: 'between' });
-            }
-        }
-        return results;
-    }
-
-    @action getOperandKind(meta: any, operator: string) {
-        if (meta) {
-            if (meta.attrCtrlType === 'date' && operator === 'between') {
-                return 'date-range';
-            }
-            if (meta.attrCtrlType === 'picklist') {
-                return (operator === 'is-one-of') ? 'multi-pick' : 'pick';
-            }
-            if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
-                return meta.attrCtrlType;
-            }
-        }
-        return 'none';
-    }
-
-    @action getMeta(attrId: string): IMetaDictionaryElement | undefined {
+    @action getMeta(attrId: string): any | undefined {
         return this.knownMetaDictionary.find(function (elm: any) {
             return elm.attrId === attrId;
         });
     }
-
-    // @action replaceWithComplex(logic: ExpressionBooleanLogic, child: IExpressionTreeNode) {
-    //     if (child) {
-    //         let parentId = child.parent;
-    //         const newComplexNode: IExpressionTreeNode = {
-    //             nodeId: AttrIdSingleton.NextUniqueNodeId,
-    //             name: 'logic',
-    //             operator: logic,
-    //             operands: [child],
-    //             children: [child.nodeId],
-    //             parent: parentId,
-    //             isClone: false
-    //         };
-    //         this.expressionMap.set(newComplexNode.nodeId.toString(), newComplexNode);
-
-    //         let parent = this.getNode(parentId!.toString());
-    //         if (parent) {
-
-    //             let index = parent.children!.findIndex(x => x === child.nodeId);
-    //             parent.children!.splice(index, 1, newComplexNode.nodeId);
-    //         }
-
-    //         child.parent = newComplexNode.nodeId;
-    //     }
-    // }
 
     // @action isAncestor(targetParentId: number, childId: number) {
     //     let child = this.getNode(childId.toString());

@@ -29,7 +29,7 @@ class App extends React.Component<AppProps> {
           {!expressionStore.valid && <div className="error">There is an error</div>}
           <div>
             <Button onClick={() => { expressionStore.reveal(); }}>Reveal</Button>
-            <Button onClick={() => { expressionStore.validate(); }}>validate</Button>
+            {/* <Button onClick={() => { expressionStore.validate(); }}>validate</Button> */}
             <div id="expr_value" />
           </div>
         </div>

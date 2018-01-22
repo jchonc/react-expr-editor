@@ -1,8 +1,9 @@
 import moment from 'moment';
+import { ExpressionOperandKind } from '../types/index';
 
 export default class ValidatorFactory {
 
-    GetValidator(type: string) {
+    GetValidator(type: ExpressionOperandKind) {
 
         switch (type) {
             case 'number':
@@ -20,27 +21,27 @@ export default class ValidatorFactory {
         }
     }
 
-    isNotEmpty(value: any): boolean {
+    isNotEmpty(value: string): boolean {
         return !!value;
     }
 
-    private ValidateText = (values: any[]) => {
+    private ValidateText = (values: string[]) => {
         return this.isNotEmpty(values[0]);
     }
 
-    private ValidateMultiPick = (values: any[]) => {
+    private ValidateMultiPick = (values: string[]) => {
         let result = true;
         for (let i = 0; i < values.length; i++) {
-            result = result && this.ValidateText(values[i]);
+            result = result && this.isNotEmpty(values[i]);
         }
         return result;
     }
 
-    private ValidateNumber = (values: any[]) => {
-        return this.isNotEmpty(values[0]) && !isNaN(values[0]);
+    private ValidateNumber = (values: string[]) => {
+        return this.isNotEmpty(values[0]) && !Number.isNaN(values[0] as any);
     }
 
     private ValidateDate = (values: any[]) => {
-        return moment(values[0], 'YYY-MM-DD').isValid();
+        return moment(values[0], 'YYYY-MM-DD').isValid();
     }
 }

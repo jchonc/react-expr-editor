@@ -1,29 +1,28 @@
-import { ExpressionStore } from "../stores/ExpressionStore";
-
+import { ExpressionStore } from '../stores/ExpressionStore';
 
 function handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number, store: ExpressionStore) {
-    let oldParent = store.getNode(oldParentID.toString());
-    let newParent = store.getNode(newParentID.toString());
+    // let oldParent = store.getNode(oldParentID.toString());
+    // let newParent = store.getNode(newParentID.toString());
 
-    let source = store.getNode(sourceID.toString());
+    // let source = store.getNode(sourceID.toString());
 
-    if (!source) {
-        // input was not correct
-        return;
-    }
+    // if (!source) {
+    //     // input was not correct
+    //     return;
+    // }
 
-    let sourceIndex = oldParent!.children!.findIndex(node => node === sourceID);
-    oldParent!.children!.splice(sourceIndex, 1);
-    source.parent = newParentID
+    // let sourceIndex = oldParent!.children!.findIndex(node => node === sourceID);
+    // oldParent!.children!.splice(sourceIndex, 1);
+    // source.parent = newParentID
 
-    let targetIndex = newParentID === targetID ? -1 :
-        newParent!.children!.findIndex((node: any) => node === targetID);
+    // let targetIndex = newParentID === targetID ? -1 :
+    //     newParent!.children!.findIndex((node: any) => node === targetID);
 
-    if ((newParentID !== targetID && targetIndex < 0)) {
-        return;
-    }
+    // if ((newParentID !== targetID && targetIndex < 0)) {
+    //     return;
+    // }
 
-    newParent!.children!.splice(targetIndex + 1, 0, sourceID);
+    // newParent!.children!.splice(targetIndex + 1, 0, sourceID);
 
 }
 

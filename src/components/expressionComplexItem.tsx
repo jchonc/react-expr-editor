@@ -22,7 +22,7 @@ import './expressionComplexItem.css';
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
 import { inject, observer } from 'mobx-react';
-import { ExpressionBooleanLogic, LogicNode, AbstractNode } from '../types/index';
+import { ExpressionBooleanLogic, LogicNode } from '../types/index';
 import { ExpressionStore } from '../stores/ExpressionStore';
 
 interface ExpressionComplexItemProps {
@@ -33,7 +33,6 @@ interface ExpressionComplexItemProps {
     connectDropTargetSimple: any;
     isDragging: boolean;
     expressionStore?: ExpressionStore;
-
 }
 
 @observer
@@ -43,38 +42,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
         cachedPickLists: PropTypes.any
     };
 
-    constructor(props: any, context: any) {
-        super(props, context);
-
-        this.addSimpleChild = this.addSimpleChild.bind(this);
-        this.removeChild = this.removeChild.bind(this);
-        this.replaceWithComplex = this.replaceWithComplex.bind(this);
-    }
-
-    replaceWithComplex(logic: ExpressionBooleanLogic) {
-        this.props.node!.replaceWithComplex(logic);
-    }
-
     updateOperator(op: ExpressionBooleanLogic) {
         this.props.node.operator = op;
     }
 
-    addSimpleChild() {
-        this.props.node!.addSimpleChild();
-    }
-
-    removeChild(child: AbstractNode) {
-        this.props.node!.removeNode(child);
-
-    }
-
-    removeSelf() {
-        this.props.node!.removeNode(this.props.node);
-    }
-
-    isAncestor(connector: any) {
-        return connector === this.props.node ? true : this.props.node.parentNode.isAncestor(connector);
-    }
     render() {
         const node = this.props.node;
         const props = this.props;
@@ -99,10 +70,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
             if (!this.props.readonly) {
                 menu = (
                     <DropdownButton id="menu-simple-dropdown" title="">
-                        <MenuItem onClick={() => { this.addSimpleChild(); }}>New Line</MenuItem>
+                        <MenuItem onClick={() => { node.addSimpleChild(); }}>New Line</MenuItem>
                         <MenuItem divider={true} />
                         <MenuItem eventKey="3">Another Link</MenuItem>
-                        <MenuItem onClick={() => { this.removeSelf(); }}>Remove Group</MenuItem>
+                        <MenuItem onClick={() => { node.removeSelf(); }}>Remove Group</MenuItem>
                     </DropdownButton>
                 );
             }
@@ -113,9 +84,6 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                     <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
                     <Select
                         className="expr-logic-operator"
-                        // options={options}
-                        // searchable={false}
-                        // clearable={false}
                         disabled={this.props.readonly}
                         value={node!.operator}
                         onChange={(evt: any) => { this.updateOperator(evt.value); }}

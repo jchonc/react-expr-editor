@@ -1,12 +1,10 @@
-import { ObservableMap } from 'mobx';
 import { observable } from 'mobx';
-import { action } from 'mobx/lib/api/action';
-import ExpressionItem from '../components/expressionItem';
+import { action } from 'mobx';
 export type ExpressionType = 'logic' | 'compare';
 
 export type ExpressionBooleanLogic = 'And' | 'Or';
 
-export type ExpressionOperator = ExpressionBooleanLogic | 'Equal' | 'NotEqual' | 'IsBetween' | 'IsNotBetween';
+export type ExpressionOperator = ExpressionBooleanLogic | 'Equal' | 'NotEqual' | 'IsBetween' | 'IsNotBetween' | 'is-one-of';
 
 export type ExpressionOperandKind =
   'none' | 'text' | 'number' | 'date' | 'time' | 'datetime' | 'date-range' | 'pick' | 'multi-pick' | 'lookup';
@@ -15,41 +13,21 @@ export interface ExpressionOperand {
   name: ExpressionType;
 }
 
-export type IExpressionTreeNode = AbstractNode | null | {
-  name: 'logic' | 'compare';
-  nodeId: number;
-  operator: ExpressionOperator;
-  operands?: IExpressionTreeNode[] | string[];
-  attrId?: string;
-  attrCaption?: string;
-  isValid?: boolean;
-  isClone: boolean;
-  parent?: number;
-  children?: number[];
-};
-
-export interface IMetaDictionaryElement {
-  attrId: string;
-  attrCaption: string;
-  attrDataType: string;
-  attrCtrlType: string;
-  attrCtrlParams: string;
-}
-
 export interface NodeOwner {
-  addSimpleChild(): void;
+  addSimpleChild(node: AbstractNode): void;
   removeNode(node: AbstractNode): void;
-  isAncestor(connector: any): boolean;
+  replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void;
 }
 
-export class AbstractNode {
-  @observable name: 'logic' | 'compare';
+export abstract class AbstractNode {
+  @observable name: 'logic' | 'compare'; // revisit later, move to instanceof later
   @observable isClone: boolean;
   @observable parentNode: NodeOwner;
+  isValid: boolean = false;
 
   @action addSibling() {
     if (this.parentNode) {
-      this.parentNode.addSimpleChild();
+      this.parentNode.addSimpleChild(new CompareNode());
     }
   }
 
@@ -57,16 +35,33 @@ export class AbstractNode {
     this.parentNode.removeNode(this);
   }
 
-  @action replaceWithComplex(logic: ExpressionBooleanLogic) {
-    // do stuff;
+  isDescedentOf(parentNode: AbstractNode): boolean {
+    // do stuff
+    return false;
   }
 
-  @action isAncestor(connector: any) {
-    // do stuff
+  @action replaceWithComplex(logic: ExpressionBooleanLogic) {
+    const parent = this.parentNode;
+    const newComplexNode = new LogicNode();
+
+    newComplexNode.operator = logic;
+    newComplexNode.operands.push(this);
+
+    this.parentNode = newComplexNode;
+    newComplexNode.parentNode = parent;
+
+    parent.replaceNode(this, newComplexNode);
+
   }
 }
 
+export const validCtrlKind: string[] = [
+  'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
+];
 export class CompareNode extends AbstractNode {
+  // validate(): boolean {
+  //   return ;
+  // }
 
   @observable
   attrId: string;
@@ -84,9 +79,42 @@ export class CompareNode extends AbstractNode {
     super();
     this.operands = new Array<string>();
   }
+
+  getAllowedOperators(meta: any) {
+    // gt; ge; lt; le; between; is-one-of; 
+    let results = [
+      { value: 'eq', label: 'equals to' },
+      { value: 'ne', label: 'not equal to' }
+    ];
+    if (meta) {
+      if (meta.attrCtrlType === 'picklist') {
+        results.push({ value: 'is-one-of', label: 'is one of' });
+      }
+      if (meta.attrCtrlType === 'date') {
+        results.push({ value: 'between', label: 'between' });
+      }
+    }
+    return results;
+  }
+
+  getOperandKind(meta: any) {
+    if (meta) {
+      if (meta.attrCtrlType === 'date' && this.operator === 'IsBetween') {
+        return 'date-range';
+      }
+      if (meta.attrCtrlType === 'picklist') {
+        return (this.operator === 'is-one-of') ? 'multi-pick' : 'pick';
+      }
+      if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
+        return meta.attrCtrlType;
+      }
+    }
+    return 'none';
+  }
 }
 
 export class LogicNode extends AbstractNode implements NodeOwner {
+
   @observable
   operator: ExpressionBooleanLogic;
 
@@ -108,6 +136,16 @@ export class LogicNode extends AbstractNode implements NodeOwner {
       this.operands.splice(idx, 1);
     }
   }
+
+  replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void {
+    const idx = this.operands.indexOf(oldNode);
+    if (idx >= 0) {
+      this.operands[idx] = newNode;
+    } else {
+      this.operands.push(newNode);
+    }
+  }
+
 }
 
 export class NodeFactory {
@@ -124,7 +162,7 @@ export class NodeFactory {
           if (jsonExpression.operands && jsonExpression.operands.length) {
             simpleResult.operands.push(...jsonExpression.operands);
           }
-          break;
+          return simpleResult;
         case 'logic':
           let compositeResult = new LogicNode();
           compositeResult.name = jsonExpression.name;
