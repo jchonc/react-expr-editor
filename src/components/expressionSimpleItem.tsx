@@ -1,10 +1,8 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import { Select } from 'antd';
+import { Menu, Dropdown, Button, Icon, Select } from 'antd';
 const Option = Select.Option;
-
-import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 import { DragSource, DropTarget } from 'react-dnd';
 import classNames from 'classnames';
@@ -26,7 +24,6 @@ import {
 
 import './expressionSimpleItem.css';
 import { ExpressionOperator, CompareNode } from '../types/index';
-import ValidatorFactory from '../factories/ValidatorFactory';
 import ExpressionValueLookup from './editors/ExpressionValueLookup';
 import { observer, inject } from 'mobx-react';
 import { ExpressionStore } from '../stores/ExpressionStore';
@@ -50,29 +47,28 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         cachedPickLists: PropTypes.any
     };
 
-    validatorFactory = new ValidatorFactory();
-    validator: any;
-
     constructor(props: any, context: any) {
         super(props, context);
-        // const expression = props.node;
-        // if (!expression) {
-        //     this.state = {
-        //         attrId: '',
-        //         allowedOperators: [],
-        //         operator: '',
-        //         operandKind: 'none',
-        //         operands: []
-        //     };
-        // }
-        // else {
-        // this.node = this.props.expressionStore!.getNode(expression)!;
-        let meta = this.props.expressionStore!.getMeta(this.props.node.attrId!);
-        this.validator = this.validatorFactory.GetValidator(this.props.node.getOperandKind(meta));
+        this.handleMenuClick = this.handleMenuClick.bind(this);
+    }
 
-        // this.node!.isValid = this.validator(this.node!.operands);
-
-        // }
+    handleMenuClick(e: any) {
+        switch (e.key) {
+            case 'ADD_AND': 
+                this.props.node.replaceWithComplex('And'); 
+                break;
+            case 'ADD_OR':
+                this.props.node.replaceWithComplex('Or');
+                break;
+            case 'NEW_LINE':
+                this.props.node.addSibling();
+                break;
+            case 'REMOVE':
+                this.props.node.removeSelf();
+                break;
+            default: 
+                break;
+        }
     }
 
     updateMetaReference(elmId: string) {
@@ -80,28 +76,17 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         let meta = this.props.expressionStore!.getMeta(elmId);
         if (expression && meta) {
             expression.attrId = elmId;
-            expression.attrCaption = meta.attrCaption;
-
-            let opKind = expression.getOperandKind(meta);
-            this.validator = this.validatorFactory.GetValidator(opKind);
+            expression.attrCaption = meta.attrCaption;          
+            expression.operands = ['', ''];
         }
     }
 
     updateOperator(operator: ExpressionOperator) {
         this.props.node.operator = operator;
-        // let meta = this.props.expressionStore!.getMeta(this.props.node.attrId!);
-
-        // this.setState({
-        //     operator: operator,
-        //     operandKind: this.props.expressionStore!.getOperandKind(meta, this.node.operator)
-        // });
     }
 
     updateValue(...values: any[]) {
-        const expression = this.props.node;
-
-        // expression.isValid = this.validator(values);
-        expression.operands = [...values];
+        this.props.node.operands = [...values];
     }
 
     render() {
@@ -174,14 +159,19 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
             let menu = (<span>&nbsp;</span>);
             if (!this.props.readOnly) {
+                const dropdownMenu = (
+                    <Menu onClick={this.handleMenuClick}>
+                    <Menu.Item key="ADD_AND">AND</Menu.Item>
+                    <Menu.Item key="ADD_OR">OR</Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item key="NEW_LINE">New Line</Menu.Item>
+                    <Menu.Item key="REMOVE">Remove</Menu.Item>
+                    </Menu>
+                );
                 menu = (
-                    <DropdownButton id="menu-simple-dropdown" title="">
-                        <MenuItem onClick={() => { expression.replaceWithComplex('And'); }}>AND</MenuItem>
-                        <MenuItem onClick={() => { expression.replaceWithComplex('Or'); }}>OR</MenuItem>
-                        <MenuItem onClick={() => { expression.addSibling(); }}>New Line</MenuItem>
-                        <MenuItem divider={true} />
-                        <MenuItem onClick={() => { expression.removeSelf(); }}>Remove</MenuItem>
-                    </DropdownButton>
+                    <Dropdown overlay={dropdownMenu}>
+                        <Button style={{ marginLeft: 8 }}><Icon type="down" /></Button>
+                    </Dropdown>
                 );
             }
 
@@ -220,9 +210,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             ));
         }
         return <div />;
-
     }
-
 }
 
 export default

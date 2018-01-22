@@ -2,10 +2,9 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from './expressionItem';
 
-import { Select } from 'antd';
+import { Menu, Dropdown, Button, Icon, Select } from 'antd';
 const Option = Select.Option;
 
-import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classNames from 'classnames';
 
 import {
@@ -42,10 +41,28 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
         cachedPickLists: PropTypes.any
     };
 
+    constructor(props: any) {
+        super(props);
+        this.handleMenuClick = this.handleMenuClick.bind(this);
+    }    
+
     updateOperator(op: ExpressionBooleanLogic) {
         this.props.node.operator = op;
     }
 
+    handleMenuClick(e: any) {
+        switch (e.key) {
+            case 'NEW_LINE':
+                this.props.node.addSimpleChild();
+                break;
+            case 'REMOVE':
+                this.props.node.removeSelf();
+                break;
+            default:
+                break;
+        }
+    }
+    
     render() {
         const node = this.props.node;
         const props = this.props;
@@ -68,13 +85,18 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
 
             let menu = (<span>&nbsp;</span>);
             if (!this.props.readonly) {
+                const dropdownMenu = (
+                    <Menu onClick={this.handleMenuClick}>
+                      <Menu.Item key="NEW_LINE">NewLine</Menu.Item>
+                      <Menu.Item key="SOMETHING">Another Link</Menu.Item>
+                      <Menu.Divider />
+                      <Menu.Item key="REMOVE">Remove Group</Menu.Item>
+                    </Menu>
+                  );
                 menu = (
-                    <DropdownButton id="menu-simple-dropdown" title="">
-                        <MenuItem onClick={() => { node.addSimpleChild(); }}>New Line</MenuItem>
-                        <MenuItem divider={true} />
-                        <MenuItem eventKey="3">Another Link</MenuItem>
-                        <MenuItem onClick={() => { node.removeSelf(); }}>Remove Group</MenuItem>
-                    </DropdownButton>
+                    <Dropdown overlay={dropdownMenu}>
+                        <Button><Icon type="down" /></Button>
+                    </Dropdown>
                 );
             }
             const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;

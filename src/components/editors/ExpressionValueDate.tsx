@@ -6,7 +6,6 @@ import { observer, inject } from 'mobx-react';
 import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueDateState {
-    focused: boolean;
     date: moment.Moment | undefined;
 }
 
@@ -22,7 +21,6 @@ interface ExpressionValueDateProps {
 class ExpressionValueDate extends React.Component<ExpressionValueDateProps, ExpressionValueDateState> {
     constructor(props: any) {
         super(props);
-        this.onFocusChanged = this.onFocusChanged.bind(this);
         this.onDateChanged = this.onDateChanged.bind(this);
 
         let v;
@@ -33,15 +31,11 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
             }
         }
         this.state = {
-            focused: false,
             date: v
         };
     }
-    onFocusChanged(f: any) {
-        this.setState(f);
-    }
-    onDateChanged(d: moment.Moment) {
-        this.props.onChange(d.format('YYYY-MM-DD'));
+    onDateChanged(d: moment.Moment, ds: string) {
+        this.props.onChange(ds);
         this.setState({
             date: d
         });
@@ -51,10 +45,6 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
             <DatePicker
                 value={this.state.date}
                 disabled={this.props.readOnly}
-
-                // numberOfMonths={1}
-                // isOutsideRange={() => false}
-                // onFocusChange={this.onFocusChanged} 
                 onChange={this.onDateChanged}
             />
         );
