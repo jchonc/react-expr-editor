@@ -70,7 +70,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let meta = this.props.expressionStore!.getMeta(this.node.attrId!);
             let opKind = this.props.expressionStore!.getOperandKind(meta, this.node!.operator);
             this.validator = this.validatorFactory.GetValidator(opKind);
-            this.node!.isValid = this.validator(this.node!.operands);
+            //this.node!.isValid = this.validator(this.node!.operands);
 
         }
     }
@@ -209,7 +209,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                 <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
             );
             return connectDropTargetComplex(connectDropTargetSimple(
-                <div className={classNames('expr-simple-item', { clone: expression.isClone }, { 'node-error': !expression.isValid })}>
+                <div className={classNames('expr-simple-item', { clone: expression.isClone }, { 'node-error': expression.isValid != undefined && !expression.isValid })}>
                     {drag}
                     <Select
                         className="expr-simple-field"

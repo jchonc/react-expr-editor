@@ -200,6 +200,9 @@ class ExpressionStore implements IExpressionStore {
 
                 return result;
             } else {
+                if (node.isValid === undefined){
+                    node.isValid = false;
+                }
                 return node.isValid!;
             }
         };

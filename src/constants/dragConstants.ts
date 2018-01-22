@@ -55,7 +55,7 @@ export function dragCollect(connect: any, monitor: any) {
 }
 
 export const simpleSource = {
-    beginDrag(props: any, monitor: any) {
+    beginDrag(props: any, monitor: any, component: any) {
         let node = props.expressionStore.getNode(props.node);
         return {node: node, parent: props.parent, store: props.expressionStore};
     },
