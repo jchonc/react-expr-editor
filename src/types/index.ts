@@ -1,5 +1,8 @@
-import { observable } from 'mobx';
+import { observable, computed } from 'mobx';
 import { action } from 'mobx';
+import ExpressionStore from '../stores/ExpressionStore';
+import ValidatorFactory from '../factories/ValidatorFactory';
+
 export type ExpressionType = 'logic' | 'compare';
 
 export type ExpressionBooleanLogic = 'And' | 'Or';
@@ -22,17 +25,23 @@ export interface NodeOwner {
 export abstract class AbstractNode {
   @observable name: 'logic' | 'compare'; // revisit later, move to instanceof later
   @observable isClone: boolean;
-  @observable parentNode: NodeOwner;
-  isValid: boolean = false;
+  @observable parentNode?: NodeOwner;
+  abstract isValid: boolean;
+
+  constructor(parent?: NodeOwner) {
+    this.parentNode = parent;
+  }
 
   @action addSibling() {
     if (this.parentNode) {
-      this.parentNode.addSimpleChild(new CompareNode());
+      this.parentNode.addSimpleChild(new CompareNode(this.parentNode));
     }
   }
 
   @action removeSelf() {
-    this.parentNode.removeNode(this);
+    if (this.parentNode) {
+      this.parentNode.removeNode(this);
+    }
   }
 
   isDescedentOf(parentNode: AbstractNode): boolean {
@@ -42,26 +51,21 @@ export abstract class AbstractNode {
 
   @action replaceWithComplex(logic: ExpressionBooleanLogic) {
     const parent = this.parentNode;
-    const newComplexNode = new LogicNode();
-
-    newComplexNode.operator = logic;
-    newComplexNode.operands.push(this);
-
-    this.parentNode = newComplexNode;
-    newComplexNode.parentNode = parent;
-
-    parent.replaceNode(this, newComplexNode);
-
+    if (parent) {
+      const newComplexNode = new LogicNode(parent);
+      newComplexNode.operator = logic;
+      newComplexNode.operands.push(this);
+      this.parentNode = newComplexNode;
+      parent.replaceNode(this, newComplexNode);
+    }
   }
+
 }
 
 export const validCtrlKind: string[] = [
   'none', 'text', 'number', 'date', 'time', 'datetime', 'date-range', 'pick', 'multi-pick', 'lookup'
 ];
 export class CompareNode extends AbstractNode {
-  // validate(): boolean {
-  //   return ;
-  // }
 
   @observable
   attrId: string;
@@ -75,8 +79,8 @@ export class CompareNode extends AbstractNode {
   @observable
   operands: string[];
 
-  constructor() {
-    super();
+  constructor(parent?: NodeOwner) {
+    super(parent);
     this.operands = new Array<string>();
   }
 
@@ -111,6 +115,18 @@ export class CompareNode extends AbstractNode {
     }
     return 'none';
   }
+
+  @computed get meta(): any {
+    return ExpressionStore.getMeta(this.attrId);
+  }
+
+  @computed get validator(): any {
+    return new ValidatorFactory().GetValidator(this.getOperandKind(this.meta));
+  }
+
+  @computed get isValid(): boolean {
+    return this.validator(this.operands);
+  }
 }
 
 export class LogicNode extends AbstractNode implements NodeOwner {
@@ -121,13 +137,14 @@ export class LogicNode extends AbstractNode implements NodeOwner {
   @observable
   operands: AbstractNode[];
 
-  constructor() {
-    super();
+  constructor(parent?: NodeOwner) {
+    super(parent);
     this.operands = new Array<AbstractNode>();
   }
 
   @action addSimpleChild() {
-    this.operands.push(new CompareNode());
+    const node = new CompareNode(this);
+    this.operands.push(node);
   }
 
   @action removeNode(node: AbstractNode) {
@@ -146,6 +163,9 @@ export class LogicNode extends AbstractNode implements NodeOwner {
     }
   }
 
+  @computed get isValid(): boolean {
+    return this.operands.every((x) => x.isValid);
+  }
 }
 
 export class NodeFactory {
@@ -154,7 +174,7 @@ export class NodeFactory {
 
       switch (jsonExpression.name) {
         case 'compare':
-          let simpleResult = new CompareNode();
+          let simpleResult = new CompareNode(undefined);
           simpleResult.name = jsonExpression.name;
           simpleResult.attrId = jsonExpression.attrId;
           simpleResult.attrCaption = jsonExpression.attrCaption;
@@ -164,7 +184,7 @@ export class NodeFactory {
           }
           return simpleResult;
         case 'logic':
-          let compositeResult = new LogicNode();
+          let compositeResult = new LogicNode(undefined);
           compositeResult.name = jsonExpression.name;
           compositeResult.operator = jsonExpression.operator;
           if (jsonExpression.operands && jsonExpression.operands.length) {
@@ -183,4 +203,29 @@ export class NodeFactory {
     }
     return null;
   }
+
+  static SaveExpression( node: AbstractNode | null ): any | null {
+    if ( node ) {
+      if ( node instanceof CompareNode ) {
+        const sn = node as CompareNode;
+        return {
+          name: 'compare',
+          attrId: sn.attrId,
+          attrCaption: sn.attrCaption,
+          operator: sn.operator,
+          operands: sn.operands
+        };
+      }
+      else {
+        const cn = node as LogicNode;
+        return {
+          name: 'logic',
+          operator: cn.operator,
+          operands: cn.operands.map((c) => NodeFactory.SaveExpression(c))
+        };
+      }
+    }
+    return null;
+  }
+  
 }

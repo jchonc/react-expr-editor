@@ -81,7 +81,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         if (expression && meta) {
             expression.attrId = elmId;
             expression.attrCaption = meta.attrCaption;
-            
+
             let opKind = expression.getOperandKind(meta);
             this.validator = this.validatorFactory.GetValidator(opKind);
         }
@@ -100,7 +100,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
     updateValue(...values: any[]) {
         const expression = this.props.node;
 
-        expression.isValid = this.validator(values);
+        // expression.isValid = this.validator(values);
         expression.operands = [...values];
     }
 

@@ -30,7 +30,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
 
     constructor(props: any) {
         super(props);
-
     }
 
     componentDidMount() {
@@ -53,13 +52,13 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
     }
 
     removeNode(node: AbstractNode): void {
-        const newExp = new CompareNode();
+        const newExp = new CompareNode(this);
         this.props.expressionStore!.expression = newExp;
     }
 
     replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void {
         this.props.expressionStore!.expression = newNode;
-        }
+    }
 
     render() {
         if (!this.props.expressionStore!.metaLoaded) {
@@ -68,6 +67,9 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
         else {
             let expression = this.props.expressionStore!.expression;
             if (expression) {
+                if (!expression.parentNode) {
+                    expression.parentNode = this;
+                }
                 let buttons = (<div />);
                 if (!this.props.expressionStore!.readonly) {
                     buttons = (

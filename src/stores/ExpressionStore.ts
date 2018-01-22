@@ -202,11 +202,14 @@ export class ExpressionStore {
     // }
 
     @action reveal() {
-        const result = JSON.stringify(this.expression);
+        const result = JSON.stringify(NodeFactory.SaveExpression(this.expression));
         document.getElementById('expr_value')!.innerHTML = result;
     }
 
     @action getMeta(attrId: string): any | undefined {
+        if (!attrId) {
+            return undefined;
+        }
         return this.knownMetaDictionary.find(function (elm: any) {
             return elm.attrId === attrId;
         });
