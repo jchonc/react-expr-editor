@@ -43,7 +43,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
         };
     }
 
-    isAncestor(current: any) {
+    isDescedentOf(parentNode: AbstractNode) {
         return false;
     }
 

@@ -20,6 +20,7 @@ export interface NodeOwner {
   addSimpleChild(node: AbstractNode): void;
   removeNode(node: AbstractNode): void;
   replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void;
+  isDescedentOf(parentNode: AbstractNode): boolean;
 }
 
 export abstract class AbstractNode {
@@ -45,8 +46,7 @@ export abstract class AbstractNode {
   }
 
   isDescedentOf(parentNode: AbstractNode): boolean {
-    // do stuff
-    return false;
+    return this === parentNode ? true : this.parentNode!.isDescedentOf(parentNode);
   }
 
   @action replaceWithComplex(logic: ExpressionBooleanLogic) {
