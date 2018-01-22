@@ -1,5 +1,6 @@
-import { ObservableMap } from "mobx";
-
+import { ObservableMap } from 'mobx';
+import { observable } from 'mobx';
+import { action } from 'mobx/lib/api/action';
 export type ExpressionType = 'logic' | 'compare';
 
 export type ExpressionBooleanLogic = 'And' | 'Or';
@@ -55,4 +56,108 @@ export interface IMetaDictionaryElement {
   attrDataType: string;
   attrCtrlType: string;
   attrCtrlParams: string;
+}
+
+
+
+export interface NodeOwner {
+  addSimpleChild(): void;
+  removeNode(node: AbstractNode): void;
+}
+
+export class AbstractNode {
+  name: string;
+  parentNode: NodeOwner;
+
+  @action addSibling() {
+    if (this.parentNode) {
+      this.parentNode.addSimpleChild();
+    }
+  }
+
+  @action removeSelf() {
+    this.parentNode.removeNode(this);
+  }
+}
+
+export class CompareNode extends AbstractNode {
+
+  @observable
+  attrId: string;
+
+  @observable
+  attrCaption: string;
+
+  @observable
+  operator: string;
+
+  @observable
+  operands: string[];
+
+  constructor() {
+    super();
+    this.operands = new Array<string>();
+  }
+}
+
+export class LogicNode extends AbstractNode implements NodeOwner {
+  @observable
+  operator: string;
+
+  @observable
+  operands: AbstractNode[];
+
+  constructor() {
+    super();
+    this.operands = new Array<AbstractNode>();
+  }
+
+  @action addSimpleChild() {
+    this.operands.push(new CompareNode());
+  }
+
+  @action removeNode(node: AbstractNode) {
+    const idx = this.operands.indexOf(node);
+    if (idx >= 0) {
+      this.operands.splice(idx, 1);
+    }
+  }
+}
+
+export class NodeFactory {
+  static LoadExpression(jsonExpression: any): AbstractNode | null {
+    if (jsonExpression && jsonExpression.name) {
+
+
+      switch (jsonExpression.name) {
+        case 'compare':
+          let simpleResult = new CompareNode();
+          simpleResult.name = jsonExpression.name;
+          simpleResult.attrId = jsonExpression.attrId;
+          simpleResult.attrCaption = jsonExpression.attrCaption;
+          simpleResult.operator = jsonExpression.operator;
+          if (jsonExpression.operands && jsonExpression.operands.length) {
+            simpleResult.operands.push(...jsonExpression.operands);
+          }
+          break;
+        case 'logic':
+          let compositeResult = new LogicNode();
+          compositeResult.name = jsonExpression.name;
+          compositeResult.operator = jsonExpression.operator;
+          if (jsonExpression.operands && jsonExpression.operands.length) {
+            jsonExpression.operands.map(function (se: any) {
+              const childExpression = NodeFactory.LoadExpression(se);
+              if (childExpression) {
+                childExpression.parentNode = compositeResult;
+                compositeResult.operands.push(childExpression);
+              }
+            });
+          }
+          return compositeResult;
+        default:
+          break;
+      }
+    }
+    return null;
+  }
 }
