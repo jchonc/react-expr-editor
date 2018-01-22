@@ -84,8 +84,6 @@ export class CompareNode extends AbstractNode {
     super();
     this.operands = new Array<string>();
   }
-
-
 }
 
 export class LogicNode extends AbstractNode implements NodeOwner {
