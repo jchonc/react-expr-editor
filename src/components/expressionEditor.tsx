@@ -8,12 +8,13 @@ import Button from 'antd/lib/button';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import { ExpressionOperator, IExpressionTreeNode, IExpressionStore } from '../types/index';
+import { ExpressionOperator, IExpressionTreeNode, NodeOwner } from '../types/index';
 import { inject, observer } from 'mobx-react';
+import { ExpressionStore } from '../stores/ExpressionStore';
 
 interface ExpressionEditorProps {
-    expressionStore?: IExpressionStore;
-    root: number;
+    expressionStore?: ExpressionStore;
+    root: NodeOwner;
 }
 
 @inject('expressionStore')
@@ -47,7 +48,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> {
     }
 
     removeChild(child: any) {
-        this.props.expressionStore!.addSimpleChild(child.parent.nodeId);
+        this.props.root.addSimpleChild();
     }
 
     isAncestor(current: any) {

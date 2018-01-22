@@ -3,7 +3,7 @@ import { DatePicker } from 'antd';
 
 import moment from 'moment';
 import { observer, inject } from 'mobx-react';
-import { IExpressionStore } from '../../types/index';
+import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueDateState {
     focused: boolean;
@@ -13,8 +13,8 @@ interface ExpressionValueDateState {
 interface ExpressionValueDateProps {
     values: any;
     readOnly: boolean;
-    onChange: any;   
-    expressionStore?: IExpressionStore;
+    onChange: any;
+    expressionStore?: ExpressionStore;
 
 }
 @inject('expressionStore')

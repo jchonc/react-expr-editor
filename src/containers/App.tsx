@@ -3,11 +3,11 @@ import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
 import Button from 'antd/lib/button';
 
-import { IExpressionStore } from '../types/index';
+import { ExpressionStore } from '../stores/ExpressionStore';
 import { inject, observer } from 'mobx-react';
 
 interface AppProps {
-  expressionStore?: IExpressionStore;
+  expressionStore?: ExpressionStore;
 }
 
 @inject('expressionStore')
@@ -23,7 +23,7 @@ class App extends React.Component<AppProps> {
             <h2>Welcome to React</h2>
           </div>
           <ExpressionEditor
-            root={expressionStore.expression.nodeId}
+            root={expressionStore.expression!}
           />
           <hr />
           {!expressionStore.valid && <div className="error">There is an error</div>}

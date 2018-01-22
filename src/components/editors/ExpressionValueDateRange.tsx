@@ -2,7 +2,7 @@ import * as React from 'react';
 import moment from 'moment';
 import { DatePicker } from 'antd';
 import { inject, observer } from 'mobx-react';
-import { IExpressionStore } from '../../types/index';
+import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueDateRangeState {
     focusedInput: any;
@@ -14,7 +14,7 @@ interface ExpressionValueDateRangeProps {
     values: any;
     readOnly: boolean;
     onChange: any;
-    expressionStore?: IExpressionStore;
+    expressionStore?: ExpressionStore;
 
 }
 @inject('expressionStore')
@@ -32,7 +32,7 @@ class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeP
         };
     }
 
-    onStartChanged( startDate: moment.Moment) {
+    onStartChanged(startDate: moment.Moment) {
         this.props.onChange([startDate, this.state.endDate]);
         this.setState({
             startDate: startDate,
@@ -66,7 +66,7 @@ class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeP
                     value={this.state.startDate}
                     placeholder="Start"
                     onChange={this.onStartChanged}
-                    // onOpenChange={this.handleStartOpenChange}
+                // onOpenChange={this.handleStartOpenChange}
                 />
                 <DatePicker
                     // disabledDate={this.disabledEndDate}
@@ -74,8 +74,8 @@ class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeP
                     value={this.state.endDate}
                     placeholder="End"
                     onChange={this.onEndChanged}
-                    // open={endOpen}
-                    // onOpenChange={this.handleEndOpenChange}
+                // open={endOpen}
+                // onOpenChange={this.handleEndOpenChange}
                 />
             </div>
         );

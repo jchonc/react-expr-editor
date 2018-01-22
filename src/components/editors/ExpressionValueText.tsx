@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Input } from 'antd';
 import { observer, inject } from 'mobx-react';
-import { IExpressionStore } from '../../types/index';
+import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueTextState {
 }
@@ -10,7 +10,7 @@ interface ExpressionValueTextProps {
     values: any[];
     readOnly: boolean;
     onChange: any;
-    expressionStore?: IExpressionStore;
+    expressionStore?: ExpressionStore;
 
 }
 

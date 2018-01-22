@@ -2,16 +2,17 @@ import * as React from 'react';
 
 import ExpressionSimpleItem from './expressionSimpleItem';
 import ExpressionComplexItem from './expressionComplexItem';
-import { IExpressionStore } from '../types/index';
+import { ExpressionStore } from '../stores/ExpressionStore';
 import { observer, inject } from 'mobx-react';
+import { AbstractNode } from '../types/index';
 
 interface ExpressionItemState {
 }
 
 interface ExpressionItemProps {
-    node: number;
+    node: AbstractNode;
     readOnly: boolean;
-    expressionStore?: IExpressionStore;
+    expressionStore?: ExpressionStore;
 }
 
 @inject('expressionStore')
@@ -19,18 +20,16 @@ interface ExpressionItemProps {
 export default class ExpressionItem extends React.Component<ExpressionItemProps, ExpressionItemState> {
 
     render(): JSX.Element {
-        let node = this.props.expressionStore!.getNode(this.props.node.toString());
+        let {node} = this.props;
         if (!node) {
             return <div>Empty</div>;
         }
         else {
             const { readOnly } = this.props;
-            const { parent } = node;
             if (node.name === 'logic') {
                 return (
                     <ExpressionComplexItem
-                        node={node.nodeId}
-                        parent={parent}
+                        node={node}
                         readOnly={readOnly}
                     />
                 );
@@ -38,8 +37,7 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps,
             else {
                 return (
                     <ExpressionSimpleItem
-                        node={node.nodeId}
-                        parent={parent}
+                        node={node}
                         readOnly={readOnly}
                     />
                 );

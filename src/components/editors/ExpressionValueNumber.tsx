@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputNumber } from 'antd';
 import { inject, observer } from 'mobx-react';
-import { IExpressionStore } from '../../types/index';
+import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueNumberState {
 }
@@ -10,7 +10,7 @@ interface ExpressionValueNumberProps {
     values: any[];
     readOnly: boolean;
     onChange: any;
-    expressionStore?: IExpressionStore;
+    expressionStore?: ExpressionStore;
 
 }
 @inject('expressionStore')

@@ -1,6 +1,7 @@
 import { ObservableMap } from 'mobx';
 import { observable } from 'mobx';
 import { action } from 'mobx/lib/api/action';
+import ExpressionItem from '../components/expressionItem';
 export type ExpressionType = 'logic' | 'compare';
 
 export type ExpressionBooleanLogic = 'And' | 'Or';
@@ -14,7 +15,7 @@ export interface ExpressionOperand {
   name: ExpressionType;
 }
 
-export interface IExpressionTreeNode {
+export type IExpressionTreeNode = AbstractNode | null | {
   name: 'logic' | 'compare';
   nodeId: number;
   operator: ExpressionOperator;
@@ -25,30 +26,7 @@ export interface IExpressionTreeNode {
   isClone: boolean;
   parent?: number;
   children?: number[];
-}
-
-export interface IExpressionStore {
-  expression: IExpressionTreeNode;
-  expressionMap: ObservableMap<IExpressionTreeNode>;
-  moduleId: number;
-  rootId: number;
-  entityName: string;
-  readonly: boolean;
-  valid: boolean;
-  knownMetaDictionary: any[];
-  knownPickLists: any[];
-  getNode: (nodeId: string) => IExpressionTreeNode | undefined;
-  getMeta: (attrId: string) => IMetaDictionaryElement | undefined;
-  addSimpleChild: (parentId: string) => void;
-  removeChild: (node: IExpressionTreeNode) => void;
-  validate: () => void;
-  reveal: () => void;
-  fetchStuff: () => Promise<void>;
-  getAllowedOperators: (meta: any) => { value: string; label: string }[];
-  getOperandKind: (meta: any, operator: any) => ExpressionOperandKind;
-  replaceWithComplex: (logic: ExpressionBooleanLogic, node: IExpressionTreeNode) => void;
-  metaLoaded: boolean;
-}
+};
 
 export interface IMetaDictionaryElement {
   attrId: string;
@@ -58,16 +36,16 @@ export interface IMetaDictionaryElement {
   attrCtrlParams: string;
 }
 
-
-
 export interface NodeOwner {
   addSimpleChild(): void;
   removeNode(node: AbstractNode): void;
+  isAncestor(connector: any): boolean;
 }
 
 export class AbstractNode {
-  name: string;
-  parentNode: NodeOwner;
+  @observable name: 'logic' | 'compare';
+  @observable isClone: boolean;
+  @observable parentNode: NodeOwner;
 
   @action addSibling() {
     if (this.parentNode) {
@@ -77,6 +55,14 @@ export class AbstractNode {
 
   @action removeSelf() {
     this.parentNode.removeNode(this);
+  }
+
+  @action replaceWithComplex(logic: ExpressionBooleanLogic) {
+    // do stuff;
+  }
+
+  @action isAncestor(connector: any) {
+    // do stuff
   }
 }
 
@@ -89,7 +75,7 @@ export class CompareNode extends AbstractNode {
   attrCaption: string;
 
   @observable
-  operator: string;
+  operator: ExpressionOperator;
 
   @observable
   operands: string[];
@@ -98,11 +84,13 @@ export class CompareNode extends AbstractNode {
     super();
     this.operands = new Array<string>();
   }
+
+
 }
 
 export class LogicNode extends AbstractNode implements NodeOwner {
   @observable
-  operator: string;
+  operator: ExpressionBooleanLogic;
 
   @observable
   operands: AbstractNode[];
@@ -127,7 +115,6 @@ export class LogicNode extends AbstractNode implements NodeOwner {
 export class NodeFactory {
   static LoadExpression(jsonExpression: any): AbstractNode | null {
     if (jsonExpression && jsonExpression.name) {
-
 
       switch (jsonExpression.name) {
         case 'compare':

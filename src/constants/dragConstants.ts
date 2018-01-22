@@ -1,6 +1,7 @@
-import { IExpressionStore } from "../types/index";
+import { ExpressionStore } from "../stores/ExpressionStore";
 
-function handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number, store: IExpressionStore) {
+
+function handleHover(oldParentID: number, newParentID: number, targetID: number, sourceID: number, store: ExpressionStore) {
     let oldParent = store.getNode(oldParentID.toString());
     let newParent = store.getNode(newParentID.toString());
 
@@ -15,7 +16,7 @@ function handleHover(oldParentID: number, newParentID: number, targetID: number,
     oldParent!.children!.splice(sourceIndex, 1);
     source.parent = newParentID
 
-    let targetIndex = newParentID === targetID ? -1 : 
+    let targetIndex = newParentID === targetID ? -1 :
         newParent!.children!.findIndex((node: any) => node === targetID);
 
     if ((newParentID !== targetID && targetIndex < 0)) {
@@ -57,7 +58,7 @@ export function dragCollect(connect: any, monitor: any) {
 export const simpleSource = {
     beginDrag(props: any, monitor: any) {
         let node = props.expressionStore.getNode(props.node);
-        return {node: node, parent: props.parent, store: props.expressionStore};
+        return { node: node, parent: props.parent, store: props.expressionStore };
     },
     endDrag(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
@@ -68,8 +69,8 @@ export const simpleSource = {
 export const simpleTarget = {
     hover(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        let condition = dragNodeInfo.node.name === 'logic' ? 
-            !props.expressionStore.isAncestor(dragNodeInfo.node.nodeId, props.node) : 
+        let condition = dragNodeInfo.node.name === 'logic' ?
+            !props.expressionStore.isAncestor(dragNodeInfo.node.nodeId, props.node) :
             dragNodeInfo.node.nodeId !== props.node;
         if (condition) {
             dragNodeInfo.node.isClone = true;
@@ -86,10 +87,11 @@ export const simpleTarget = {
 export const complexSource = {
     beginDrag(props: any, monitor: any) {
         let node = props.expressionStore.getNode(props.node);
-        return {node: node, 
-                parent: props.parent ? props.parent : props.node, 
-                store: props.expressionStore
-            };
+        return {
+            node: node,
+            parent: props.parent ? props.parent : props.node,
+            store: props.expressionStore
+        };
     },
     endDrag(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
@@ -100,8 +102,8 @@ export const complexSource = {
 export const complexTarget = {
     hover(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        
-        let condition = dragNodeInfo.node.name === 'logic' ? 
+
+        let condition = dragNodeInfo.node.name === 'logic' ?
             dragNodeInfo.node.nodeId !== props.node && !props.expressionStore.isAncestor(dragNodeInfo.node.nodeId, props.node)
             : true;
 
@@ -109,9 +111,9 @@ export const complexTarget = {
         if (condition && newParent && newParent.children[0] !== dragNodeInfo.node.nodeId) {
             dragNodeInfo.node.isClone = true;
             handleHover(
-                dragNodeInfo.parent, 
-                props.node, 
-                props.node, 
+                dragNodeInfo.parent,
+                props.node,
+                props.node,
                 dragNodeInfo.node.nodeId,
                 dragNodeInfo.store);
             dragNodeInfo.parent = props.node;

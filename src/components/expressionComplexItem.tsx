@@ -22,17 +22,17 @@ import './expressionComplexItem.css';
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
 import { inject, observer } from 'mobx-react';
-import { IExpressionStore, ExpressionBooleanLogic, IExpressionTreeNode, ExpressionOperator } from '../types/index';
+import { ExpressionBooleanLogic, LogicNode, AbstractNode } from '../types/index';
+import { ExpressionStore } from '../stores/ExpressionStore';
 
 interface ExpressionComplexItemProps {
-    node: number;
-    parent?: any;
+    node: LogicNode;
     readonly: boolean;
     connectDragSource: any;
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
-    expressionStore?: IExpressionStore;
+    expressionStore?: ExpressionStore;
 
 }
 
@@ -43,55 +43,42 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
         cachedPickLists: PropTypes.any
     };
 
-    node: IExpressionTreeNode;
-
     constructor(props: any, context: any) {
         super(props, context);
 
         this.addSimpleChild = this.addSimpleChild.bind(this);
         this.removeChild = this.removeChild.bind(this);
         this.replaceWithComplex = this.replaceWithComplex.bind(this);
-        this.node = this.props.expressionStore!.getNode(this.props.node.toString())!;
     }
 
     replaceWithComplex(logic: ExpressionBooleanLogic) {
-        this.props.expressionStore!.replaceWithComplex(logic, this.node);
+        this.props.node!.replaceWithComplex(logic);
     }
 
-    updateOperator(op: ExpressionOperator) {
-         this.node.operator = op;
+    updateOperator(op: ExpressionBooleanLogic) {
+        this.props.node.operator = op;
     }
 
     addSimpleChild() {
-        this.props.expressionStore!.addSimpleChild(this.props.node.toString());
+        this.props.node!.addSimpleChild();
     }
 
-    removeChild(child: any) {
-        this.props.expressionStore!.removeChild(this.node);
+    removeChild(child: AbstractNode) {
+        this.props.node!.removeNode(child);
 
     }
 
     removeSelf() {
-        this.props.expressionStore!.removeChild(this.node);
+        this.props.node!.removeNode(this.props.node);
     }
 
     isAncestor(connector: any) {
-        return connector === this.props.node ? true : this.props.parent.isAncestor(connector);
+        return connector === this.props.node ? true : this.props.node.parentNode.isAncestor(connector);
     }
-
-    componentWillReceiveProps(newProps: any) {
-        this.node = newProps.expressionStore!.getNode(newProps.node);
-
-        this.setState({
-            operator: newProps.node.operator,
-            children: newProps.node.operands
-        });
-    }
-
     render() {
-        const node = this.props.expressionStore!.getNode(this.props.node.toString());
+        const node = this.props.node;
         const props = this.props;
-        const operands = node!.children;
+        const operands = node!.operands;
 
         if (operands && operands.length) {
             let nodes = operands.map(function (n: any, i: number) {
@@ -154,10 +141,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
 }
 
 export default
-inject('expressionStore')(
-    DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
-        DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
-            DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
+    inject('expressionStore')(
+        DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
+            DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
+                DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
+            )
         )
-    )
-);
+    );

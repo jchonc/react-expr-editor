@@ -25,10 +25,11 @@ import {
 } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
-import { IExpressionStore, ExpressionOperator, IExpressionTreeNode, ExpressionBooleanLogic } from '../types/index';
+import { ExpressionOperator, IExpressionTreeNode, ExpressionBooleanLogic } from '../types/index';
 import ValidatorFactory from '../factories/ValidatorFactory';
 import ExpressionValueLookup from './editors/ExpressionValueLookup';
 import { observer, inject } from 'mobx-react';
+import { ExpressionStore } from '../stores/ExpressionStore';
 
 interface ExpressionSimpleItemProps {
     node: number;
@@ -38,7 +39,7 @@ interface ExpressionSimpleItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
-    expressionStore?: IExpressionStore;
+    expressionStore?: ExpressionStore;
 }
 
 @observer
