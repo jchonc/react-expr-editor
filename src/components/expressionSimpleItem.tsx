@@ -19,6 +19,7 @@ import {
     simpleSource,
     simpleTarget
 } from '../constants/dragConstants';
+
 import './expressionSimpleItem.css';
 import { ExpressionOperator, CompareNode } from '../types/index';
 
@@ -35,7 +36,7 @@ interface ExpressionSimpleItemProps {
     expressionStore?: ExpressionStore;
     utilityStore?: UtilityStore;
 }
-
+@observer
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
     constructor(props: any, context: any) {
@@ -206,11 +207,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
 export default
     inject(...['expressionStore', 'utilityStore'])(
-        observer(
-            DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
-                DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
-                    DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
-                )
+        DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
+            DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
+                DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
             )
         )
     );

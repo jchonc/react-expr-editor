@@ -9,7 +9,9 @@ import { NodeOwner, AbstractNode, CompareNode } from '../types/index';
 import { Provider, observer } from 'mobx-react';
 
 interface ExpressionEditorProps {
-    moduleId: number; entityName: string; root: any;
+    moduleId: number; 
+    entityName: string; 
+    root: any;
 }
 
 const stores = {

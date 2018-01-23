@@ -2,22 +2,16 @@ import * as React from 'react';
 
 import ExpressionSimpleItem from './expressionSimpleItem';
 import ExpressionComplexItem from './expressionComplexItem';
-import { ExpressionStore } from '../stores/ExpressionStore';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { AbstractNode, LogicNode, CompareNode } from '../types/index';
-
-interface ExpressionItemState {
-}
 
 interface ExpressionItemProps {
     node: AbstractNode;
     readOnly: boolean;
-    expressionStore?: ExpressionStore;
 }
 
-@inject('expressionStore')
 @observer
-export default class ExpressionItem extends React.Component<ExpressionItemProps, ExpressionItemState> {
+export default class ExpressionItem extends React.Component<ExpressionItemProps> {
 
     render(): JSX.Element {
         let {node} = this.props;

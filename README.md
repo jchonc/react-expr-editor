@@ -1,12 +1,16 @@
-My first attempt for expression editor
+Expression Editor using React
 
 TODO:
 
-* lines using :first-child :before
-* fetch/api
-    * server code is in server folder
-    * run `npm run server-start`
-    * server will be listening to localhost:3001
-* lookup for user/employee
-* drag-n-drop
-* unit tests
+* copy/paste
+* more test coverage
+* calling from HTML/calling from React
+
+Debug:
+  yarn server-start  // to get the mock API working
+  yarn start // to debug 
+  
+Count the LOC: (npm i -g sloc)
+ sloc --exclude "^.*\.test.tsx$" src/
+
+

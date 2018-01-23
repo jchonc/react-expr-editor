@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { InputNumber } from 'antd';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { ExpressionStore } from '../../stores/ExpressionStore';
-
-interface ExpressionValueNumberState {
-}
 
 interface ExpressionValueNumberProps {
     values: any[];
@@ -13,9 +10,9 @@ interface ExpressionValueNumberProps {
     expressionStore?: ExpressionStore;
 
 }
-@inject('expressionStore')
+
 @observer
-class ExpressionValueNumber extends React.Component<ExpressionValueNumberProps, ExpressionValueNumberState> {
+class ExpressionValueNumber extends React.Component<ExpressionValueNumberProps> {
     render() {
         let v = null;
         if (this.props.values && this.props.values.length) {

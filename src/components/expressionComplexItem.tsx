@@ -17,11 +17,9 @@ import {
 
 import './expressionComplexItem.css';
 
-import { DragSource } from 'react-dnd';
-import { DropTarget } from 'react-dnd';
-import { inject, observer } from 'mobx-react';
+import { DragSource, DropTarget } from 'react-dnd';
+import { observer } from 'mobx-react';
 import { ExpressionBooleanLogic, LogicNode } from '../types/index';
-import { ExpressionStore } from '../stores/ExpressionStore';
 
 interface ExpressionComplexItemProps {
     node: LogicNode;
@@ -30,7 +28,6 @@ interface ExpressionComplexItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     isDragging: boolean;
-    expressionStore?: ExpressionStore;
 }
 
 @observer
@@ -125,10 +122,8 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
 }
 
 export default
-    inject('expressionStore')(
-        DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
-            DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
-                DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
-            )
+    DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
+        DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
+            DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
         )
     );

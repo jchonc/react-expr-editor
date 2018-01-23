@@ -1,22 +1,15 @@
 import * as React from 'react';
 import { Input } from 'antd';
-import { observer, inject } from 'mobx-react';
-import { ExpressionStore } from '../../stores/ExpressionStore';
-
-interface ExpressionValueTextState {
-}
+import { observer } from 'mobx-react';
 
 interface ExpressionValueTextProps {
     values: any[];
     readOnly: boolean;
     onChange: any;
-    expressionStore?: ExpressionStore;
-
 }
 
-@inject('expressionStore')
 @observer
-class ExpressionValueText extends React.Component<ExpressionValueTextProps, ExpressionValueTextState> {
+class ExpressionValueText extends React.Component<ExpressionValueTextProps> {
 
     render() {
         let v = '';
@@ -29,7 +22,7 @@ class ExpressionValueText extends React.Component<ExpressionValueTextProps, Expr
                 className="expr-simple-value" 
                 readOnly={this.props.readOnly}
                 value={v} 
-                onChange={(evt) => { this.props.onChange([evt.target.value]); }}
+                onChange={(evt) => { if (!this.props.readOnly) { this.props.onChange([evt.target.value]); } }}
             />
         );
     }
