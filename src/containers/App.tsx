@@ -1,40 +1,61 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
-import Button from 'antd/lib/button';
+import { AttrIdSingleton } from '../constants/constants';
 
-import { ExpressionStore } from '../stores/ExpressionStore';
-import { inject, observer } from 'mobx-react';
+const testComplexExpression: any = {
+  name: 'logic',
+  operator: 'And',
+  nodeId: AttrIdSingleton.NextUniqueNodeId,
+  isClone: false,
+  operands: [
+    {
+      name: 'compare',
+      attrId: '11001',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
+      attrCaption: 'First Name',
+      operator: 'Equal',
+      isClone: false,
+      operands: ['Jian']
+    },
+    {
+      name: 'compare',
+      attrId: '11003',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
+      attrCaption: 'Gender',
+      operator: 'NotEqual',
+      isClone: false,
+      operands: ['GD_MALE']
+    },
+    {
+      name: 'compare',
+      attrId: '11004',
+      nodeId: AttrIdSingleton.NextUniqueNodeId,
+      attrCaption: 'Birthday',
+      operator: 'Equal',
+      isClone: false,
+      operands: ['2011-12-12']
+    }
+  ]
+};
 
-interface AppProps {
-  expressionStore?: ExpressionStore;
-}
-
-@inject('expressionStore')
-@observer
-class App extends React.Component<AppProps> {
+class App extends React.Component<{ }> {
 
   render() {
-    const { expressionStore } = this.props;
-    if (expressionStore) {
-      return (
-        <div className="container">
-          <div className="row">
-            <h2>Welcome to React</h2>
-          </div>
-          <ExpressionEditor
-            root={expressionStore.expression!}
-          />
-          <hr />
-          {!expressionStore.valid && <div className="error">There is an error</div>}
-          <div>
-            <Button onClick={() => { expressionStore.reveal(); }}>Reveal</Button>
-            <div id="expr_value" />
-          </div>
+
+    return (
+      <div className="container">
+        <div className="row">
+          <h2>Welcome to React</h2>
         </div>
-      );
-    }
-    return;
+        <ExpressionEditor
+          moduleId={1}
+          entityName={'patient'}
+          root={testComplexExpression}
+        />
+      </div>
+    );
+
   }
 }
 
