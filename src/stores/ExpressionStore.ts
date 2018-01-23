@@ -11,40 +11,8 @@ export class ExpressionStore {
     moduleId: number;
     readonly: boolean;
 
-    @observable knownPickLists = [{
-        listName: 'Gender',
-        items: [
-            { value: 'GD_MALE', label: 'Male', description: 'Gentleman' },
-            { value: 'GD_FEMALE', label: 'Female', description: 'Lady' }
-        ]
-    }];
-
-    @observable knownMetaDictionary: any[] = [{
-        attrId: '11001',
-        attrCaption: 'First Name',
-        attrDataType: 'string',
-        attrCtrlType: 'text',
-        attrCtrlParams: ''
-    }, {
-        attrId: '11002',
-        attrCaption: 'Last Name',
-        attrDataType: 'string',
-        attrCtrlType: 'text',
-        attrCtrlParams: ''
-    }, {
-        attrId: '11003',
-        attrCaption: 'Gender',
-        attrDataType: 'string',
-        attrCtrlType: 'picklist',
-        attrCtrlParams: 'Gender'
-    }, {
-        attrId: '11004',
-        attrCaption: 'Birthday',
-        attrDataType: 'date',
-        attrCtrlType: 'date',
-        attrCtrlParams: ''
-
-    }];
+    @observable knownPickLists = [];
+    @observable knownMetaDictionary: any[] = [];
 
     @action setExpression(expression: any) {
         this.expression = NodeFactory.LoadExpression(expression);
