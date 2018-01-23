@@ -19,7 +19,7 @@ export class UtilityStore {
     @observable dictionary: any[];
 
     @computed get usedLists(): any[] {
-        if (!this.dictionary || !this.dictionary.length || !this.picklists) {
+        if (!this.dictionary || !this.dictionary.length) {
             return [];
         }
         let result = new Set<string>(this.dictionary
