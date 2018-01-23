@@ -102,7 +102,7 @@ export class CompareNode extends AbstractNode {
 
   getOperandKind(meta: any) {
     if (meta) {
-      if (meta.attrCtrlType === 'date' && ( this.operator === 'IsBetween' || this.operator === 'IsNotBetween' )) {
+      if (meta.attrCtrlType === 'date' && (this.operator === 'IsBetween' || this.operator === 'IsNotBetween')) {
         return 'date-range';
       }
       if (meta.attrCtrlType === 'picklist') {
@@ -163,7 +163,11 @@ export class LogicNode extends AbstractNode implements NodeOwner {
   }
 
   @computed get isValid(): boolean {
-    return this.operands.every((x) => x.isValid);
+    if (this.operands && this.operands.length) {
+      return this.operands.every((x) => x!.isValid);
+    } else {
+      return true;
+    }
   }
 }
 
@@ -201,9 +205,9 @@ export class NodeFactory {
     return null;
   }
 
-  static SaveExpression( node: AbstractNode | null ): any | null {
-    if ( node ) {
-      if ( node instanceof CompareNode ) {
+  static SaveExpression(node: AbstractNode | null): any | null {
+    if (node) {
+      if (node instanceof CompareNode) {
         const sn = node as CompareNode;
         return {
           name: 'compare',
@@ -224,5 +228,5 @@ export class NodeFactory {
     }
     return null;
   }
-  
+
 }

@@ -3,8 +3,6 @@ import { observable, action } from 'mobx';
 import utilityStore from './UtilityStore';
 
 export class ExpressionStore {
-    @observable metaLoaded: boolean = false;
-
     @observable valid: boolean = true;
     @observable expression: AbstractNode | null;
 

@@ -70,7 +70,18 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
                         <div>
                             <Button>Copy</Button>
                             <Button>Paste</Button>
-                            <Button>Clear</Button>
+                            <Button
+                                onClick={() => {
+                                    stores.expressionStore.setExpression({
+                                        operator: 'And',
+                                        name: 'logic',
+                                        isClone: false,
+                                        operands: []
+                                    });
+                                }}
+                            >
+                                Clear
+                            </Button>
                         </div>
                     );
                 }

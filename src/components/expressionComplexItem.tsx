@@ -35,7 +35,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     constructor(props: any) {
         super(props);
         this.handleMenuClick = this.handleMenuClick.bind(this);
-    }    
+    }
 
     updateOperator(op: ExpressionBooleanLogic) {
         this.props.node.operator = op;
@@ -53,12 +53,49 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                 break;
         }
     }
-    
+
     render() {
         const node = this.props.node;
         const props = this.props;
-        const operands = node!.operands;
+        const options: any = [
+            { value: 'and', label: 'AND' },
+            { value: 'or', label: 'OR' }
+        ];
 
+        let menu = (<span>&nbsp;</span>);
+        if (!this.props.readonly) {
+            const dropdownMenu = (
+                <Menu onClick={this.handleMenuClick}>
+                    <Menu.Item key="NEW_LINE">NewLine</Menu.Item>
+                    <Menu.Item key="SOMETHING">Another Link</Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item key="REMOVE">Remove Group</Menu.Item>
+                </Menu>
+            );
+            menu = (
+                <Dropdown overlay={dropdownMenu}>
+                    <Button><Icon type="down" /></Button>
+                </Dropdown>
+            );
+        }
+        const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
+
+        let logicNode = connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
+            <div className="expr-logic">
+                <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
+                <Select
+                    className="expr-logic-operator"
+                    disabled={this.props.readonly}
+                    value={node!.operator}
+                    onChange={(evt: any) => { this.updateOperator(evt.value); }}
+                >
+                    {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
+                </Select>
+                <div className="expr-logic-part">
+                    {menu}
+                </div>
+            </div>)));
+        const operands = node!.operands;
         if (operands && operands.length) {
             let nodes = operands.map(function (n: any, i: number) {
                 return (
@@ -68,46 +105,6 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                         readOnly={props.readonly}
                     />);
             });
-
-            const options: any = [
-                { value: 'and', label: 'AND' },
-                { value: 'or', label: 'OR' }
-            ];
-
-            let menu = (<span>&nbsp;</span>);
-            if (!this.props.readonly) {
-                const dropdownMenu = (
-                    <Menu onClick={this.handleMenuClick}>
-                      <Menu.Item key="NEW_LINE">NewLine</Menu.Item>
-                      <Menu.Item key="SOMETHING">Another Link</Menu.Item>
-                      <Menu.Divider />
-                      <Menu.Item key="REMOVE">Remove Group</Menu.Item>
-                    </Menu>
-                  );
-                menu = (
-                    <Dropdown overlay={dropdownMenu}>
-                        <Button><Icon type="down" /></Button>
-                    </Dropdown>
-                );
-            }
-            const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
-
-            let logicNode = connectDropTargetComplex(connectDropTargetSimple(connectDragSource(
-                <div className="expr-logic">
-                    <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
-                    <Select
-                        className="expr-logic-operator"
-                        disabled={this.props.readonly}
-                        value={node!.operator}
-                        onChange={(evt: any) => { this.updateOperator(evt.value); }}
-                    >
-                        {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
-                    </Select>
-                    <div className="expr-logic-part">
-                        {menu}
-                    </div>
-                </div>)));
-
             return (
                 <div className={classNames('expr-complex-item', { clone: node!.isClone })}>
                     {logicNode}
@@ -117,7 +114,10 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                 </div>
             );
         }
-        return null;
+        return (
+            <div className={classNames('expr-complex-item', { clone: node!.isClone })}>
+                {logicNode}
+            </div>);
     }
 }
 
