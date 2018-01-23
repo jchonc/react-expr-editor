@@ -1,6 +1,8 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
+import { Button } from 'antd';
+import expressionStore from '../stores/ExpressionStore';
 
 const testComplexExpression: any = {
   name: 'logic',
@@ -10,7 +12,7 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11001',
-  
+
       attrCaption: 'First Name',
       operator: 'Equal',
       isClone: false,
@@ -19,7 +21,7 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11003',
-  
+
       attrCaption: 'Gender',
       operator: 'NotEqual',
       isClone: false,
@@ -28,7 +30,7 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11004',
-  
+
       attrCaption: 'Birthday',
       operator: 'Equal',
       isClone: false,
@@ -37,7 +39,7 @@ const testComplexExpression: any = {
   ]
 };
 
-class App extends React.Component<{ }> {
+class App extends React.Component<{}> {
   render() {
     return (
       <div className="container">
@@ -49,6 +51,10 @@ class App extends React.Component<{ }> {
           entityName={'patient'}
           root={testComplexExpression}
         />
+        <div className="row">
+          <Button onClick={() => expressionStore.reveal()}>Reveal</Button>
+          <pre id="expr_value"/>
+        </div>
       </div>
     );
   }
