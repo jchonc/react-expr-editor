@@ -7,8 +7,6 @@ import { inject, observer } from 'mobx-react';
 import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueDateRangeState {
-    startDate: moment.Moment;
-    endDate: moment.Moment;
 }
 
 interface ExpressionValueDateRangeProps {
