@@ -2,10 +2,8 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
-
 import Button from 'antd/lib/button';
 import expressionStore from '../stores/ExpressionStore';
-
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { NodeOwner, AbstractNode, CompareNode } from '../types/index';
@@ -32,6 +30,9 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
 
     constructor(props: any) {
         super(props);
+        stores.expressionStore.moduleId = this.props.moduleId;
+        stores.expressionStore.entityName = this.props.entityName;
+        stores.expressionStore.setExpression(this.props.root);
     }
 
     componentDidMount() {
@@ -63,10 +64,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
     }
 
     render() {
-        stores.expressionStore.moduleId = 1;
-        stores.expressionStore.entityName = 'patient';
-
-        stores.expressionStore.setExpression(this.props.root);
         if (!expressionStore.metaLoaded) {
             return <div>Loading Metabase</div>;
         }

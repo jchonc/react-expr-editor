@@ -53,12 +53,6 @@ class App extends React.Component<{ }> {
           entityName={'patient'}
           root={testComplexExpression}
         />
-        <hr />
-        {/* {!expressionStore.valid && <div className="error">There is an error</div>} */}
-        <div>
-          {/* <Button onClick={() => { expressionStore.reveal(); }}>Reveal</Button> */}
-          <div id="expr_value" />
-        </div>
       </div>
     );
 
