@@ -13,7 +13,6 @@ interface ExpressionValueMultiListProps {
     readOnly: boolean;
     onChange: any;
     expressionStore?: ExpressionStore;
-
 }
 
 @inject('expressionStore')
@@ -34,10 +33,6 @@ class ExpressionValueMultiList extends React.Component<ExpressionValueMultiListP
         return (
             <Select
                 className="expr-simple-value"
-                // options={this.props.options}
-                // multi={true}
-                // searchable={false}
-                // clearable={false}
                 mode="multiple"
                 disabled={this.props.readOnly}
                 value={this.props.values}

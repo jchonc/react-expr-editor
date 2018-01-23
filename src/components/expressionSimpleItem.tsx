@@ -13,6 +13,8 @@ import ExpressionValueList from './editors/ExpressionValueList';
 import ExpressionValueMultiList from './editors/ExpressionValueMultiList';
 import ExpressionValueDate from './editors/ExpressionValueDate';
 import ExpressionValueDateRange from './editors/ExpressionValueDateRange';
+import ExpressionValueLookup from './editors/ExpressionValueLookup';
+
 import {
     ItemTypes,
     dragCollect,
@@ -24,8 +26,9 @@ import {
 
 import './expressionSimpleItem.css';
 import { ExpressionOperator, CompareNode } from '../types/index';
-import ExpressionValueLookup from './editors/ExpressionValueLookup';
+
 import { observer, inject } from 'mobx-react';
+import { observable } from 'mobx';
 import { ExpressionStore } from '../stores/ExpressionStore';
 
 interface ExpressionSimpleItemProps {
@@ -85,8 +88,8 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         this.props.node.operator = operator;
     }
 
-    updateValue(...values: any[]) {
-        this.props.node.operands = [...values];
+    updateValue(values: string[]) {
+        this.props.node.operands = observable(values);
     }
 
     render() {
@@ -119,7 +122,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let OperandCtrlProps: any = {
                 values: expression.operands,
                 readOnly: this.props.readOnly,
-                onChange: (...evt: any[]) => { this.updateValue(...evt); }
+                onChange: (evt: any) => { this.updateValue(evt); }
             };
 
             switch (operandKind) {

@@ -31,7 +31,7 @@ class ExpressionValueList extends React.Component<ExpressionValueListProps, Expr
                 // clearable={false}
                 disabled={this.props.readOnly}
                 value={v}
-                onChange={(value: any) => { this.props.onChange(value); }}
+                onChange={(value: any) => { this.props.onChange([value]); }}
             >
                 {this.props.options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
             </Select>
