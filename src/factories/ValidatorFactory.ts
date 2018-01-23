@@ -11,7 +11,7 @@ export default class ValidatorFactory {
             case 'date':
                 return this.ValidateDate;
             case 'date-range':
-                return;
+                return this.ValidateDates;
             case 'multi-pick':
                 return this.ValidateMultiPick;
             case 'pick':
@@ -44,4 +44,11 @@ export default class ValidatorFactory {
     private ValidateDate = (values: any[]) => {
         return moment(values[0], 'YYYY-MM-DD').isValid();
     }
+
+    private ValidateDates = (values: any[]) => {
+        return (values.length === 2) &&
+            moment(values[0], 'YYYY-MM-DD').isValid() &&
+            moment(values[1], 'YYYY-MM-DD').isValid();
+    }
+
 }

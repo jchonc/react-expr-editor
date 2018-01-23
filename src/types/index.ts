@@ -7,7 +7,7 @@ export type ExpressionType = 'logic' | 'compare';
 
 export type ExpressionBooleanLogic = 'And' | 'Or';
 
-export type ExpressionOperator = ExpressionBooleanLogic | 'Equal' | 'NotEqual' | 'IsBetween' | 'IsNotBetween' | 'is-one-of';
+export type ExpressionOperator = ExpressionBooleanLogic | 'Equal' | 'NotEqual' | 'IsBetween' | 'IsNotBetween' | 'IsOneOf';
 
 export type ExpressionOperandKind =
   'none' | 'text' | 'number' | 'date' | 'time' | 'datetime' | 'date-range' | 'pick' | 'multi-pick' | 'lookup';
@@ -85,17 +85,17 @@ export class CompareNode extends AbstractNode {
   }
 
   getAllowedOperators(meta: any) {
-    // gt; ge; lt; le; between; is-one-of; 
     let results = [
-      { value: 'eq', label: 'equals to' },
-      { value: 'ne', label: 'not equal to' }
+      { value: 'Equal', label: 'equals to' },
+      { value: 'NotEqual', label: 'not equal to' }
     ];
     if (meta) {
       if (meta.attrCtrlType === 'picklist') {
-        results.push({ value: 'is-one-of', label: 'is one of' });
+        results.push({ value: 'IsOneOf', label: 'is one of' });
       }
       if (meta.attrCtrlType === 'date') {
-        results.push({ value: 'between', label: 'between' });
+        results.push({ value: 'IsBetween', label: 'between' });
+        results.push({ value: 'IsNotBetween', label: 'is not between' });
       }
     }
     return results;
@@ -103,11 +103,11 @@ export class CompareNode extends AbstractNode {
 
   getOperandKind(meta: any) {
     if (meta) {
-      if (meta.attrCtrlType === 'date' && this.operator === 'IsBetween') {
+      if (meta.attrCtrlType === 'date' && ( this.operator === 'IsBetween' || this.operator === 'IsNotBetween' )) {
         return 'date-range';
       }
       if (meta.attrCtrlType === 'picklist') {
-        return (this.operator === 'is-one-of') ? 'multi-pick' : 'pick';
+        return (this.operator === 'IsOneOf') ? 'multi-pick' : 'pick';
       }
       if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
         return meta.attrCtrlType;

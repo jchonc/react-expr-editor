@@ -32,10 +32,11 @@ class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeP
     }
 
     render() {
+        const v = this.props.values.map((s: string) => moment(s));
         return (
             <RangePicker 
                 disabled={this.props.readOnly}
-                value={this.props.values}
+                value={v}
                 onChange={this.onChanged}
             />
         );
