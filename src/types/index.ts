@@ -24,7 +24,6 @@ export interface NodeOwner {
 }
 
 export abstract class AbstractNode {
-  @observable name: 'logic' | 'compare'; // revisit later, move to instanceof later
   @observable isClone: boolean;
   @observable parentNode?: NodeOwner;
   abstract isValid: boolean;
@@ -175,7 +174,6 @@ export class NodeFactory {
       switch (jsonExpression.name) {
         case 'compare':
           let simpleResult = new CompareNode(undefined);
-          simpleResult.name = jsonExpression.name;
           simpleResult.attrId = jsonExpression.attrId;
           simpleResult.attrCaption = jsonExpression.attrCaption;
           simpleResult.operator = jsonExpression.operator;
@@ -185,7 +183,6 @@ export class NodeFactory {
           return simpleResult;
         case 'logic':
           let compositeResult = new LogicNode(undefined);
-          compositeResult.name = jsonExpression.name;
           compositeResult.operator = jsonExpression.operator;
           if (jsonExpression.operands && jsonExpression.operands.length) {
             jsonExpression.operands.map(function (se: any) {

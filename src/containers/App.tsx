@@ -10,6 +10,7 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11001',
+  
       attrCaption: 'First Name',
       operator: 'Equal',
       isClone: false,
@@ -18,6 +19,7 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11003',
+  
       attrCaption: 'Gender',
       operator: 'NotEqual',
       isClone: false,
@@ -26,6 +28,7 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11004',
+  
       attrCaption: 'Birthday',
       operator: 'Equal',
       isClone: false,

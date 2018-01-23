@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
 import ExpressionItem from './expressionItem';
 
 import { Menu, Dropdown, Button, Icon, Select } from 'antd';
@@ -36,11 +35,6 @@ interface ExpressionComplexItemProps {
 
 @observer
 class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> {
-    static contextTypes = {
-        metaDictionary: PropTypes.any,
-        cachedPickLists: PropTypes.any
-    };
-
     constructor(props: any) {
         super(props);
         this.handleMenuClick = this.handleMenuClick.bind(this);
