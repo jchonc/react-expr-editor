@@ -26,7 +26,7 @@ class ExpressionValueNumber extends React.Component<ExpressionValueNumberProps, 
                 className="expr-simple-value" 
                 disabled={this.props.readOnly}
                 value={v} 
-                onChange={(value) => { this.props.onChange(value); }}
+                onChange={(value) => { this.props.onChange([value]); }}
             />
         );
     }

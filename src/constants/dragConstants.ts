@@ -13,6 +13,11 @@ function handleHover(oldParent: LogicNode, newParent: LogicNode, target: Abstrac
     source.parentNode = newParent;
 }
 
+function confirmPlace(dragNode: AbstractNode, dragParentNode: LogicNode, TargetNode: AbstractNode): boolean {
+    let index = dragParentNode.operands.findIndex((n: AbstractNode)  => n === dragNode);
+    return index > 0 && TargetNode === dragParentNode.operands[index - 1];
+}
+
 export const ItemTypes = {
     Complex: 'Complex',
     Simple: 'Simple'
@@ -61,7 +66,7 @@ export const simpleTarget = {
             !targetNode.isDescedentOf(dragNode) :
             dragNode !== targetNode;
 
-        if (condition) {
+        if (condition && !confirmPlace(dragNode, dragNode.parentNode, targetNode)) {
             dragNode.isClone = true;
             handleHover(dragNode.parentNode, targetNode.parentNode, targetNode, dragNode);
         }
