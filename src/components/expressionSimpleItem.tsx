@@ -24,7 +24,7 @@ import { ExpressionOperator, CompareNode } from '../types/index';
 
 import { observer, inject } from 'mobx-react';
 import { observable } from 'mobx';
-import { ExpressionStore } from '../stores/ExpressionStore';
+import { ExpressionStore, UtilityStore } from '../stores/ExpressionStore';
 
 interface ExpressionSimpleItemProps {
     node: CompareNode;
@@ -33,20 +33,20 @@ interface ExpressionSimpleItemProps {
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
     expressionStore?: ExpressionStore;
+    utilityStore?: UtilityStore;
 }
 
-@observer
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
-   constructor(props: any, context: any) {
+    constructor(props: any, context: any) {
         super(props, context);
         this.handleMenuClick = this.handleMenuClick.bind(this);
     }
 
     handleMenuClick(e: any) {
         switch (e.key) {
-            case 'ADD_AND': 
-                this.props.node.replaceWithComplex('And'); 
+            case 'ADD_AND':
+                this.props.node.replaceWithComplex('And');
                 break;
             case 'ADD_OR':
                 this.props.node.replaceWithComplex('Or');
@@ -57,7 +57,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             case 'REMOVE':
                 this.props.node.removeSelf();
                 break;
-            default: 
+            default:
                 break;
         }
     }
@@ -67,7 +67,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         let meta = this.props.expressionStore!.getMeta(elmId);
         if (expression && meta) {
             expression.attrId = elmId;
-            expression.attrCaption = meta.attrCaption;          
+            expression.attrCaption = meta.attrCaption;
             expression.operands = ['', ''];
         }
     }
@@ -84,7 +84,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
         let expression = this.props.node;
         if (expression) {
-            let options = this.props.expressionStore!.knownMetaDictionary.map(function (item: any) {
+            let options = this.props.utilityStore!.dictionary.map(function (item: any) {
                 return {
                     value: item.attrId,
                     label: item.attrCaption
@@ -97,7 +97,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let listItems: any[] = [];
             if (meta) {
                 if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams) {
-                    const list = this.props.expressionStore!.knownPickLists.find(function (lr: any) {
+                    const list = this.props.utilityStore!.picklists.find(function (lr: any) {
                         return lr.listName === meta!.attrCtrlParams;
                     });
                     if (list) {
@@ -152,11 +152,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             if (!this.props.readOnly) {
                 const dropdownMenu = (
                     <Menu onClick={this.handleMenuClick}>
-                    <Menu.Item key="ADD_AND">AND</Menu.Item>
-                    <Menu.Item key="ADD_OR">OR</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item key="NEW_LINE">New Line</Menu.Item>
-                    <Menu.Item key="REMOVE">Remove</Menu.Item>
+                        <Menu.Item key="ADD_AND">AND</Menu.Item>
+                        <Menu.Item key="ADD_OR">OR</Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Item key="NEW_LINE">New Line</Menu.Item>
+                        <Menu.Item key="REMOVE">Remove</Menu.Item>
                     </Menu>
                 );
                 menu = (
@@ -205,10 +205,12 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 }
 
 export default
-    inject('expressionStore')(
-        DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
-            DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
-                DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
+    inject(...['expressionStore', 'utilityStore'])(
+        observer(
+            DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
+                DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
+                    DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
+                )
             )
         )
     );

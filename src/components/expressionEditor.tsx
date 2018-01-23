@@ -2,7 +2,7 @@ import * as React from 'react';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
 import Button from 'antd/lib/button';
-import expressionStore from '../stores/ExpressionStore';
+import expressionStore, { utilityStore } from '../stores/ExpressionStore';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { NodeOwner, AbstractNode, CompareNode } from '../types/index';
@@ -13,7 +13,8 @@ interface ExpressionEditorProps {
 }
 
 const stores = {
-    expressionStore
+    expressionStore,
+    utilityStore,
 };
 
 @observer
@@ -27,7 +28,10 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
     }
 
     componentDidMount() {
-        expressionStore!.fetchStuff();
+        stores.utilityStore.fetchDictionary(this.props.moduleId, this.props.entityName)
+            .then(() => {
+                stores.utilityStore.fetchPicklists(utilityStore.usedLists);
+            });
     }
 
     isDescedentOf(parentNode: AbstractNode) {
@@ -40,15 +44,15 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
 
     removeNode(node: AbstractNode): void {
         const newExp = new CompareNode(this);
-        expressionStore.expression = newExp;
+        stores.expressionStore.expression = newExp;
     }
 
     replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void {
-        expressionStore.expression = newNode;
+        stores.expressionStore.expression = newNode;
     }
 
     render() {
-        if (!expressionStore.metaLoaded) {
+        if (stores.utilityStore.isBusy) {
             return <div>Loading Metabase</div>;
         }
         else {
