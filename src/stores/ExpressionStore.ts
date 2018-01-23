@@ -19,6 +19,19 @@ export class ExpressionStore {
         document.getElementById('expr_value')!.innerHTML = result;
     }
 
+    @action clear() {
+        this.setExpression({
+            operator: 'And',
+            name: 'logic',
+            isClone: false,
+            operands: []
+        });
+        utilityStore.fetchDictionary(this.moduleId, this.entityName)
+            .then(() => {
+                utilityStore.fetchPicklists(utilityStore.usedLists);
+            });
+    }
+
     @action getMeta(attrId: string): any | undefined {
         if (!attrId) {
             return undefined;

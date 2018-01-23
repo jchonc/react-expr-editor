@@ -1,5 +1,4 @@
 import utilityStore, { UtilityStore } from './UtilityStore';
-import { exec } from 'child_process';
 describe('Store test', function () {
 
     beforeEach(function () {

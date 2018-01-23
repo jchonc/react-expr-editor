@@ -12,6 +12,7 @@ import { Provider, observer } from 'mobx-react';
 interface ExpressionEditorProps {
     moduleId: number;
     entityName: string;
+    readonly: boolean;
     root: any;
 }
 
@@ -27,6 +28,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
         super(props);
         stores.expressionStore.moduleId = this.props.moduleId;
         stores.expressionStore.entityName = this.props.entityName;
+        stores.expressionStore.readonly = this.props.readonly;
         stores.expressionStore.setExpression(this.props.root);
     }
 
@@ -72,12 +74,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
                             <Button>Paste</Button>
                             <Button
                                 onClick={() => {
-                                    stores.expressionStore.setExpression({
-                                        operator: 'And',
-                                        name: 'logic',
-                                        isClone: false,
-                                        operands: []
-                                    });
+                                    stores.expressionStore.clear();
                                 }}
                             >
                                 Clear

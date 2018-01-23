@@ -57,9 +57,9 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     render() {
         const node = this.props.node;
         const props = this.props;
-        const options: any = [
-            { value: 'and', label: 'AND' },
-            { value: 'or', label: 'OR' }
+        const options: { value: ExpressionBooleanLogic; label: string }[] = [
+            { value: 'And', label: 'AND' },
+            { value: 'Or', label: 'OR' }
         ];
 
         let menu = (<span>&nbsp;</span>);
@@ -86,8 +86,8 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                 <Select
                     className="expr-logic-operator"
                     disabled={this.props.readonly}
-                    value={node!.operator}
-                    onChange={(evt: any) => { this.updateOperator(evt.value); }}
+                    value={node.operator}
+                    onChange={(value: ExpressionBooleanLogic) => { this.updateOperator(value); }}
                 >
                     {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
                 </Select>
