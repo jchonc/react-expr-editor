@@ -1,12 +1,8 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
-
 import { Menu, Dropdown, Button, Icon, Select } from 'antd';
 const Option = Select.Option;
-
 import { DragSource, DropTarget } from 'react-dnd';
 import classNames from 'classnames';
-
 import ExpressionValueText from './editors/ExpressionValueText';
 import ExpressionValueNumber from './editors/ExpressionValueNumber';
 import ExpressionValueList from './editors/ExpressionValueList';
@@ -21,7 +17,6 @@ import {
     simpleSource,
     simpleTarget
 } from '../constants/dragConstants';
-
 import './expressionSimpleItem.css';
 import { ExpressionOperator, CompareNode } from '../types/index';
 import ExpressionValueLookup from './editors/ExpressionValueLookup';
@@ -30,24 +25,17 @@ import { ExpressionStore } from '../stores/ExpressionStore';
 
 interface ExpressionSimpleItemProps {
     node: CompareNode;
-    // parent: any;
     readOnly: boolean;
     connectDragSource: any;
     connectDropTargetComplex: any;
     connectDropTargetSimple: any;
-    // isDragging: boolean;
     expressionStore?: ExpressionStore;
 }
 
 @observer
 class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
-    static contextTypes = {
-        metaDictionary: PropTypes.any,
-        cachedPickLists: PropTypes.any
-    };
-
-    constructor(props: any, context: any) {
+   constructor(props: any, context: any) {
         super(props, context);
         this.handleMenuClick = this.handleMenuClick.bind(this);
     }
@@ -93,7 +81,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
         let expression = this.props.node;
         if (expression) {
-            let options = this.context.metaDictionary.map(function (item: any) {
+            let options = this.props.expressionStore!.knownMetaDictionary.map(function (item: any) {
                 return {
                     value: item.attrId,
                     label: item.attrCaption
@@ -103,10 +91,10 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let meta = this.props.expressionStore!.getMeta(expression.attrId!);
             let operandKind = this.props.node.getOperandKind(meta);
             let allowedOperators = this.props.node.getAllowedOperators(meta);
-            let listItems = [];
+            let listItems: any[] = [];
             if (meta) {
                 if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams) {
-                    const list = this.context.cachedPickLists.find(function (lr: any) {
+                    const list = this.props.expressionStore!.knownPickLists.find(function (lr: any) {
                         return lr.listName === meta!.attrCtrlParams;
                     });
                     if (list) {

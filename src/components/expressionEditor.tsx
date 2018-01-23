@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
 import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
 import Button from 'antd/lib/button';
@@ -20,14 +19,6 @@ const stores = {
 @observer
 class ExpressionEditor extends React.Component<ExpressionEditorProps> implements NodeOwner {
 
-    static childContextTypes = {
-        metaDictionary: PropTypes.any,
-        cachedPickLists: PropTypes.any
-    };
-
-    metaDictionary: any;
-    cachedPickLists: any;
-
     constructor(props: any) {
         super(props);
         stores.expressionStore.moduleId = this.props.moduleId;
@@ -37,13 +28,6 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
 
     componentDidMount() {
         expressionStore!.fetchStuff();
-    }
-
-    getChildContext() {
-        return {
-            metaDictionary: expressionStore!.knownMetaDictionary,
-            cachedPickLists: expressionStore!.knownPickLists
-        };
     }
 
     isDescedentOf(parentNode: AbstractNode) {
