@@ -1,23 +1,17 @@
 import * as React from 'react';
 import { Select } from 'antd';
-import { observer, inject } from 'mobx-react';
-import { ExpressionStore } from '../../stores/ExpressionStore';
+import { observer } from 'mobx-react';
 const Option = Select.Option;
-
-interface ExpressionValueMultiListState {
-}
 
 interface ExpressionValueMultiListProps {
     values: any;
     options: any;
     readOnly: boolean;
     onChange: any;
-    expressionStore?: ExpressionStore;
 }
 
-@inject('expressionStore')
 @observer
-class ExpressionValueMultiList extends React.Component<ExpressionValueMultiListProps, ExpressionValueMultiListState> {
+class ExpressionValueMultiList extends React.Component<ExpressionValueMultiListProps> {
 
     constructor(props: any) {
         super(props);

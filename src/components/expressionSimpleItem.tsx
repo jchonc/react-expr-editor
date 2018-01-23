@@ -19,6 +19,7 @@ import {
     simpleSource,
     simpleTarget
 } from '../constants/dragConstants';
+
 import './expressionSimpleItem.css';
 import { ExpressionOperator, CompareNode } from '../types/index';
 

@@ -2,10 +2,7 @@ import * as React from 'react';
 import { DatePicker } from 'antd';
 
 import moment from 'moment';
-import { observer, inject } from 'mobx-react';
-
-interface ExpressionValueDateState {
-}
+import { observer } from 'mobx-react';
 
 interface ExpressionValueDateProps {
     values: any;
@@ -14,7 +11,7 @@ interface ExpressionValueDateProps {
 }
 
 @observer
-class ExpressionValueDate extends React.Component<ExpressionValueDateProps, ExpressionValueDateState> {
+class ExpressionValueDate extends React.Component<ExpressionValueDateProps> {
     constructor(props: any) {
         super(props);
         this.onDateChanged = this.onDateChanged.bind(this);
