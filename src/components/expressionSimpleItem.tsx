@@ -25,7 +25,8 @@ import { ExpressionOperator, CompareNode } from '../types/index';
 
 import { observer, inject } from 'mobx-react';
 import { observable } from 'mobx';
-import { ExpressionStore, UtilityStore } from '../stores/ExpressionStore';
+import { ExpressionStore } from '../stores/ExpressionStore';
+import { UtilityStore } from '../stores/UtilityStore';
 
 interface ExpressionSimpleItemProps {
     node: CompareNode;
