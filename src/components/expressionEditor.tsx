@@ -4,19 +4,21 @@ import ExpressionItem from '../components/expressionItem';
 import './expressionEditor.css';
 
 import Button from 'antd/lib/button';
+import expressionStore from '../stores/ExpressionStore';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { NodeOwner, AbstractNode, CompareNode } from '../types/index';
-import { inject, observer } from 'mobx-react';
-import { ExpressionStore } from '../stores/ExpressionStore';
+import { Provider, observer } from 'mobx-react';
 
 interface ExpressionEditorProps {
-    expressionStore?: ExpressionStore;
-    root: NodeOwner;
+    moduleId: number; entityName: string; root: any;
 }
 
-@inject('expressionStore')
+const stores = {
+    expressionStore
+};
+
 @observer
 class ExpressionEditor extends React.Component<ExpressionEditorProps> implements NodeOwner {
 
@@ -33,13 +35,13 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
     }
 
     componentDidMount() {
-        this.props.expressionStore!.fetchStuff();
+        expressionStore!.fetchStuff();
     }
 
     getChildContext() {
         return {
-            metaDictionary: this.props.expressionStore!.knownMetaDictionary,
-            cachedPickLists: this.props.expressionStore!.knownPickLists
+            metaDictionary: expressionStore!.knownMetaDictionary,
+            cachedPickLists: expressionStore!.knownPickLists
         };
     }
 
@@ -53,25 +55,29 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
 
     removeNode(node: AbstractNode): void {
         const newExp = new CompareNode(this);
-        this.props.expressionStore!.expression = newExp;
+        expressionStore.expression = newExp;
     }
 
     replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void {
-        this.props.expressionStore!.expression = newNode;
+        expressionStore.expression = newNode;
     }
 
     render() {
-        if (!this.props.expressionStore!.metaLoaded) {
+        stores.expressionStore.moduleId = 1;
+        stores.expressionStore.entityName = 'patient';
+
+        stores.expressionStore.setExpression(this.props.root);
+        if (!expressionStore.metaLoaded) {
             return <div>Loading Metabase</div>;
         }
         else {
-            let expression = this.props.expressionStore!.expression;
+            let expression = expressionStore.expression;
             if (expression) {
                 if (!expression.parentNode) {
                     expression.parentNode = this;
                 }
                 let buttons = (<div />);
-                if (!this.props.expressionStore!.readonly) {
+                if (!expressionStore.readonly) {
                     buttons = (
                         <div>
                             <Button>Copy</Button>
@@ -85,10 +91,12 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
                         {buttons}
                         <div className="row expr-editor">
                             <div className="expr-canvas">
-                                <ExpressionItem
-                                    node={expression}
-                                    readOnly={this.props.expressionStore!.readonly}
-                                />
+                                <Provider {...stores}>
+                                    <ExpressionItem
+                                        node={expression}
+                                        readOnly={expressionStore.readonly}
+                                    />
+                                </Provider>
                             </div>
                         </div>
                     </div>
