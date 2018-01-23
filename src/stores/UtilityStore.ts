@@ -5,9 +5,13 @@ export class UtilityStore {
     @observable tasks: number = 0;
 
     @computed get isBusy() {
-        return this.tasks !== 0 || !this.dictionary || !this.picklists;
+        return this.tasks !== 0;
     }
 
+    @computed get isEmpty() {
+        return !this.dictionary || !this.picklists;
+    }
+    
     @observable dictionary: any;
 
     @computed get usedLists() {

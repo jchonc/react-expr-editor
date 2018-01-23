@@ -55,7 +55,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
     }
 
     render() {
-        if (stores.utilityStore.isBusy) {
+        if (stores.utilityStore.isBusy|| stores.utilityStore.isEmpty) {
             return <div>Loading Metabase</div>;
         }
         else {
