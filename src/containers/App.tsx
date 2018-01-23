@@ -1,18 +1,15 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
-import { AttrIdSingleton } from '../constants/constants';
 
 const testComplexExpression: any = {
   name: 'logic',
   operator: 'And',
-  nodeId: AttrIdSingleton.NextUniqueNodeId,
   isClone: false,
   operands: [
     {
       name: 'compare',
       attrId: '11001',
-      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'First Name',
       operator: 'Equal',
       isClone: false,
@@ -21,7 +18,6 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11003',
-      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Gender',
       operator: 'NotEqual',
       isClone: false,
@@ -30,7 +26,6 @@ const testComplexExpression: any = {
     {
       name: 'compare',
       attrId: '11004',
-      nodeId: AttrIdSingleton.NextUniqueNodeId,
       attrCaption: 'Birthday',
       operator: 'Equal',
       isClone: false,
