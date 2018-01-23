@@ -4,24 +4,31 @@ export class UtilityStore {
 
     @observable tasks: number = 0;
 
-    @computed get isBusy() {
-        return this.tasks !== 0;
+    @computed get isBusy(): boolean {
+        return this.tasks > 0;
     }
 
-    @computed get isEmpty() {
-        return !this.dictionary || !this.picklists;
+    @computed get isDictionaryEmpty(): boolean {
+        return !this.dictionary || !this.dictionary.length;
     }
-    
-    @observable dictionary: any;
 
-    @computed get usedLists() {
+    @computed get isPicklistsEmpty(): boolean {
+        return !this.picklists || !this.picklists.length;
+    }
+
+    @observable dictionary: any[];
+
+    @computed get usedLists(): any[] {
+        if (!this.dictionary || !this.dictionary.length || !this.picklists) {
+            return [];
+        }
         let result = new Set<string>(this.dictionary
             .filter((attr: any) => attr.attrCtrlType === 'picklist' && attr.attrCtrlParams)
             .map((attr: any) => attr.attrCtrlParams));
         return Array.from(result.values());
     }
 
-    @observable picklists: any;
+    @observable picklists: any[];
 
     @action async fetchDictionary(moduleId: number, entityName: string): Promise<any> {
         return new Promise(async (resolve, reject) => {

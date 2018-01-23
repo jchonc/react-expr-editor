@@ -98,7 +98,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let allowedOperators = this.props.node.getAllowedOperators(meta);
             let listItems: any[] = [];
             if (meta) {
-                if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams) {
+                if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams && !this.props.utilityStore!.isPicklistsEmpty) {
                     const list = this.props.utilityStore!.picklists.find(function (lr: any) {
                         return lr.listName === meta!.attrCtrlParams;
                     });

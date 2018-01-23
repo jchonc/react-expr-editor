@@ -10,8 +10,8 @@ import { NodeOwner, AbstractNode, CompareNode } from '../types/index';
 import { Provider, observer } from 'mobx-react';
 
 interface ExpressionEditorProps {
-    moduleId: number; 
-    entityName: string; 
+    moduleId: number;
+    entityName: string;
     root: any;
 }
 
@@ -55,7 +55,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
     }
 
     render() {
-        if (stores.utilityStore.isBusy|| stores.utilityStore.isEmpty) {
+        if (stores.utilityStore.isBusy || stores.utilityStore.isDictionaryEmpty) {
             return <div>Loading Metabase</div>;
         }
         else {
