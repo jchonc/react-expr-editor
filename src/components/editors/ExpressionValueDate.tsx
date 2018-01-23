@@ -3,7 +3,6 @@ import { DatePicker } from 'antd';
 
 import moment from 'moment';
 import { observer, inject } from 'mobx-react';
-import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueDateState {
 }
@@ -12,10 +11,8 @@ interface ExpressionValueDateProps {
     values: any;
     readOnly: boolean;
     onChange: any;
-    expressionStore?: ExpressionStore;
-
 }
-@inject('expressionStore')
+
 @observer
 class ExpressionValueDate extends React.Component<ExpressionValueDateProps, ExpressionValueDateState> {
     constructor(props: any) {
@@ -29,7 +26,7 @@ class ExpressionValueDate extends React.Component<ExpressionValueDateProps, Expr
         let v;
         const props = this.props;
         if (props.values && props.values.length) {
-            v = props.values[0] ? moment(props.values[0]) : moment();
+            v = props.values[0] ? moment(props.values[0], 'YYYY-MM-DD') : moment();
             if (!v.isValid) {
                 v = undefined;
             }
