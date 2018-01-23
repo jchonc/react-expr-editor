@@ -5,7 +5,6 @@ const Option = Select.Option;
 
 interface ExpressionValueLookupState {
     options: any;
-    value: any;
 }
 
 interface ExpressionValueLookupProps {
@@ -19,30 +18,24 @@ class ExpressionValueLookup extends React.Component<ExpressionValueLookupProps, 
 
     constructor(props: any) {
         super(props);
-
+        this.state = {
+            options: [],
+        };    
         if (props.values && props.values.length) {
             const originalValue = props.values[0];
             if (originalValue) {
                 const parts = originalValue.match(/([^=]*)\(([^=]*)\)/);
                 if ( parts && parts.length && parts.length === 3) {
                     this.state = {
-                        options: [{value: parts[1], text: parts[2]}],
-                        value: parts[1]
+                        options: [{value: parts[1], text: parts[2]}]
                     };
                 }
                 else {
                     this.state = {
-                        options: [{value: originalValue, text: originalValue}],
-                        value: originalValue
+                        options: [{value: originalValue, text: originalValue}]
                     };
                 }
             }
-        }
-        else {
-            this.state = {
-                options: [],
-                value: ''
-            };    
         }
         this.fetch = debounce(400, this.fetch);
         this.handleSearch = this.handleSearch.bind(this);
@@ -54,10 +47,7 @@ class ExpressionValueLookup extends React.Component<ExpressionValueLookupProps, 
     }
 
     triggerChange(value: string, option: any) {
-        if ( value !== this.state.value ) {
-            this.setState({
-                value: value
-            });
+        if ( value !== this.props.values[0] ) {
             if (value) {
                 const selectedOption = this.state.options.find((o: any) => o.value === value);
                 if (selectedOption && selectedOption.text) {
@@ -90,7 +80,7 @@ class ExpressionValueLookup extends React.Component<ExpressionValueLookupProps, 
         return (
             <Select
                 style={{width: 200}}
-                defaultValue={state.value}                
+                defaultValue={this.props.values[0]}                
                 showSearch={true}
                 defaultActiveFirstOption={false}
                 filterOption={false}
