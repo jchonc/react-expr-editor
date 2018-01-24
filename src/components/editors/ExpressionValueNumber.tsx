@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { InputNumber } from 'antd';
 import { observer } from 'mobx-react';
-import { ExpressionStore } from '../../stores/ExpressionStore';
 
 interface ExpressionValueNumberProps {
     values: any[];
     readOnly: boolean;
     onChange: any;
-    expressionStore?: ExpressionStore;
-
 }
 
 @observer
@@ -23,7 +20,7 @@ class ExpressionValueNumber extends React.Component<ExpressionValueNumberProps> 
                 className="expr-simple-value" 
                 disabled={this.props.readOnly}
                 value={v} 
-                onChange={(value) => { this.props.onChange([value]); }}
+                onChange={(value: any) => { this.props.onChange([value]); }}
             />
         );
     }

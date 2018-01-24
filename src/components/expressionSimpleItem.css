@@ -2,7 +2,8 @@
     display: flex;
     justify-content: flex-start;
     align-items: center; 
-    width: 520px; 
+    min-width: 520px; 
+    width: auto;
     margin: 10px;
     background-color: #afaaaa;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.11);
@@ -15,7 +16,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center; 
-    width: inherit;
+    width: 100%;
 }
 
 .node-error{
@@ -26,4 +27,4 @@
 .expr-simple-handle {width: 20px; margin-right: 5px;}
 .expr-simple-menu {display: flex;}
 .expr-simple-field { width: 160px;}
-.expr-simple-value {display: flex; }
+.expr-simple-value {width: auto; }

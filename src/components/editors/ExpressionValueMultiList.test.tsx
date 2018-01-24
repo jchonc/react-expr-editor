@@ -1,10 +1,10 @@
 import * as React from 'react';
-import ExpressionValueList from './ExpressionValueList';
-import { configure, shallow, mount } from 'enzyme';
+import ExpressionValueMultiList from './ExpressionValueMultiList';
+import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-describe('Expression Simple Editor - List', function() {
-
+describe('Expression Simple Editor - MultiList', function() {
+    
     const options = [ 
         { value: 'GD_MALE', label: 'Male', description: 'Gentleman' },
         { value: 'GD_FEMALE', label: 'Female', description: 'Lady' }
@@ -15,10 +15,10 @@ describe('Expression Simple Editor - List', function() {
     });
 
     test('Should Render', function() {
-        const values = ['GD_MALE'];        
+        const values = ['GD_MALE', 'GD_FEMALE'];
         const onChanged = () => undefined;
         const component = shallow(
-            <ExpressionValueList 
+            <ExpressionValueMultiList 
                 values={values}
                 readOnly={false}
                 options={options}
@@ -28,8 +28,10 @@ describe('Expression Simple Editor - List', function() {
         expect(component !== null);    
     });
 
+    /*
     test('Can Update Value', async (done) =>  {        
-        const newValue = 'GD_MALE';
+        const values: string[] = [];
+        const newValue = ['GD_MALE'];
         const onChanged = function(vs: any) {
             expect(vs).not.toBeNull();
             expect(Array.isArray(vs)).toBe(true);
@@ -38,18 +40,19 @@ describe('Expression Simple Editor - List', function() {
             done();
         };
         const component: any = mount(
-            <ExpressionValueList 
-                values={[]}
+            <ExpressionValueMultiList 
+                values={values}
                 readOnly={false}
                 options={options}
                 onChange={onChanged}
             />          
         );
-        component.find('.ant-select-selection').simulate('click');
-        let menuItems = component.find('li.ant-select-dropdown-menu-item');
+        let select = component.find(Select);
+        component.find('span.ant-select-arrow').simulate('click');
+        let menuItems = select.find(MenuItem);
         if (menuItems.length > 0) {
             menuItems.first().simulate('click');
         }
-    });
+    });*/
 
 });
