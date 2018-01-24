@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ExpressionValueMultiList from './ExpressionValueMultiList';
-import { configure, shallow } from 'enzyme';
+import { configure, shallow, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
 describe('Expression Simple Editor - MultiList', function() {
@@ -28,9 +28,7 @@ describe('Expression Simple Editor - MultiList', function() {
         expect(component !== null);    
     });
 
-    /*
     test('Can Update Value', async (done) =>  {        
-        const values: string[] = [];
         const newValue = ['GD_MALE'];
         const onChanged = function(vs: any) {
             expect(vs).not.toBeNull();
@@ -41,12 +39,14 @@ describe('Expression Simple Editor - MultiList', function() {
         };
         const component: any = mount(
             <ExpressionValueMultiList 
-                values={values}
+                values={[]}
                 readOnly={false}
                 options={options}
                 onChange={onChanged}
             />          
         );
+        expect(component !== null);
+        /*
         let select = component.find(Select);
         component.find('span.ant-select-arrow').simulate('click');
         let menuItems = select.find(MenuItem);
@@ -54,5 +54,5 @@ describe('Expression Simple Editor - MultiList', function() {
             menuItems.first().simulate('click');
         }
     });*/
-
+    });
 });
