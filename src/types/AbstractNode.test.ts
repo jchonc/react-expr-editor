@@ -1,4 +1,6 @@
 import { LogicNode, CompareNode, AbstractNode } from './AbstractNode';
+import { NodeFactory } from './index';
+import { exec } from 'child_process';
 
 describe('LogicNode', () => {
     test('instanceof', () => {
@@ -99,7 +101,7 @@ describe('LogicNode', () => {
         expect(n1.operands).toHaveLength(1);
         expect(n1.operands).toContain(n3);
         expect(n1.operands).not.toContain(n2);
-        
+
         let n4 = new LogicNode();
         let n5 = new LogicNode();
         n3.replaceNode(n4, n5);
@@ -130,5 +132,17 @@ describe('CompareNode', () => {
         expect(n1.operands).toHaveLength(1);
         n2.removeSelf();
         expect(n1.operands).toHaveLength(0);
+    });
+});
+
+describe('NodeFactory', () => {
+    test('can load empty json', () => {
+        let exp = NodeFactory.LoadExpression({});
+        expect(exp).toBeNull();
+    });
+    test('can load valid json', () => {
+        let exp = NodeFactory.LoadExpression({ name: 'logic', operands: [{ name: 'compare', operands: ['test'] }] });
+        expect(exp).not.toBeNull();
+        expect(exp).toBeInstanceOf(LogicNode);
     });
 });
