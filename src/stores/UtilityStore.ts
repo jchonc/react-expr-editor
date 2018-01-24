@@ -1,4 +1,6 @@
-import mobx, { observable, computed, action, runInAction } from 'mobx';
+import * as mobx from 'mobx';
+
+const { observable, computed, action, runInAction } = mobx;
 
 mobx.useStrict(true);
 

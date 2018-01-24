@@ -17,8 +17,8 @@ describe('Utility Store Test', function () {
         expect(utilityStore.isBusy).toBe(false);
         expect(utilityStore.isPicklistsEmpty).toBe(true);
         expect(utilityStore.isDictionaryEmpty).toBe(true);
-        expect(utilityStore.dictionary).toBeUndefined();
-        expect(utilityStore.picklists).toBeUndefined();
+        expect(utilityStore.dictionary).toBeInstanceOf(Array);
+        expect(utilityStore.picklists).toBeInstanceOf(Array);
         expect(utilityStore.usedLists).toBeDefined();
     });
 
