@@ -3,7 +3,7 @@
     justify-content: flex-start;
     align-items: center; 
     min-width: 520px; 
-    width: auto;
+    width: fit-content;
     margin: 10px;
     background-color: #afaaaa;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.11);
@@ -27,4 +27,4 @@
 .expr-simple-handle {width: 20px; margin-right: 5px;}
 .expr-simple-menu {display: flex;}
 .expr-simple-field { width: 160px;}
-.expr-simple-value {width: auto; }
+.expr-simple-value {width: 160px; }

@@ -76,13 +76,13 @@ export const simpleTarget: DropTargetSpec<ExpressionSimpleItemProps | Expression
     hover(props: ExpressionSimpleItemProps, monitor: DropTargetMonitor) {
         let dragNode = (monitor.getItem() as any).node;
         let targetNode: AbstractNode = props.node;
+        dragNode.toggleIsClone(true);
 
         let condition = dragNode instanceof LogicNode ?
             !targetNode.isDescedentOf(dragNode) :
             dragNode !== targetNode;
 
         if (condition && !confirmPlace(dragNode, dragNode.parentNode, targetNode)) {
-            dragNode.toggleIsClone(true);
             handleHover(dragNode.parentNode, targetNode.parentNode as LogicNode, targetNode, dragNode);
         }
     },
@@ -107,13 +107,13 @@ export const complexTarget: DropTargetSpec<ExpressionComplexItemProps> = {
     hover(props: ExpressionComplexItemProps, monitor: DropTargetMonitor) {
         let dragNode = (monitor.getItem() as any).node;
         let targetNode = props.node;
+        dragNode.toggleIsClone(true);
 
         let condition = dragNode instanceof LogicNode ?
             dragNode !== targetNode && !targetNode.isDescedentOf(dragNode)
             : true;
 
         if (condition && targetNode.operands[0] !== dragNode) {
-            dragNode.toggleIsClone(true);
             handleHover(dragNode.parentNode, targetNode, targetNode, dragNode);
         }
     },
