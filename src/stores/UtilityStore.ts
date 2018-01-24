@@ -1,4 +1,6 @@
-import mobx, { observable, computed, action, runInAction } from 'mobx';
+import * as mobx from 'mobx';
+
+const { observable, computed, action, runInAction } = mobx;
 
 mobx.useStrict(true);
 
@@ -38,7 +40,6 @@ export class UtilityStore {
     async fetchDictionary(moduleId: number, entityName: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                debugger;
                 const dictionaryUrl = `/dictionary/${moduleId}/${entityName}`;
                 this.tasks += 1;
                 let result = await fetch(dictionaryUrl);
