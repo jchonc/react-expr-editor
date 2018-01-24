@@ -72,11 +72,7 @@ export const simpleSource: DragSourceSpec<NodeSourceProps & ExpressionSimpleItem
     }
 };
 
-export interface NodeTargetProps {
-
-}
-
-export const simpleTarget: DropTargetSpec<NodeTargetProps & ExpressionSimpleItemProps | ExpressionComplexItemProps> = {
+export const simpleTarget: DropTargetSpec<ExpressionSimpleItemProps | ExpressionComplexItemProps> = {
     hover(props: ExpressionSimpleItemProps, monitor: DropTargetMonitor) {
         let dragNode = (monitor.getItem() as any).node;
         let targetNode: AbstractNode = props.node;
@@ -96,20 +92,20 @@ export const simpleTarget: DropTargetSpec<NodeTargetProps & ExpressionSimpleItem
     }
 };
 
-export const complexSource = {
-    beginDrag(props: any, monitor: any) {
+export const complexSource: DragSourceSpec<ExpressionComplexItemProps> = {
+    beginDrag(props: ExpressionComplexItemProps, monitor: DragSourceMonitor) {
         let node = props.node;
         return { node: node };
     },
-    endDrag(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
+    endDrag(props: ExpressionComplexItemProps, monitor: DragSourceMonitor) {
+        let dragNodeInfo: any = monitor.getItem();
         dragNodeInfo.node.toggleIsClone(false);
     }
 };
 
-export const complexTarget = {
-    hover(props: any, monitor: any) {
-        let dragNode = monitor.getItem().node;
+export const complexTarget: DropTargetSpec<ExpressionComplexItemProps> = {
+    hover(props: ExpressionComplexItemProps, monitor: DropTargetMonitor) {
+        let dragNode = (monitor.getItem() as any).node;
         let targetNode = props.node;
 
         let condition = dragNode instanceof LogicNode ?
@@ -121,8 +117,8 @@ export const complexTarget = {
             handleHover(dragNode.parentNode, targetNode, targetNode, dragNode);
         }
     },
-    drop(props: any, monitor: any) {
-        let dragNodeInfo = monitor.getItem();
+    drop(props: ExpressionComplexItemProps, monitor: DropTargetMonitor) {
+        let dragNodeInfo: any = monitor.getItem();
         dragNodeInfo.node.toggleIsClone(false);
     }
 };
