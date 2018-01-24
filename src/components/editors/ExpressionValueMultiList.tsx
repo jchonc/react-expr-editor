@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Select } from 'antd';
+import * as mobx from 'mobx';
 import { observer } from 'mobx-react';
 import { ObservableArray } from 'mobx/lib/types/observablearray';
 const Option = Select.Option;
@@ -19,8 +20,15 @@ class ExpressionValueMultiList extends React.Component<ExpressionValueMultiListP
     }
 
     render() {
-        const values = (this.props.values as ObservableArray<string>).peek();
-        const opts = (this.props.options as ObservableArray<string>).peek();
+        let values = this.props.values;
+        if (mobx.isObservableArray(values)) {
+            values = (this.props.values as ObservableArray<string>).peek();
+        }
+        let opts = this.props.options;
+        if (mobx.isObservableArray(opts)) {
+            opts = (this.props.options as ObservableArray<string>).peek();
+        }
+        
         return (
             <Select
                 className="expr-simple-value"

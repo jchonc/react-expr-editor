@@ -29,7 +29,7 @@ describe('Expression Simple Editor - MultiList', function() {
     });
 
     test('Can Update Value', async (done) =>  {        
-        const newValue = ['GD_MALE'];
+        const newValue = 'GD_MALE';
         const onChanged = function(vs: any) {
             expect(vs).not.toBeNull();
             expect(Array.isArray(vs)).toBe(true);
@@ -46,13 +46,10 @@ describe('Expression Simple Editor - MultiList', function() {
             />          
         );
         expect(component !== null);
-        /*
-        let select = component.find(Select);
-        component.find('span.ant-select-arrow').simulate('click');
-        let menuItems = select.find(MenuItem);
+        component.find('.ant-select-selection').simulate('click');
+        let menuItems = component.find('.ant-select-dropdown-menu-item');
         if (menuItems.length > 0) {
             menuItems.first().simulate('click');
         }
-    });*/
     });
 });
