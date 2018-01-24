@@ -27,12 +27,12 @@ import { observer, inject } from 'mobx-react';
 import { ExpressionStore } from '../stores/ExpressionStore';
 import { UtilityStore } from '../stores/UtilityStore';
 
-interface ExpressionSimpleItemProps {
+export interface ExpressionSimpleItemProps {
     node: CompareNode;
     readOnly: boolean;
-    connectDragSource: any;
-    connectDropTargetComplex: any;
-    connectDropTargetSimple: any;
+    connectDragSource?: any;
+    connectDropTargetComplex?: any;
+    connectDropTargetSimple?: any;
     expressionStore?: ExpressionStore;
     utilityStore?: UtilityStore;
 }
@@ -58,6 +58,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             case 'REMOVE':
                 this.props.node.removeSelf();
                 break;
+            case 'COPY_LINE':
+                this.props.node.copyLine();
+                break;
             default:
                 break;
         }
@@ -69,6 +72,10 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         if (expression && meta) {
             expression.setMeta(elmId, meta.attrCaption);
         }
+    }
+
+    getCurrentOp(){
+
     }
 
     render() {
@@ -85,6 +92,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let meta = this.props.expressionStore!.getMeta(expression.attrId!);
             let operandKind = this.props.node.getOperandKind(meta);
             let allowedOperators = this.props.node.getAllowedOperators(meta);
+            let currentOperators = allowedOperators.filter((op: any) => op.value === expression.operator);
+            let displayOp = 'equals';
+            if (currentOperators.length){
+                displayOp = currentOperators[0].label;
+            }
             let listItems: any[] = [];
             if (meta) {
                 if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams && !this.props.utilityStore!.isPicklistsEmpty) {
@@ -143,10 +155,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             if (!this.props.readOnly) {
                 const dropdownMenu = (
                     <Menu onClick={this.handleMenuClick}>
+                        <Menu.Item key="NEW_LINE">New Line</Menu.Item>
                         <Menu.Item key="ADD_AND">AND</Menu.Item>
                         <Menu.Item key="ADD_OR">OR</Menu.Item>
                         <Menu.Divider />
-                        <Menu.Item key="NEW_LINE">New Line</Menu.Item>
+                        <Menu.Item key="COPY_LINE">Duplicate Line</Menu.Item>
                         <Menu.Item key="REMOVE">Remove</Menu.Item>
                     </Menu>
                 );
@@ -175,12 +188,12 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                     <Select
                         className="expr-simple-field"
                         disabled={this.props.readOnly}
-                        value={expression.operator}
+                        value={displayOp}
                         onChange={(value: any) => { this.props.node.setOperator(value); }}
                     >
                         {
                             allowedOperators.map((o: any) =>
-                                <Option key={o.value} value={o.value}>{o.label}</Option>
+                                <Option value={o.value}>{o.label}</Option>
                             )
                         }
                     </Select>
@@ -197,9 +210,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
 export default
     inject(...['expressionStore', 'utilityStore'])(
-        DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
-            DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
-                DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
+        DropTarget<ExpressionSimpleItemProps>(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
+            DropTarget<ExpressionSimpleItemProps>(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
+                DragSource<ExpressionSimpleItemProps>(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
             )
         )
     );

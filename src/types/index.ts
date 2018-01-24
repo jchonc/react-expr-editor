@@ -16,3 +16,4 @@ export const validCtrlKind: string[] = [
 ];
 
 export * from './AbstractNode';
+export * from './Operators';

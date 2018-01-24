@@ -24,7 +24,7 @@ export default class ExpressionItem extends React.Component<ExpressionItemProps>
                 return (
                     <ExpressionComplexItem
                         node={node as LogicNode}
-                        readOnly={readOnly}
+                        readOnly={readOnly} 
                     />
                 );
             }

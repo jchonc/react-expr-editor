@@ -1,8 +1,9 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
-import { Button } from 'antd';
 import expressionStore from '../stores/ExpressionStore';
+import { autorun } from 'mobx';
+import { NodeFactory } from '../types/index';
 
 const testComplexExpression: any = {
   name: 'logic',
@@ -13,7 +14,7 @@ const testComplexExpression: any = {
       name: 'compare',
       attrId: '11001',
       attrCaption: 'First Name',
-      operator: 'Equal',
+      operator: 'EQUALS',
       isClone: false,
       operands: ['Jian']
     },
@@ -21,7 +22,7 @@ const testComplexExpression: any = {
       name: 'compare',
       attrId: '11003',
       attrCaption: 'Gender',
-      operator: 'NotEqual',
+      operator: 'NOT_EQUALS',
       isClone: false,
       operands: ['GD_MALE']
     },
@@ -29,7 +30,7 @@ const testComplexExpression: any = {
       name: 'compare',
       attrId: '11004',
       attrCaption: 'Birthday',
-      operator: 'Equal',
+      operator: 'EQUALS_IS',
       isClone: false,
       operands: ['2011-12-12']
     }
@@ -37,6 +38,17 @@ const testComplexExpression: any = {
 };
 
 class App extends React.Component<{}> {
+  componentDidMount() {
+    autorun(
+      () => {
+        if (expressionStore && expressionStore.expression) {
+          document.getElementById('expr_value')!.innerHTML =
+            JSON.stringify(NodeFactory.SaveExpression(expressionStore.expression), null, 2);
+        }
+      },
+      this
+    );
+  }
   render() {
     return (
       <div className="container">
@@ -49,8 +61,7 @@ class App extends React.Component<{}> {
           root={testComplexExpression}
         />
         <div className="row">
-          <Button onClick={() => expressionStore.reveal()}>Reveal</Button>
-          <pre id="expr_value"/>
+          <pre id="expr_value" />
         </div>
       </div>
     );

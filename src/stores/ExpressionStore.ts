@@ -1,8 +1,9 @@
 import { NodeFactory, AbstractNode } from '../types/index';
-import { observable, action } from 'mobx';
+import { observable, action, IReactionDisposer } from 'mobx';
 import utilityStore from './UtilityStore';
 
 export class ExpressionStore {
+    handler: IReactionDisposer;
     @observable valid: boolean = true;
     @observable expression: AbstractNode | null;
 
@@ -14,22 +15,18 @@ export class ExpressionStore {
         this.expression = NodeFactory.LoadExpression(expression);
     }
 
-    @action reveal() {
-        const result = JSON.stringify(NodeFactory.SaveExpression(this.expression));
-        document.getElementById('expr_value')!.innerHTML = result;
-    }
-
     @action clear() {
         this.setExpression({
-            operator: 'And',
-            name: 'logic',
+            name: 'compare',
             isClone: false,
             operands: []
         });
-        utilityStore.fetchDictionary(this.moduleId, this.entityName)
-            .then(() => {
-                utilityStore.fetchPicklists(utilityStore.usedLists);
-            });
+        if (this.moduleId && this.entityName) {
+            utilityStore.fetchDictionary(this.moduleId, this.entityName)
+                .then(() => {
+                    utilityStore.fetchPicklists(utilityStore.usedLists);
+                });
+        }
     }
 
     @action getMeta(attrId: string): any | undefined {

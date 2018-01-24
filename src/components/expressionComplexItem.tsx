@@ -21,17 +21,17 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { observer } from 'mobx-react';
 import { ExpressionBooleanLogic, LogicNode } from '../types/index';
 
-interface ExpressionComplexItemProps {
+export interface ExpressionComplexItemProps {
     node: LogicNode;
-    readonly: boolean;
-    connectDragSource: any;
-    connectDropTargetComplex: any;
-    connectDropTargetSimple: any;
-    isDragging: boolean;
+    readOnly: boolean;
+    connectDragSource?: any;
+    connectDropTargetComplex?: any;
+    connectDropTargetSimple?: any;
+    isDragging?: boolean;
 }
 
 @observer
-class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> {
+export class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> {
     constructor(props: any) {
         super(props);
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -43,11 +43,20 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
 
     handleMenuClick(e: any) {
         switch (e.key) {
+            case 'ADD_AND':
+                this.props.node.replaceWithComplex('And');
+                break;
+            case 'ADD_OR':
+                this.props.node.replaceWithComplex('Or');
+                break;
             case 'NEW_LINE':
                 this.props.node.addSimpleChild();
                 break;
             case 'REMOVE':
                 this.props.node.removeSelf();
+                break;
+            case 'COPY_GROUP':
+                this.props.node.copyGroup();
                 break;
             default:
                 break;
@@ -63,12 +72,14 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
         ];
 
         let menu = (<span>&nbsp;</span>);
-        if (!this.props.readonly) {
+        if (!this.props.readOnly) {
             const dropdownMenu = (
                 <Menu onClick={this.handleMenuClick}>
-                    <Menu.Item key="NEW_LINE">NewLine</Menu.Item>
-                    <Menu.Item key="SOMETHING">Another Link</Menu.Item>
+                    <Menu.Item key="NEW_LINE">New Line</Menu.Item>
+                    <Menu.Item key="ADD_AND">AND</Menu.Item>
+                    <Menu.Item key="ADD_OR">OR</Menu.Item>
                     <Menu.Divider />
+                    <Menu.Item key="COPY_GROUP">Duplicate Group</Menu.Item>
                     <Menu.Item key="REMOVE">Remove Group</Menu.Item>
                 </Menu>
             );
@@ -85,7 +96,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                 <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
                 <Select
                     className="expr-logic-operator"
-                    disabled={this.props.readonly}
+                    disabled={this.props.readOnly}
                     value={node.operator}
                     onChange={(value: ExpressionBooleanLogic) => { this.updateOperator(value); }}
                 >
@@ -102,7 +113,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                     <ExpressionItem
                         key={i}
                         node={n}
-                        readOnly={props.readonly}
+                        readOnly={props.readOnly}
                     />);
             });
             return (
@@ -122,8 +133,8 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
 }
 
 export default
-    DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
-        DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
-            DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
+    DropTarget<ExpressionComplexItemProps>(ItemTypes.Simple, complexTarget, dropCollectSimple)(
+        DropTarget<ExpressionComplexItemProps>(ItemTypes.Complex, complexTarget, dropCollectComplex)(
+            DragSource<ExpressionComplexItemProps>(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
         )
     );
