@@ -1,16 +1,45 @@
 import * as React from 'react';
 import { configure, shallow /*, mount*/ } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-
-import { CompareNode } from '../types/index';
+import { Provider } from 'mobx-react';
+import { LogicNode } from '../types/index';
 import expressionStore from '../stores/ExpressionStore';
 import utilityStore from '../stores/UtilityStore';
 import mockUtilityApi from '../utils/mockApi';
 
-import ExpressionSimpleItem from './expressionSimpleItem';
-import { Provider } from 'mobx-react';
+import ExpressionItem from './expressionItem';
+import { NodeFactory } from '../types/AbstractNode';
 
-describe('Expression Compare Node', function() {
+const testComplexExpression: any = {
+    name: 'logic',
+    operator: 'And',
+    isClone: false,
+    operands: [
+      {
+        name: 'compare',
+        attrId: '11001',
+        attrCaption: 'First Name',
+        operator: 'Equal',
+        operands: ['Jian']
+      },
+      {
+        name: 'compare',
+        attrId: '11003',
+        attrCaption: 'Gender',
+        operator: 'NotEqual',
+        operands: ['GD_MALE']
+      },
+      {
+        name: 'compare',
+        attrId: '11004',
+        attrCaption: 'Birthday',
+        operator: 'Equal',
+        operands: ['2011-12-12']
+      }
+    ]
+  };
+  
+describe('Expression Item', function() {
 
     const stores = {
         expressionStore,
@@ -27,20 +56,12 @@ describe('Expression Compare Node', function() {
     });
 
     test('Should Render', function() {
-        const expressionNode = new CompareNode(undefined);
-        expressionNode.attrId = '11001';
-        expressionNode.attrCaption = 'First Name';
-        expressionNode.operator = 'Equal';
-        expressionNode.isClone = false;
-        expressionNode.operands = ['Jian'];
+        const expressionNode = NodeFactory.LoadExpression(testComplexExpression) as LogicNode;
         const component = shallow(
             <Provider {...stores}>
-                <ExpressionSimpleItem 
+                <ExpressionItem 
                     node={expressionNode}
                     readOnly={false}
-                    connectDragSource={jest.fn()}
-                    connectDropTargetComplex={jest.fn()}
-                    connectDropTargetSimple={jest.fn()}
                 />          
             </Provider>
         );    

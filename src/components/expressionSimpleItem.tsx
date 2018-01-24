@@ -37,7 +37,7 @@ interface ExpressionSimpleItemProps {
     utilityStore?: UtilityStore;
 }
 @observer
-export class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
+class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
     constructor(props: any, context: any) {
         super(props, context);
