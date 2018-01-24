@@ -5,6 +5,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import { CompareNode } from '../types/index';
 import expressionStore from '../stores/ExpressionStore';
 import utilityStore from '../stores/UtilityStore';
+import mockUtilityApi from '../utils/mockApi';
 
 import { ExpressionSimpleItem } from './expressionSimpleItem';
 
@@ -13,6 +14,7 @@ describe('Expression Compare Node', function() {
     beforeAll( async (done) => {
         expressionStore.moduleId = 1;
         expressionStore.entityName = 'patient';
+        mockUtilityApi();
         await utilityStore.fetchDictionary(1, 'patient');
         configure({ adapter: new Adapter() }); 
         done();

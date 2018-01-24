@@ -38,7 +38,6 @@ export class UtilityStore {
     async fetchDictionary(moduleId: number, entityName: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                debugger;
                 const dictionaryUrl = `/dictionary/${moduleId}/${entityName}`;
                 this.tasks += 1;
                 let result = await fetch(dictionaryUrl);
