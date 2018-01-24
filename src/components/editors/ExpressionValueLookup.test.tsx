@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ExpressionValueLookup from './ExpressionValueLookup';
 
-import { configure, shallow, mount } from 'enzyme';
+import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
 describe('Expression Simple Editor - Date', function() {
