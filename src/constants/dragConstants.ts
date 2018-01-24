@@ -10,7 +10,6 @@ function handleHover(oldParent: LogicNode, newParent: LogicNode, target: Abstrac
         newParent.operands.findIndex((node: any) => node === target);
 
     newParent.addOperandAt(targetIndex + 1, source);
-    source.parentNode = newParent;
 }
 
 function confirmPlace(dragNode: AbstractNode, dragParentNode: LogicNode, TargetNode: AbstractNode): boolean {

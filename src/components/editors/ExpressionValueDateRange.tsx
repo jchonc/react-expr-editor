@@ -23,7 +23,7 @@ class ExpressionValueDateRange extends React.Component<ExpressionValueDateRangeP
     }
 
     render() {
-        const dates = this.props.values.map((s: string) => moment(s));
+        const dates = this.props.values.map((s: string) => moment(s, 'YYYY-MM-DD'));
         return (
             <RangePicker 
                 disabled={this.props.readOnly}

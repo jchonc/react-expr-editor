@@ -1,48 +1,52 @@
 import * as React from 'react';
 import { configure, shallow /*, mount*/ } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-
-import { CompareNode } from '../types/index';
-import expressionStore from '../stores/ExpressionStore';
-import utilityStore from '../stores/UtilityStore';
 import mockUtilityApi from '../utils/mockApi';
+import ExpressionEditor from './expressionEditor';
 
-import ExpressionSimpleItem from './expressionSimpleItem';
-import { Provider } from 'mobx-react';
-
-describe('Expression Compare Node', function() {
-
-    const stores = {
-        expressionStore,
-        utilityStore,
-    };
+const testComplexExpression: any = {
+    name: 'logic',
+    operator: 'And',
+    isClone: false,
+    operands: [
+      {
+        name: 'compare',
+        attrId: '11001',
+        attrCaption: 'First Name',
+        operator: 'Equal',
+        operands: ['Jian']
+      },
+      {
+        name: 'compare',
+        attrId: '11003',
+        attrCaption: 'Gender',
+        operator: 'NotEqual',
+        operands: ['GD_MALE']
+      },
+      {
+        name: 'compare',
+        attrId: '11004',
+        attrCaption: 'Birthday',
+        operator: 'Equal',
+        operands: ['2011-12-12']
+      }
+    ]
+  };
+  
+describe('Expression Editor', function() {
 
     beforeAll( async (done) => {
-        expressionStore.moduleId = 1;
-        expressionStore.entityName = 'patient';
         mockUtilityApi();
-        await utilityStore.fetchDictionary(1, 'patient');
         configure({ adapter: new Adapter() }); 
         done();
     });
 
     test('Should Render', function() {
-        const expressionNode = new CompareNode(undefined);
-        expressionNode.attrId = '11001';
-        expressionNode.attrCaption = 'First Name';
-        expressionNode.operator = 'Equal';
-        expressionNode.isClone = false;
-        expressionNode.operands = ['Jian'];
         const component = shallow(
-            <Provider {...stores}>
-                <ExpressionSimpleItem 
-                    node={expressionNode}
+                <ExpressionEditor 
+                    node={testComplexExpression}
                     readOnly={false}
-                    connectDragSource={jest.fn()}
-                    connectDropTargetComplex={jest.fn()}
-                    connectDropTargetSimple={jest.fn()}
                 />          
-            </Provider>
         );    
         expect(component !== null);    
     });
