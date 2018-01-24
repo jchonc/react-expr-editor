@@ -27,12 +27,12 @@ import { observer, inject } from 'mobx-react';
 import { ExpressionStore } from '../stores/ExpressionStore';
 import { UtilityStore } from '../stores/UtilityStore';
 
-interface ExpressionSimpleItemProps {
+export interface ExpressionSimpleItemProps {
     node: CompareNode;
     readOnly: boolean;
-    connectDragSource: any;
-    connectDropTargetComplex: any;
-    connectDropTargetSimple: any;
+    connectDragSource?: any;
+    connectDropTargetComplex?: any;
+    connectDropTargetSimple?: any;
     expressionStore?: ExpressionStore;
     utilityStore?: UtilityStore;
 }
@@ -197,9 +197,9 @@ export class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemPr
 
 export default
     inject(...['expressionStore', 'utilityStore'])(
-        DropTarget(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
-            DropTarget(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
-                DragSource(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
+        DropTarget<ExpressionSimpleItemProps>(ItemTypes.Complex, simpleTarget, dropCollectComplex)(
+            DropTarget<ExpressionSimpleItemProps>(ItemTypes.Simple, simpleTarget, dropCollectSimple)(
+                DragSource<ExpressionSimpleItemProps>(ItemTypes.Simple, simpleSource, dragCollect)(ExpressionSimpleItem)
             )
         )
     );

@@ -21,17 +21,17 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { observer } from 'mobx-react';
 import { ExpressionBooleanLogic, LogicNode } from '../types/index';
 
-interface ExpressionComplexItemProps {
+export interface ExpressionComplexItemProps {
     node: LogicNode;
-    readonly: boolean;
-    connectDragSource: any;
-    connectDropTargetComplex: any;
-    connectDropTargetSimple: any;
-    isDragging: boolean;
+    readOnly: boolean;
+    connectDragSource?: any;
+    connectDropTargetComplex?: any;
+    connectDropTargetSimple?: any;
+    isDragging?: boolean;
 }
 
 @observer
-class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> {
+export class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> {
     constructor(props: any) {
         super(props);
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -63,7 +63,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
         ];
 
         let menu = (<span>&nbsp;</span>);
-        if (!this.props.readonly) {
+        if (!this.props.readOnly) {
             const dropdownMenu = (
                 <Menu onClick={this.handleMenuClick}>
                     <Menu.Item key="NEW_LINE">NewLine</Menu.Item>
@@ -85,7 +85,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                 <div className="expr-logic-part"><i className="fa fa-th" aria-hidden="true" /></div>
                 <Select
                     className="expr-logic-operator"
-                    disabled={this.props.readonly}
+                    disabled={this.props.readOnly}
                     value={node.operator}
                     onChange={(value: ExpressionBooleanLogic) => { this.updateOperator(value); }}
                 >
@@ -102,7 +102,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
                     <ExpressionItem
                         key={i}
                         node={n}
-                        readOnly={props.readonly}
+                        readOnly={props.readOnly}
                     />);
             });
             return (
@@ -122,8 +122,8 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
 }
 
 export default
-    DropTarget(ItemTypes.Simple, complexTarget, dropCollectSimple)(
-        DropTarget(ItemTypes.Complex, complexTarget, dropCollectComplex)(
-            DragSource(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
+    DropTarget<ExpressionComplexItemProps>(ItemTypes.Simple, complexTarget, dropCollectSimple)(
+        DropTarget<ExpressionComplexItemProps>(ItemTypes.Complex, complexTarget, dropCollectComplex)(
+            DragSource<ExpressionComplexItemProps>(ItemTypes.Complex, complexSource, dragCollect)(ExpressionComplexItem)
         )
     );
