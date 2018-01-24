@@ -24,7 +24,6 @@ import './expressionSimpleItem.css';
 import { ExpressionOperator, CompareNode } from '../types/index';
 
 import { observer, inject } from 'mobx-react';
-import { observable } from 'mobx';
 import { ExpressionStore } from '../stores/ExpressionStore';
 import { UtilityStore } from '../stores/UtilityStore';
 
@@ -68,18 +67,16 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         const expression = this.props.node;
         let meta = this.props.expressionStore!.getMeta(elmId);
         if (expression && meta) {
-            expression.attrId = elmId;
-            expression.attrCaption = meta.attrCaption;
-            expression.operands = ['', ''];
+            expression.setMeta(elmId, meta.attrCaption);
         }
     }
 
     updateOperator(operator: ExpressionOperator) {
-        this.props.node.operator = operator;
+        this.props.node.setOperator(operator);
     }
 
     updateValue(values: string[]) {
-        this.props.node.operands = observable(values);
+        this.props.node.setValues(values);
     }
 
     render() {

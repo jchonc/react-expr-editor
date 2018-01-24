@@ -1,4 +1,6 @@
-import { observable, computed, action } from 'mobx';
+import mobx, { observable, computed, action, runInAction } from 'mobx';
+
+mobx.useStrict(true);
 
 export class UtilityStore {
 
@@ -8,18 +10,20 @@ export class UtilityStore {
         return this.tasks > 0;
     }
 
+    @observable state: 'pending' | 'done' | 'error' = 'pending';
+
     @computed get isDictionaryEmpty(): boolean {
-        return !this.dictionary || !this.dictionary.length;
+        return !this.dictionary.length;
     }
 
     @computed get isPicklistsEmpty(): boolean {
-        return !this.picklists || !this.picklists.length;
+        return !this.picklists.length;
     }
 
-    @observable dictionary?: any[];
+    @observable dictionary: any[] = [];
 
     @computed get usedLists(): any[] {
-        if (!this.dictionary || !this.dictionary.length) {
+        if (!this.dictionary.length) {
             return [];
         }
         let result = new Set<string>(this.dictionary
@@ -28,9 +32,10 @@ export class UtilityStore {
         return Array.from(result.values());
     }
 
-    @observable picklists?: any[];
+    @observable picklists: any[] = [];
 
-    @action async fetchDictionary(moduleId: number, entityName: string): Promise<any> {
+    @action
+    async fetchDictionary(moduleId: number, entityName: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const dictionaryUrl = `/dictionary/${moduleId}/${entityName}`;
@@ -39,8 +44,10 @@ export class UtilityStore {
                 if (result.ok) {
                     let data = await result.json();
                     if (data) {
-                        this.dictionary = data;
-                        resolve(data);
+                        runInAction(() => {
+                            this.dictionary = data;
+                            resolve(data);
+                        });
                     }
                 }
                 reject(result);
@@ -48,7 +55,9 @@ export class UtilityStore {
                 reject(e);
             }
             finally {
-                this.tasks = Math.max(this.tasks - 1, 0);
+                runInAction(() => {
+                    this.tasks = Math.max(this.tasks - 1, 0);
+                });
             }
         });
     }
@@ -69,8 +78,10 @@ export class UtilityStore {
                 if (result.ok) {
                     let data = await result.json();
                     if (data) {
-                        this.picklists = data;
-                        resolve(data);
+                        runInAction(() => {
+                            this.picklists = data;
+                            resolve(data);
+                        });
                     }
                 }
                 reject(result);
@@ -78,7 +89,9 @@ export class UtilityStore {
                 reject(e);
             }
             finally {
-                this.tasks = Math.max(this.tasks - 1, 0);
+                runInAction(() => {
+                    this.tasks = Math.max(this.tasks - 1, 0);
+                });
             }
         });
     }

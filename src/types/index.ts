@@ -32,13 +32,15 @@ export abstract class AbstractNode {
     this.parentNode = parent;
   }
 
-  @action addSibling() {
+  @action
+  addSibling() {
     if (this.parentNode) {
       this.parentNode.addSimpleChild(new CompareNode(this.parentNode));
     }
   }
 
-  @action removeSelf() {
+  @action
+  removeSelf() {
     if (this.parentNode) {
       this.parentNode.removeNode(this);
     }
@@ -115,6 +117,23 @@ export class CompareNode extends AbstractNode {
     return 'none';
   }
 
+  @action
+  setMeta(elmId: string, meta: any): void {
+    this.attrId = elmId;
+    this.attrCaption = meta.attrCaption;
+    this.operands = ['', ''];
+  }
+
+  @action
+  setValues(values: string[]) {
+    this.operands = observable(values);
+  }
+
+  @action
+  setOperator(operator: ExpressionOperator) {
+    this.operator = operator;
+  }
+
   @computed get meta(): any {
     return ExpressionStore.getMeta(this.attrId);
   }
@@ -135,6 +154,11 @@ export class LogicNode extends AbstractNode implements NodeOwner {
 
   @observable
   operands: AbstractNode[];
+
+  @action
+  setOperator(operator: ExpressionBooleanLogic) {
+    this.operator = operator;
+  }
 
   constructor(parent?: NodeOwner) {
     super(parent);

@@ -38,7 +38,7 @@ class ExpressionComplexItem extends React.Component<ExpressionComplexItemProps> 
     }
 
     updateOperator(op: ExpressionBooleanLogic) {
-        this.props.node.operator = op;
+        this.props.node.setOperator(op);
     }
 
     handleMenuClick(e: any) {
