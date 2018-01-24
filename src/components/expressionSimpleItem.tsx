@@ -21,7 +21,7 @@ import {
 } from '../constants/dragConstants';
 
 import './expressionSimpleItem.css';
-import { ExpressionOperator, CompareNode } from '../types/index';
+import { CompareNode } from '../types/index';
 
 import { observer, inject } from 'mobx-react';
 import { ExpressionStore } from '../stores/ExpressionStore';
@@ -71,14 +71,6 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         }
     }
 
-    updateOperator(operator: ExpressionOperator) {
-        this.props.node.setOperator(operator);
-    }
-
-    updateValue(values: string[]) {
-        this.props.node.setValues(values);
-    }
-
     render() {
 
         let expression = this.props.node;
@@ -109,7 +101,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let OperandCtrlProps: any = {
                 values: expression.operands,
                 readOnly: this.props.readOnly,
-                onChange: (evt: any) => { this.updateValue(evt); }
+                onChange: (evt: any) => { this.props.node.setValues(evt); }
             };
 
             switch (operandKind) {
@@ -184,7 +176,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                         className="expr-simple-field"
                         disabled={this.props.readOnly}
                         value={expression.operator}
-                        onChange={(value: any) => { this.updateOperator(value); }}
+                        onChange={(value: any) => { this.props.node.setOperator(value); }}
                     >
                         {
                             allowedOperators.map((o: any) =>

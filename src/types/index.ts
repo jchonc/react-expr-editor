@@ -33,6 +33,11 @@ export abstract class AbstractNode {
   }
 
   @action
+  toggleIsClone(value: boolean) {
+    this.isClone = value;
+  }
+
+  @action
   addSibling() {
     if (this.parentNode) {
       this.parentNode.addSimpleChild(new CompareNode(this.parentNode));
@@ -158,6 +163,17 @@ export class LogicNode extends AbstractNode implements NodeOwner {
   @action
   setOperator(operator: ExpressionBooleanLogic) {
     this.operator = operator;
+  }
+
+  @action
+  removeOperandAt(index: number) {
+    this.operands!.splice(index, 1);
+  }
+
+  @action
+  addOperandAt(index: number, newOperand: any) {
+
+    this.operands.splice(index, 0, newOperand);
   }
 
   constructor(parent?: NodeOwner) {
