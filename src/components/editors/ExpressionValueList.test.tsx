@@ -1,13 +1,6 @@
 import * as React from 'react';
 import ExpressionValueList from './ExpressionValueList';
-<<<<<<< HEAD
-import { Select, Menu } from 'antd';
-const MenuItem = Menu.Item;
 import { configure, shallow, mount } from 'enzyme';
-=======
-
-import { configure, shallow } from 'enzyme';
->>>>>>> a32de5dfe084c08e42ed9ecf2fb7d5ae7d66c561
 import Adapter from 'enzyme-adapter-react-16';
 
 describe('Expression Simple Editor - List', function() {

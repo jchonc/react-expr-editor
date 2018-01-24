@@ -74,8 +74,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         }
     }
 
-    getCurrentOp(){
-
+    getCurrentOp() {
     }
 
     render() {
@@ -192,8 +191,8 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                         onChange={(value: any) => { this.props.node.setOperator(value); }}
                     >
                         {
-                            allowedOperators.map((o: any) =>
-                                <Option value={o.value}>{o.label}</Option>
+                            allowedOperators.map((o: any, n: number) =>
+                                <Option key={n} value={o.value}>{o.label}</Option>
                             )
                         }
                     </Select>

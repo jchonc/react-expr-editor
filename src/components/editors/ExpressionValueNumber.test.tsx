@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ExpressionValueNumber from './ExpressionValueNumber';
 
-import { configure, shallow } from 'enzyme';
+import { configure, shallow, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
 describe('Expression Simple Editor - Number', function() {
