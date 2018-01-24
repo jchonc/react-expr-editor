@@ -15,22 +15,18 @@ export class ExpressionStore {
         this.expression = NodeFactory.LoadExpression(expression);
     }
 
-    @action
-    reveal(element: HTMLElement | null) {
-        const result = JSON.stringify(NodeFactory.SaveExpression(this.expression), null, 2);
-        element!.innerHTML = result;
-    }
-
     @action clear() {
         this.setExpression({
             name: 'compare',
             isClone: false,
             operands: []
         });
-        utilityStore.fetchDictionary(this.moduleId, this.entityName)
-            .then(() => {
-                utilityStore.fetchPicklists(utilityStore.usedLists);
-            });
+        if (this.moduleId && this.entityName) {
+            utilityStore.fetchDictionary(this.moduleId, this.entityName)
+                .then(() => {
+                    utilityStore.fetchPicklists(utilityStore.usedLists);
+                });
+        }
     }
 
     @action getMeta(attrId: string): any | undefined {
