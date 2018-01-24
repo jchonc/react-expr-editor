@@ -37,7 +37,7 @@ export interface ExpressionSimpleItemProps {
     utilityStore?: UtilityStore;
 }
 @observer
-export class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
+class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -57,6 +57,9 @@ export class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemPr
                 break;
             case 'REMOVE':
                 this.props.node.removeSelf();
+                break;
+            case 'COPY_LINE':
+                this.props.node.copyLine();
                 break;
             default:
                 break;
@@ -143,10 +146,11 @@ export class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemPr
             if (!this.props.readOnly) {
                 const dropdownMenu = (
                     <Menu onClick={this.handleMenuClick}>
+                        <Menu.Item key="NEW_LINE">New Line</Menu.Item>
                         <Menu.Item key="ADD_AND">AND</Menu.Item>
                         <Menu.Item key="ADD_OR">OR</Menu.Item>
                         <Menu.Divider />
-                        <Menu.Item key="NEW_LINE">New Line</Menu.Item>
+                        <Menu.Item key="COPY_LINE">Duplicate Line</Menu.Item>
                         <Menu.Item key="REMOVE">Remove</Menu.Item>
                     </Menu>
                 );
