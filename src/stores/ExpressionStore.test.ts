@@ -7,6 +7,14 @@ describe('Store test', function () {
     test('initial state', () => {
         expect(expressionStore.entityName).toBeUndefined();
         expect(expressionStore.moduleId).toBeUndefined();
-        /*expect(expressionStore.expression).toBeUndefined();*/
+    });
+
+    test('can set expression with valid json', () => {
+        expressionStore.setExpression({ name: 'logic' });
+        expect(expressionStore.expression).toBeDefined();
+
+        expressionStore.setExpression({ });
+        expect(expressionStore.expression).toBeNull();
+
     });
 });

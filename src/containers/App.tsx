@@ -1,8 +1,9 @@
 import * as React from 'react';
 import './App.css';
 import ExpressionEditor from '../components/expressionEditor';
-import { Button } from 'antd';
 import expressionStore from '../stores/ExpressionStore';
+import { autorun } from 'mobx';
+import { NodeFactory } from '../types/index';
 
 const testComplexExpression: any = {
   name: 'logic',
@@ -37,6 +38,17 @@ const testComplexExpression: any = {
 };
 
 class App extends React.Component<{}> {
+  componentDidMount() {
+    autorun(
+      () => {
+        if (expressionStore && expressionStore.expression) {
+          document.getElementById('expr_value')!.innerHTML =
+            JSON.stringify(NodeFactory.SaveExpression(expressionStore.expression), null, 2);
+        }
+      },
+      this
+    );
+  }
   render() {
     return (
       <div className="container">
@@ -49,8 +61,7 @@ class App extends React.Component<{}> {
           root={testComplexExpression}
         />
         <div className="row">
-          <Button onClick={() => expressionStore.reveal()}>Reveal</Button>
-          <pre id="expr_value"/>
+          <pre id="expr_value" />
         </div>
       </div>
     );

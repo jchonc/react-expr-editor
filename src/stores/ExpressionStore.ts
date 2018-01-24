@@ -1,8 +1,9 @@
 import { NodeFactory, AbstractNode } from '../types/index';
-import { observable, action } from 'mobx';
+import { observable, action, IReactionDisposer } from 'mobx';
 import utilityStore from './UtilityStore';
 
 export class ExpressionStore {
+    handler: IReactionDisposer;
     @observable valid: boolean = true;
     @observable expression: AbstractNode | null;
 
@@ -14,9 +15,10 @@ export class ExpressionStore {
         this.expression = NodeFactory.LoadExpression(expression);
     }
 
-    @action reveal() {
-        const result = JSON.stringify(NodeFactory.SaveExpression(this.expression));
-        document.getElementById('expr_value')!.innerHTML = result;
+    @action
+    reveal(element: HTMLElement | null) {
+        const result = JSON.stringify(NodeFactory.SaveExpression(this.expression), null, 2);
+        element!.innerHTML = result;
     }
 
     @action clear() {
