@@ -21,8 +21,7 @@ export class ExpressionStore {
 
     @action clear() {
         this.setExpression({
-            operator: 'And',
-            name: 'logic',
+            name: 'compare',
             isClone: false,
             operands: []
         });

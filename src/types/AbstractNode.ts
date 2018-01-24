@@ -50,6 +50,7 @@ export abstract class AbstractNode {
             const newComplexNode = new LogicNode(parent);
             newComplexNode.operator = logic;
             newComplexNode.operands.push(this);
+            newComplexNode.operands.push(new CompareNode(newComplexNode));
             this.parentNode = newComplexNode;
             parent.replaceNode(this, newComplexNode);
         }
@@ -125,6 +126,19 @@ export class CompareNode extends AbstractNode {
         this.operator = operator;
     }
 
+    @action
+    copyLine() {
+        let newNode = new CompareNode(this.parentNode);
+        newNode.attrId = this.attrId;
+        newNode.attrCaption = this.attrCaption;
+        newNode.operator = this.operator;
+        if (this.operands && this.operands.length) {
+            newNode.operands.push(...this.operands);
+        }
+        let index = (this.parentNode as LogicNode).operands.findIndex(n => n === this);
+        (this.parentNode as LogicNode).operands.splice(index, 0, newNode);
+    }
+
     @computed get meta(): any {
         return ExpressionStore.getMeta(this.attrId);
     }
@@ -165,9 +179,6 @@ export class LogicNode extends AbstractNode implements NodeOwner {
     constructor(parent?: NodeOwner) {
         super(parent);
         this.operands = new Array<AbstractNode>();
-        if (parent && parent instanceof LogicNode) {
-            (parent as LogicNode).operands.push(this);
-        }
     }
 
     @action addSimpleChild() {
@@ -182,6 +193,28 @@ export class LogicNode extends AbstractNode implements NodeOwner {
         }
     }
 
+    @action
+    copyGroup() {
+        let newNode = new LogicNode(this.parentNode);
+        newNode.operator = this.operator;
+        if (this.operands && this.operands.length) {
+            this.operands.map(function (se: any) {
+                se.name = se instanceof LogicNode ? 'logic' : 'compare';
+                const childExpression = NodeFactory.LoadExpression(se);
+                if (childExpression) {
+                    (childExpression.parentNode as LogicNode) = newNode;
+                    newNode.operands.push(childExpression);
+                }
+            });
+        }
+        if (this.isRoot() && this.operands && this.operands.length) {
+            this.operands.push(newNode);
+        } else {
+            let index = (this.parentNode as LogicNode).operands.findIndex(n => n === this);
+            (this.parentNode as LogicNode).operands.splice(index, 0, newNode);
+        }
+    }
+
     replaceNode(oldNode: AbstractNode, newNode: AbstractNode): void {
         const idx = this.operands.indexOf(oldNode);
         if (idx >= 0) {
@@ -189,6 +222,10 @@ export class LogicNode extends AbstractNode implements NodeOwner {
         } else {
             this.operands.push(newNode);
         }
+    }
+
+    isRoot() {
+        return !(this.parentNode instanceof LogicNode);
     }
 
     @computed get isValid(): boolean {
