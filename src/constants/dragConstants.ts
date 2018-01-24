@@ -4,17 +4,18 @@ function handleHover(oldParent: LogicNode, newParent: LogicNode, target: Abstrac
 
     let sourceIndex = oldParent.operands.findIndex(node => node === source);
 
-    oldParent.operands!.splice(sourceIndex, 1);
+    oldParent.removeOperandAt(sourceIndex);
 
     let targetIndex = newParent === target ? -1 :
         newParent.operands.findIndex((node: any) => node === target);
 
-    newParent.operands.splice(targetIndex + 1, 0, source);
+
+    newParent.addOperandAt(targetIndex + 1, source);
     source.parentNode = newParent;
 }
 
 function confirmPlace(dragNode: AbstractNode, dragParentNode: LogicNode, TargetNode: AbstractNode): boolean {
-    let index = dragParentNode.operands.findIndex((n: AbstractNode)  => n === dragNode);
+    let index = dragParentNode.operands.findIndex((n: AbstractNode) => n === dragNode);
     return index > 0 && TargetNode === dragParentNode.operands[index - 1];
 }
 
@@ -53,7 +54,7 @@ export const simpleSource = {
     },
     endDrag(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
+        dragNodeInfo.node.toggleIsClone(false);
     }
 };
 
@@ -67,13 +68,13 @@ export const simpleTarget = {
             dragNode !== targetNode;
 
         if (condition && !confirmPlace(dragNode, dragNode.parentNode, targetNode)) {
-            dragNode.isClone = true;
+            dragNode.toggleIsClone(true);
             handleHover(dragNode.parentNode, targetNode.parentNode, targetNode, dragNode);
         }
     },
     drop(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
+        dragNodeInfo.node.toggleIsClone(false);
     }
 };
 
@@ -84,7 +85,7 @@ export const complexSource = {
     },
     endDrag(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
+        dragNodeInfo.node.toggleIsClone(false);
     }
 };
 
@@ -98,12 +99,12 @@ export const complexTarget = {
             : true;
 
         if (condition && targetNode.operands[0] !== dragNode) {
-            dragNode.isClone = true;
+            dragNode.toggleIsClone(true);
             handleHover(dragNode.parentNode, targetNode, targetNode, dragNode);
         }
     },
     drop(props: any, monitor: any) {
         let dragNodeInfo = monitor.getItem();
-        dragNodeInfo.node.isClone = false;
+        dragNodeInfo.node.toggleIsClone(false);
     }
 };
