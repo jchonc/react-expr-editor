@@ -74,10 +74,6 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         }
     }
 
-    getCurrentOp(){
-
-    }
-
     render() {
 
         let expression = this.props.node;
@@ -94,7 +90,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let allowedOperators = this.props.node.getAllowedOperators(meta);
             let currentOperators = allowedOperators.filter((op: any) => op.value === expression.operator);
             let displayOp = 'equals';
-            if (currentOperators.length){
+            if (currentOperators.length) {
                 displayOp = currentOperators[0].label;
             }
             let listItems: any[] = [];
@@ -172,34 +168,36 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
             const { connectDropTargetComplex, connectDropTargetSimple, connectDragSource } = this.props;
             const drag = connectDragSource(
-                <div className="expr-simple-part"><i className="fa fa-th" aria-hidden="true" /></div>
+                <div className="expr-simple-handle"><i className="fa fa-th" aria-hidden="true" /></div>
             );
             return connectDropTargetComplex(connectDropTargetSimple(
                 <div className={classNames('expr-simple-item', { clone: expression.isClone }, { 'node-error': !expression.isValid })}>
                     {drag}
-                    <Select
-                        className="expr-simple-field"
-                        disabled={this.props.readOnly}
-                        value={expression.attrId}
-                        onChange={(value: any) => { this.updateMetaReference(value); }}
-                    >
-                        {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
-                    </Select>
-                    <Select
-                        className="expr-simple-field"
-                        disabled={this.props.readOnly}
-                        value={displayOp}
-                        onChange={(value: any) => { this.props.node.setOperator(value); }}
-                    >
-                        {
-                            allowedOperators.map((o: any) =>
-                                <Option value={o.value}>{o.label}</Option>
-                            )
-                        }
-                    </Select>
-                    {OperandCtrl}
-                    <div className="expr-simple-part">
-                        {menu}
+                    <div className="expr-simple-container">
+                        <Select
+                            className="expr-simple-field"
+                            disabled={this.props.readOnly}
+                            value={expression.attrId}
+                            onChange={(value: any) => { this.updateMetaReference(value); }}
+                        >
+                            {options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
+                        </Select>
+                        <Select
+                            className="expr-simple-field"
+                            disabled={this.props.readOnly}
+                            value={displayOp}
+                            onChange={(value: any) => { this.props.node.setOperator(value); }}
+                        >
+                            {
+                                allowedOperators.map((o: any) =>
+                                    <Option key={o.value} value={o.value}>{o.label}</Option>
+                                )
+                            }
+                        </Select>
+                        {OperandCtrl}
+                        <div className="expr-simple-menu">
+                            {menu}
+                        </div>
                     </div>
                 </div>
             ));

@@ -83,7 +83,7 @@ export class CompareNode extends AbstractNode {
     }
 
     getAllowedOperators(meta: any) {
-        if (meta){
+        if (meta) {
             return Operators[meta.attrCtrlType];
         }
         return [{value: '', label: ''}];
@@ -92,11 +92,11 @@ export class CompareNode extends AbstractNode {
 
     getOperandKind(meta: any) {
         if (meta) {
-            if (meta.attrCtrlType === 'date' && (this.operator === 'IsBetween' || this.operator === 'IsNotBetween')) {
+            if (meta.attrCtrlType === 'date' && (this.operator === 'BETWEEN' || this.operator === 'NOT_BETWEEN')) {
                 return 'date-range';
             }
             if (meta.attrCtrlType === 'picklist') {
-                return (this.operator === 'IsOneOf') ? 'multi-pick' : 'pick';
+                return (this.operator === 'ONE_OF') ? 'multi-pick' : 'pick';
             }
             if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
                 return meta.attrCtrlType;

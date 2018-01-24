@@ -1,5 +1,7 @@
 .expr-simple-item {
-    display: table; 
+    display: flex;
+    justify-content: flex-start;
+    align-items: center; 
     width: 520px; 
     margin: 10px;
     background-color: #afaaaa;
@@ -9,11 +11,19 @@
     position: relative;
 }
 
+.expr-simple-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    width: inherit;
+}
+
 .node-error{
     border: solid 2px red;
     margin: 8px;
 }
 
-.expr-simple-part {display: table-cell; width: 20px;}
-.expr-simple-field {display: table-cell; width: 120px;}
-.expr-simple-value {display: table-cell; }
+.expr-simple-handle {width: 20px; margin-right: 5px;}
+.expr-simple-menu {display: flex;}
+.expr-simple-field { width: 160px;}
+.expr-simple-value {display: flex; }
