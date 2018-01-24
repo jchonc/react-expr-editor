@@ -74,6 +74,10 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         }
     }
 
+    getCurrentOp(){
+
+    }
+
     render() {
 
         let expression = this.props.node;
@@ -88,6 +92,11 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let meta = this.props.expressionStore!.getMeta(expression.attrId!);
             let operandKind = this.props.node.getOperandKind(meta);
             let allowedOperators = this.props.node.getAllowedOperators(meta);
+            let currentOperators = allowedOperators.filter((op: any) => op.value === expression.operator);
+            let displayOp = 'equals';
+            if (currentOperators.length){
+                displayOp = currentOperators[0].label;
+            }
             let listItems: any[] = [];
             if (meta) {
                 if (meta.attrCtrlType === 'picklist' && meta.attrCtrlParams && !this.props.utilityStore!.isPicklistsEmpty) {
@@ -179,12 +188,12 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                     <Select
                         className="expr-simple-field"
                         disabled={this.props.readOnly}
-                        value={expression.operator}
+                        value={displayOp}
                         onChange={(value: any) => { this.props.node.setOperator(value); }}
                     >
                         {
                             allowedOperators.map((o: any) =>
-                                <Option key={o.value} value={o.value}>{o.label}</Option>
+                                <Option value={o.value}>{o.label}</Option>
                             )
                         }
                     </Select>

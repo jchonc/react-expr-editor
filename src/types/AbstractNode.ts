@@ -1,5 +1,5 @@
 import { observable, action, computed } from 'mobx';
-import { ExpressionBooleanLogic, ExpressionOperator, validCtrlKind } from './index';
+import { ExpressionBooleanLogic, ExpressionOperator, validCtrlKind, Operators } from './index';
 import ExpressionStore from '../stores/ExpressionStore';
 import ValidatorFactory from '../factories/ValidatorFactory';
 
@@ -72,7 +72,7 @@ export class CompareNode extends AbstractNode {
     attrCaption: string;
 
     @observable
-    operator: ExpressionOperator;
+    operator: string;
 
     @observable
     operands: string[];
@@ -83,20 +83,7 @@ export class CompareNode extends AbstractNode {
     }
 
     getAllowedOperators(meta: any) {
-        let results = [
-            { value: 'Equal', label: 'equals to' },
-            { value: 'NotEqual', label: 'not equal to' }
-        ];
-        if (meta) {
-            if (meta.attrCtrlType === 'picklist') {
-                results.push({ value: 'IsOneOf', label: 'is one of' });
-            }
-            if (meta.attrCtrlType === 'date') {
-                results.push({ value: 'IsBetween', label: 'between' });
-                results.push({ value: 'IsNotBetween', label: 'is not between' });
-            }
-        }
-        return results;
+        return Operators[meta.attrCtrlType];
     }
 
     getOperandKind(meta: any) {
