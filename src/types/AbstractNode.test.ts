@@ -1,6 +1,5 @@
 import { LogicNode, CompareNode, AbstractNode } from './AbstractNode';
 import { NodeFactory } from './index';
-import { exec } from 'child_process';
 
 describe('LogicNode', () => {
     test('instanceof', () => {
