@@ -16,7 +16,7 @@ export class UtilityStore {
         return !this.picklists || !this.picklists.length;
     }
 
-    @observable dictionary: any[];
+    @observable dictionary?: any[];
 
     @computed get usedLists(): any[] {
         if (!this.dictionary || !this.dictionary.length) {
@@ -28,7 +28,7 @@ export class UtilityStore {
         return Array.from(result.values());
     }
 
-    @observable picklists: any[];
+    @observable picklists?: any[];
 
     @action async fetchDictionary(moduleId: number, entityName: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
@@ -48,7 +48,7 @@ export class UtilityStore {
                 reject(e);
             }
             finally {
-                this.tasks -= 1;
+                this.tasks = Math.max(this.tasks - 1, 0);
             }
         });
     }
@@ -78,7 +78,7 @@ export class UtilityStore {
                 reject(e);
             }
             finally {
-                this.tasks -= 1;
+                this.tasks = Math.max(this.tasks - 1, 0);
             }
         });
     }
