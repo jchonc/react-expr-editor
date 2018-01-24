@@ -11,8 +11,12 @@ export interface NodeOwner {
 }
 
 export abstract class AbstractNode {
-    @observable isClone: boolean;
-    @observable parentNode?: NodeOwner;
+    @observable
+    isClone: boolean;
+
+    @observable
+    parentNode?: NodeOwner;
+
     abstract isValid: boolean;
 
     constructor(parent?: NodeOwner) {
@@ -44,7 +48,8 @@ export abstract class AbstractNode {
         return this === parentNode ? true : this.parentNode!.isDescedentOf(parentNode);
     }
 
-    @action replaceWithComplex(logic: ExpressionBooleanLogic) {
+    @action
+    replaceWithComplex(logic: ExpressionBooleanLogic) {
         const parent = this.parentNode;
         if (parent) {
             const newComplexNode = new LogicNode(parent);
@@ -158,16 +163,13 @@ export class LogicNode extends AbstractNode implements NodeOwner {
 
     @action
     addOperandAt(index: number, newOperand: any) {
-
         this.operands.splice(index, 0, newOperand);
+        newOperand.parentNode = this;
     }
 
     constructor(parent?: NodeOwner) {
         super(parent);
         this.operands = new Array<AbstractNode>();
-        if (parent && parent instanceof LogicNode) {
-            (parent as LogicNode).operands.push(this);
-        }
     }
 
     @action addSimpleChild() {
