@@ -10,23 +10,21 @@ import { ExpressionSimpleItem } from './expressionSimpleItem';
 
 describe('Expression Compare Node', function() {
 
-    let expressionNode: CompareNode;    
-
     beforeAll( async (done) => {
         expressionStore.moduleId = 1;
         expressionStore.entityName = 'patient';
         await utilityStore.fetchDictionary(1, 'patient');
-        expressionNode = new CompareNode(undefined);
-        expressionNode.attrId = '11001';
-        expressionNode.attrCaption = 'First Name';
-        expressionNode.operator = 'Equal';
-        expressionNode.isClone = false;
-        expressionNode.operands = ['Jian'];
         configure({ adapter: new Adapter() }); 
         done();
     });
 
     test('Should Render', function() {
+        const expressionNode = new CompareNode(undefined);
+        expressionNode.attrId = '11001';
+        expressionNode.attrCaption = 'First Name';
+        expressionNode.operator = 'Equal';
+        expressionNode.isClone = false;
+        expressionNode.operands = ['Jian'];
         const component = shallow(
             <ExpressionSimpleItem 
                 node={expressionNode}
@@ -40,7 +38,8 @@ describe('Expression Compare Node', function() {
         );    
         expect(component !== null);    
     });
-/*
+
+    /*
     test('Should Render If Empty', function() {
         const values: any = [];
         const onChanged = () => undefined;
