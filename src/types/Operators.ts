@@ -35,7 +35,10 @@ const basicDateTimeOps = [
 
 export const Operators = {
     'text': basicTextOps,
+    'number': basicTextOps,
     'picklist': basicTextOps,
+    'multi-pick': basicTextOps,
     'date': basicDateTimeOps,
+    'date-range': basicDateTimeOps,
     'time': basicDateTimeOps,
 };
