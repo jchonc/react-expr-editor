@@ -83,7 +83,11 @@ export class CompareNode extends AbstractNode {
     }
 
     getAllowedOperators(meta: any) {
-        return Operators[meta.attrCtrlType];
+        if (meta){
+            return Operators[meta.attrCtrlType];
+        }
+        return [{value: '', label: ''}];
+        
     }
 
     getOperandKind(meta: any) {
