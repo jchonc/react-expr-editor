@@ -4,7 +4,7 @@ import ExpressionEditor from '../components/expressionEditor';
 import expressionStore from '../stores/ExpressionStore';
 import { autorun } from 'mobx';
 import { NodeFactory } from '../types/index';
-import { Layout, Row, Col } from 'antd';
+import { Layout, Row, Col, Button } from 'antd';
 const { Header, Content } = Layout;
 const testComplexExpression: any = {
   name: 'logic',
@@ -37,14 +37,21 @@ const testComplexExpression: any = {
     }
   ]
 };
-
+declare var CodeMirror: any;
 class App extends React.Component<{}> {
+  doc: any;
   componentDidMount() {
+    if (CodeMirror) {
+      this.doc = CodeMirror(document.getElementById('expr_value'), {
+        mode: 'javascript'
+      });
+    }
     autorun(
       () => {
         if (expressionStore && expressionStore.expression) {
-          document.getElementById('expr_value')!.innerHTML =
-            JSON.stringify(NodeFactory.SaveExpression(expressionStore.expression), null, 2);
+          if (this.doc) {
+            this.doc.setValue(JSON.stringify(NodeFactory.SaveExpression(expressionStore.expression), null, 2));
+          }
         }
       },
       this
@@ -55,7 +62,7 @@ class App extends React.Component<{}> {
       <Layout>
 
         <Header>
-          <h2>Welcome to React</h2>
+          <h2 style={{ color: '#FFF' }}>React Expression Editor</h2>
         </Header>
         <Content>
           <Row>
@@ -67,6 +74,7 @@ class App extends React.Component<{}> {
               />
             </Col>
             <Col>
+              <Button onClick={() => { expressionStore.setExpression(JSON.parse(this.doc.getValue())); }}>⬅️</Button>
               <pre id="expr_value" />
             </Col>
           </Row>
