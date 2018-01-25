@@ -61,6 +61,10 @@ export abstract class AbstractNode {
         }
     }
 
+    isRoot() {
+        return !(this.parentNode instanceof LogicNode);
+    }
+
 }
 
 export class CompareNode extends AbstractNode {
@@ -86,7 +90,7 @@ export class CompareNode extends AbstractNode {
         if (meta) {
             return Operators[meta.attrCtrlType];
         }
-        return [{value: '', label: ''}];        
+        return [{ value: '', label: '' }];
     }
 
     getOperandKind(meta: any) {
@@ -123,7 +127,16 @@ export class CompareNode extends AbstractNode {
 
     @action
     copyLine() {
+        
         if (this.parentNode) {
+            if (this.isRoot()) {
+                let newRoot = new LogicNode(this.parentNode);
+                this.parentNode = newRoot;
+                newRoot.operands.push(this);
+                newRoot.operator = 'And';
+                newRoot.parentNode!.replaceNode(this, newRoot);
+            } 
+
             let newNode = new CompareNode(this.parentNode);
             newNode.attrId = this.attrId;
             newNode.attrCaption = this.attrCaption;
@@ -131,17 +144,18 @@ export class CompareNode extends AbstractNode {
             if (this.operands && this.operands.length) {
                 newNode.operands.push(...this.operands);
             }
+
             let index = (this.parentNode as LogicNode).operands.findIndex(n => n === this);
             (this.parentNode as LogicNode).operands.splice(index, 0, newNode);
-        }
+        }        
     }
 
     @computed get meta(): any {
         return ExpressionStore.getMeta(this.attrId);
     }
 
-    @computed get validator(): any {
-        return new ValidatorFactory().GetValidator(this.getOperandKind(this.meta));
+    @computed get validator(): (values: string[]) => boolean {
+        return ValidatorFactory.GetValidator(this.getOperandKind(this.meta));
     }
 
     @computed get isValid(): boolean {
@@ -219,10 +233,6 @@ export class LogicNode extends AbstractNode implements NodeOwner {
         } else {
             this.operands.push(newNode);
         }
-    }
-
-    isRoot() {
-        return !(this.parentNode instanceof LogicNode);
     }
 
     @computed get isValid(): boolean {

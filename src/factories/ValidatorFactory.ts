@@ -3,52 +3,46 @@ import { ExpressionOperandKind } from '../types/index';
 
 export default class ValidatorFactory {
 
-    GetValidator(type: ExpressionOperandKind) {
+    static GetValidator(type: ExpressionOperandKind) {
 
         switch (type) {
             case 'number':
-                return this.ValidateNumber;
+                return ValidatorFactory.validateNumber;
             case 'date':
-                return this.ValidateDate;
+                return ValidatorFactory.validateDate;
             case 'date-range':
-                return this.ValidateDates;
+                return ValidatorFactory.validateDates;
             case 'multi-pick':
-                return this.ValidateMultiPick;
+                return ValidatorFactory.validateMultiPick;
             case 'pick':
             case 'text':
             default:
-                return this.ValidateText;
+                return ValidatorFactory.validateText;
         }
     }
 
-    isNotEmpty(value: string): boolean {
+    static isNotEmpty(value: string): boolean {
         return !!value;
     }
 
-    private ValidateText = (values: string[]) => {
-        return (values.length) ? this.isNotEmpty(values[0]) : true;
+    private static validateText = (values: string[]) => {
+        return (values.length > 0) ? ValidatorFactory.isNotEmpty(values[0]) : true;
     }
 
-    private ValidateMultiPick = (values: string[]) => {
-        let result = true;
-        for (let i = 0; i < values.length; i++) {
-            result = result && this.isNotEmpty(values[i]);
-        }
-        return result;
+    private static validateMultiPick = (values: string[]) => {
+        return values.every((v) => ValidatorFactory.isNotEmpty(v));
     }
 
-    private ValidateNumber = (values: string[]) => {
-        return this.isNotEmpty(values[0]) && !Number.isNaN(values[0] as any);
+    private static validateNumber = (values: string[]) => {
+        return values.every((v) => ValidatorFactory.isNotEmpty(v) && !isNaN(v as any));
     }
 
-    private ValidateDate = (values: any[]) => {
-        return moment(values[0], 'YYYY-MM-DD').isValid();
+    private static validateDate = (values: any[], dateFormat: string = 'YYYY-MM-DD') => {
+        return values.every((v) => moment(v, dateFormat).isValid());
     }
 
-    private ValidateDates = (values: any[]) => {
-        return (values.length === 2) &&
-            moment(values[0], 'YYYY-MM-DD').isValid() &&
-            moment(values[1], 'YYYY-MM-DD').isValid();
+    private static validateDates = (values: any[], dateFormat: string = 'YYYY-MM-DD') => {
+        return values.every((v) => moment(v, dateFormat).isValid());
     }
 
 }

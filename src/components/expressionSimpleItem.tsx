@@ -143,7 +143,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         let OperandCtrl = OperandCtrlTag ? (
             <OperandCtrlTag {...OperandCtrlProps} />
         ) : (
-                <div>Empty</div>
+                <div><input className="expr-simple-value ant-input"/></div>
             );
 
         let menu = (<span>&nbsp;</span>);

@@ -5,7 +5,8 @@ const knownPickLists = [{
     listName: 'Gender',
     items: [
         { value: 'GD_MALE', label: 'Male', description: 'Gentleman' },
-        { value: 'GD_FEMALE', label: 'Female', description: 'Lady' }
+        { value: 'GD_FEMALE', label: 'Female', description: 'Lady' },
+        { value: 'GD_LONG', label: 'This is a reaaaaaaaaaaally long option', description: 'long' }
     ]
 }];
 
