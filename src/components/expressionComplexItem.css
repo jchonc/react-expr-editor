@@ -17,6 +17,7 @@
     content: '';
     left: -6px;
     top: 50%;
+    z-index: -1;
 } 
 
 /* Middle Node*/
@@ -28,6 +29,7 @@
     content: '';
     bottom: -10px;
     left: -6px;
+    z-index: -1;
 }
 
 .expr-children > div:not(:first-child):not(:last-child)::after {
@@ -37,6 +39,7 @@
     content: '';
     top: 50%;
     left: -6px;
+    z-index: -1;
 }
 
 /* Last Node*/
@@ -49,6 +52,7 @@
     content: '';
     bottom: 50%;
     left: -6px;
+    z-index: -1;
 }
 
 /* Only Node*/
@@ -62,6 +66,7 @@
     content: '';
     bottom: 50%;
     left: -6px;
+    z-index: -1;
 }
 
 .expr-logic { 

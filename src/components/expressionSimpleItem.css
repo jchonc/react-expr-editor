@@ -26,5 +26,5 @@
 
 .expr-simple-handle {width: 20px; margin-right: 5px;}
 .expr-simple-menu {display: flex;}
-.expr-simple-field { width: 160px;}
-.expr-simple-value {width: 160px; }
+.expr-simple-field { min-width: 160px; width: auto;}
+.expr-simple-value {min-width: 160px; width: auto }
