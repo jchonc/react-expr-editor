@@ -22,8 +22,7 @@ export default class ValidatorFactory {
     }
 
     static isNotEmpty(value: string): boolean {
-        // return !!value; // doesn't work for '0'
-        return value !== undefined && value !== null && value.length > 0 && value !== '';
+        return !!value;
     }
 
     private static validateText = (values: string[]) => {
