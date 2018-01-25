@@ -25,7 +25,7 @@ describe('Utility Store Test', function () {
     test('can fetch dictionary', async () => {
         expect(utilityStore.tasks).toBe(0);
         await utilityStore.fetchDictionary(1, 'patient');
-        expect(utilityStore.dictionary).toHaveLength(1);
+        expect(utilityStore.dictionary).toHaveLength(6);
         expect(utilityStore.isBusy).toBe(false);
     });
 

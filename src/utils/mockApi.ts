@@ -11,46 +11,43 @@ export const mockApi = jest.fn().mockImplementation((...args) => {
         }];
     }
     else if (url.toString() === '/dictionary/1/patient') {
-        result = [
-            {
-                module: 1,
-                name: 'pandora',
-                entities: [{
-                    name: 'patient',
-                    attributes: [{
-                        attrId: '11001',
-                        attrCaption: 'First Name',
-                        attrDataType: 'string',
-                        attrCtrlType: 'text',
-                        attrCtrlParams: ''
-                    }, {
-                        attrId: '11002',
-                        attrCaption: 'Last Name',
-                        attrDataType: 'string',
-                        attrCtrlType: 'text',
-                        attrCtrlParams: ''
-                    }, {
-                        attrId: '11003',
-                        attrCaption: 'Gender',
-                        attrDataType: 'string',
-                        attrCtrlType: 'picklist',
-                        attrCtrlParams: 'Gender'
-                    }, {
-                        attrId: '11004',
-                        attrCaption: 'Birthday',
-                        attrDataType: 'date',
-                        attrCtrlType: 'date',
-                        attrCtrlParams: ''
-                    }, {
-                        attrId: '11005',
-                        attrCaption: 'Owner',
-                        attrDataType: 'user',
-                        attrCtrlType: 'lookup',
-                        attrCtrlParams: 'users'
-                    }]
-                }]
-            }
-        ];
+        result = [{
+            attrId: '11001',
+            attrCaption: 'First Name',
+            attrDataType: 'string',
+            attrCtrlType: 'text',
+            attrCtrlParams: ''
+        }, {
+            attrId: '11002',
+            attrCaption: 'Last Name',
+            attrDataType: 'string',
+            attrCtrlType: 'text',
+            attrCtrlParams: ''
+        }, {
+            attrId: '11003',
+            attrCaption: 'Gender',
+            attrDataType: 'string',
+            attrCtrlType: 'picklist',
+            attrCtrlParams: 'Gender'
+        }, {
+            attrId: '11004',
+            attrCaption: 'Birthday',
+            attrDataType: 'date',
+            attrCtrlType: 'date',
+            attrCtrlParams: ''
+        }, {
+            attrId: '11005',
+            attrCaption: 'Owner',
+            attrDataType: 'user',
+            attrCtrlType: 'lookup',
+            attrCtrlParams: 'users'
+        }, {
+            attrId: '11006',
+            attrCaption: 'Age',
+            attrDataType: 'number',
+            attrCtrlType: 'number',
+            attrCtrlParams: ''
+        }];
     }
     else if (url.startsWith('/lookups/users')) {
         const knownUsers = [
