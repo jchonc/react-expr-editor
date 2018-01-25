@@ -61,6 +61,10 @@ export abstract class AbstractNode {
         }
     }
 
+    isRoot() {
+        return !(this.parentNode instanceof LogicNode);
+    }
+
 }
 
 export class CompareNode extends AbstractNode {
@@ -124,6 +128,15 @@ export class CompareNode extends AbstractNode {
 
     @action
     copyLine() {
+        
+        if (this.isRoot()) {
+            let newRoot = new LogicNode(this.parentNode);
+            this.parentNode = newRoot;
+            newRoot.operands.push(this);
+            newRoot.operator = 'And';
+            newRoot.parentNode!.replaceNode(this, newRoot);
+        } 
+
         let newNode = new CompareNode(this.parentNode);
         newNode.attrId = this.attrId;
         newNode.attrCaption = this.attrCaption;
@@ -131,8 +144,10 @@ export class CompareNode extends AbstractNode {
         if (this.operands && this.operands.length) {
             newNode.operands.push(...this.operands);
         }
+
         let index = (this.parentNode as LogicNode).operands.findIndex(n => n === this);
         (this.parentNode as LogicNode).operands.splice(index, 0, newNode);
+        
     }
 
     @computed get meta(): any {
@@ -218,10 +233,6 @@ export class LogicNode extends AbstractNode implements NodeOwner {
         } else {
             this.operands.push(newNode);
         }
-    }
-
-    isRoot() {
-        return !(this.parentNode instanceof LogicNode);
     }
 
     @computed get isValid(): boolean {
