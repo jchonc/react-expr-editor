@@ -37,6 +37,12 @@ let dictionary = [
                 attrDataType: 'user',
                 attrCtrlType: 'lookup',
                 attrCtrlParams: 'users'
+            }, {
+                attrId: '11006',
+                attrCaption: 'Age',
+                attrDataType: 'number',
+                attrCtrlType: 'number',
+                attrCtrlParams: ''
             }]
         }]
     }

@@ -29,7 +29,7 @@ export class ExpressionStore {
         }
     }
 
-    @action getMeta(attrId: string): any | undefined {
+    getMeta(attrId: string): any | undefined {
         if (!attrId) {
             return undefined;
         }

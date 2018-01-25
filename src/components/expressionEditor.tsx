@@ -61,6 +61,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
             return <div>Loading Metabase</div>;
         }
         else {
+            debugger;
             let expression = expressionStore.expression;
             if (expression) {
                 if (!expression.parentNode) {

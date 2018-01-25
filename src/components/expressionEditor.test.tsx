@@ -36,15 +36,31 @@ const testComplexExpression: any = {
 describe('Expression Editor', function() {
 
     beforeAll( async (done) => {
-        mockUtilityApi();
+        await mockUtilityApi();
         configure({ adapter: new Adapter() }); 
         done();
     });
 
-    test('Should Render', function() {
+    test('Should Render', async function() {
         const component = shallow(
                 <ExpressionEditor 
+                    moduleId={1}
+                    entityName={'patient'}
                     node={testComplexExpression}
+                    readOnly={false}
+                />          
+        );    
+        await new Promise(resolve => setTimeout(resolve, 500));
+        component.update();
+        expect(component !== null);    
+    });
+
+    test('Should Render if empty', function() {
+        const component = shallow(
+                <ExpressionEditor 
+                    moduleId={1}
+                    entityName={'patient'}
+                    node={null}
                     readOnly={false}
                 />          
         );    

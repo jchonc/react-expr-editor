@@ -45,6 +45,6 @@ describe('Store test', function () {
         store.entityName = 'patient';
         store.moduleId = 1;
         let meta = store.getMeta('11001');
-        expect(meta).toBeUndefined();
+        expect(meta !== null);
     });
 });

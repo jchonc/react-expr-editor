@@ -111,7 +111,7 @@ export class ExpressionComplexItem extends React.Component<ExpressionComplexItem
             let nodes = operands.map(function (n: any, i: number) {
                 return (
                     <ExpressionItem
-                        key={i}
+                        key={i.toString()}
                         node={n}
                         readOnly={props.readOnly}
                     />);

@@ -26,7 +26,7 @@ export default class ValidatorFactory {
     }
 
     private ValidateText = (values: string[]) => {
-        return this.isNotEmpty(values[0]);
+        return (values.length) ? this.isNotEmpty(values[0]) : true;
     }
 
     private ValidateMultiPick = (values: string[]) => {

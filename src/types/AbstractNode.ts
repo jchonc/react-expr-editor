@@ -86,8 +86,7 @@ export class CompareNode extends AbstractNode {
         if (meta) {
             return Operators[meta.attrCtrlType];
         }
-        return [{value: '', label: ''}];
-        
+        return [{value: '', label: ''}];        
     }
 
     getOperandKind(meta: any) {
@@ -124,15 +123,17 @@ export class CompareNode extends AbstractNode {
 
     @action
     copyLine() {
-        let newNode = new CompareNode(this.parentNode);
-        newNode.attrId = this.attrId;
-        newNode.attrCaption = this.attrCaption;
-        newNode.operator = this.operator;
-        if (this.operands && this.operands.length) {
-            newNode.operands.push(...this.operands);
+        if (this.parentNode) {
+            let newNode = new CompareNode(this.parentNode);
+            newNode.attrId = this.attrId;
+            newNode.attrCaption = this.attrCaption;
+            newNode.operator = this.operator;
+            if (this.operands && this.operands.length) {
+                newNode.operands.push(...this.operands);
+            }
+            let index = (this.parentNode as LogicNode).operands.findIndex(n => n === this);
+            (this.parentNode as LogicNode).operands.splice(index, 0, newNode);
         }
-        let index = (this.parentNode as LogicNode).operands.findIndex(n => n === this);
-        (this.parentNode as LogicNode).operands.splice(index, 0, newNode);
     }
 
     @computed get meta(): any {
