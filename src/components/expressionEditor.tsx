@@ -8,6 +8,7 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { NodeOwner, AbstractNode, CompareNode } from '../types/index';
 import { Provider, observer } from 'mobx-react';
+import { Spin } from 'antd';
 
 interface ExpressionEditorProps {
     moduleId: number;
@@ -58,7 +59,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
 
     render() {
         if (stores.utilityStore.isBusy || stores.utilityStore.isDictionaryEmpty) {
-            return <div>Loading Metabase</div>;
+            return <div className="spinner-container"><Spin tip="Loading metabase..." /></div>;
         }
         else {
             let expression = stores.expressionStore.expression;
@@ -85,7 +86,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
                 return (
                     <div>
                         {buttons}
-                        <div className="row expr-editor">
+                        <div className="expr-editor">
                             <div className="expr-canvas">
                                 <Provider {...stores}>
                                     <ExpressionItem

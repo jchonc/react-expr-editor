@@ -2,3 +2,11 @@
 .expr-canvas {height: 2000px; width:2000px;}
 .clone{outline: dashed 2px #1ca842; opacity: 0.5}
 .error {color: red}
+.spinner-container {
+    text-align: center;
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 30px 50px;
+    margin: 20px 0;
+  }

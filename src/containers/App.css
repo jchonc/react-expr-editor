@@ -1,2 +1,5 @@
 @import '~antd/dist/antd.css';
 .top-left-corner { border-style: solid; border-top-left-radius: 5px; border-top-width: 1px; border-top-color: green; border-left-color: green; border-left-width: 1px;}
+#expr_value{
+    height: 80vh;
+}
