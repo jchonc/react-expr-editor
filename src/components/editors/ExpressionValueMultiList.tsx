@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Select } from 'antd';
+import * as mobx from 'mobx';
 import { observer } from 'mobx-react';
+import { ObservableArray } from 'mobx/lib/types/observablearray';
 const Option = Select.Option;
 
 interface ExpressionValueMultiListProps {
@@ -15,24 +17,26 @@ class ExpressionValueMultiList extends React.Component<ExpressionValueMultiListP
 
     constructor(props: any) {
         super(props);
-        this.onSelectionChanged = this.onSelectionChanged.bind(this);
-    }
-
-    onSelectionChanged(items: any) {
-        const results = items.map((item: any) => item.value);
-        this.props.onChange(results);
     }
 
     render() {
+        let values = this.props.values;
+        if (mobx.isObservableArray(values)) {
+            values = (this.props.values as ObservableArray<string>).peek();
+        }
+        let opts = this.props.options;
+        if (mobx.isObservableArray(opts)) {
+            opts = (this.props.options as ObservableArray<string>).peek();
+        }        
         return (
             <Select
                 className="expr-simple-value"
                 mode="multiple"
                 disabled={this.props.readOnly}
-                value={this.props.values}
-                onChange={this.onSelectionChanged}
+                value={values}
+                onChange={this.props.onChange}
             >
-                {this.props.options.map((o: any) => <Option key={o.value} value={o.value}>{o.label}</Option>)}
+                {opts.map((o: any, n: number) => <Option key={n + 1} value={o.value}>{o.label}</Option>)}
             </Select>
         );
     }

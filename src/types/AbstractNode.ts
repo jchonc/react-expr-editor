@@ -83,20 +83,20 @@ export class CompareNode extends AbstractNode {
     }
 
     getAllowedOperators(meta: any) {
-        if (meta){
+        if (meta) {
             return Operators[meta.attrCtrlType];
         }
-        return [{value: '', label: ''}];
-        
+        return [{ value: '', label: '' }];
+
     }
 
     getOperandKind(meta: any) {
         if (meta) {
-            if (meta.attrCtrlType === 'date' && (this.operator === 'IsBetween' || this.operator === 'IsNotBetween')) {
+            if (meta.attrCtrlType === 'date' && (this.operator === 'BETWEEN' || this.operator === 'NOT_BETWEEN')) {
                 return 'date-range';
             }
             if (meta.attrCtrlType === 'picklist') {
-                return (this.operator === 'IsOneOf') ? 'multi-pick' : 'pick';
+                return (this.operator === 'ONE_OF') ? 'multi-pick' : 'pick';
             }
             if (validCtrlKind.indexOf(meta.attrCtrlType) >= 0) {
                 return meta.attrCtrlType;
@@ -139,8 +139,8 @@ export class CompareNode extends AbstractNode {
         return ExpressionStore.getMeta(this.attrId);
     }
 
-    @computed get validator(): any {
-        return new ValidatorFactory().GetValidator(this.getOperandKind(this.meta));
+    @computed get validator(): (values: string[]) => boolean {
+        return ValidatorFactory.GetValidator(this.getOperandKind(this.meta));
     }
 
     @computed get isValid(): boolean {
