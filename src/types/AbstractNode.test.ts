@@ -107,6 +107,18 @@ describe('LogicNode', () => {
         expect(n3.operands).toHaveLength(1);
         expect(n3.operands).toContain(n5);
     });
+
+    test('can compute is valid', () => {
+        let n1 = new LogicNode();
+        let n2 = new CompareNode();
+        let n3 = new CompareNode();
+
+        n2.setMeta({attrId: '1', attrCaption: 'firstname', attrCtrlType: 'text'}, ['test']);
+        n3.setMeta({attrId: '2', attrCaption: 'lastname', attrCtrlType: 'text'}, ['test']);
+        n1.operands.push(...[n2, n3]);
+
+        expect(n1.isValid).toBeTruthy();
+    });
 });
 
 describe('CompareNode', () => {
@@ -143,5 +155,28 @@ describe('NodeFactory', () => {
         let exp = NodeFactory.LoadExpression({ name: 'logic', operands: [{ name: 'compare', operands: ['test'] }] });
         expect(exp).not.toBeNull();
         expect(exp).toBeInstanceOf(LogicNode);
+    });
+    test('can load invalid json', () => {
+        let exp = NodeFactory.LoadExpression({ name: '' });
+        expect(exp).toBeNull();
+
+        let exp1 = NodeFactory.LoadExpression({
+            name: 'logic', operands: [{
+                name: 'banana', operand: [{
+                    name:
+                        'compare'
+                }]
+            }]
+        });
+        expect(exp1).toBeDefined();
+    });
+    test('can save valid node', () => {
+        let n1 = null;
+        let r1 = NodeFactory.SaveExpression(n1);
+        expect(r1).toBeNull();
+
+        let n2 = new LogicNode();
+        let r2 = NodeFactory.SaveExpression(n2);
+        expect(r2).toBeDefined();
     });
 });

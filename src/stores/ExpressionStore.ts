@@ -28,15 +28,6 @@ export class ExpressionStore {
                 });
         }
     }
-
-    @action getMeta(attrId: string): any | undefined {
-        if (!attrId) {
-            return undefined;
-        }
-        return utilityStore.dictionary.find(function (elm: any) {
-            return elm.attrId === attrId;
-        });
-    }
 }
 
 export default new ExpressionStore();

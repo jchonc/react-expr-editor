@@ -98,6 +98,15 @@ export class UtilityStore {
         });
     }
 
+    @action getMeta(attrId: string): any | undefined {
+        if (!attrId) {
+            return undefined;
+        }
+        return this.dictionary.find(function (elm: any) {
+            return elm.attrId === attrId;
+        });
+    }
+
 }
 
 export default new UtilityStore();

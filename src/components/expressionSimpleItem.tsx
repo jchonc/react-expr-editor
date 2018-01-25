@@ -68,9 +68,9 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
 
     updateMetaReference(elmId: string) {
         const expression = this.props.node;
-        let meta = this.props.expressionStore!.getMeta(elmId);
+        let meta = this.props.utilityStore!.getMeta(elmId);
         if (expression && meta) {
-            expression.setMeta(elmId, meta);
+            expression.setMeta(meta);
         }
     }
 
@@ -85,7 +85,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                 };
             });
 
-            let meta = this.props.expressionStore!.getMeta(expression.attrId!);
+            let meta = this.props.utilityStore!.getMeta(expression.attrId);
             let operandKind = this.props.node.getOperandKind(meta);
             let allowedOperators = this.props.node.getAllowedOperators(meta);
             let currentOperators = allowedOperators.filter((op: any) => op.value === expression.operator);

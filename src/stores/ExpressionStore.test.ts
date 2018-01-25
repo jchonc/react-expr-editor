@@ -40,11 +40,4 @@ describe('Store test', function () {
         store.clear();
         expect(mockApi).toBeCalled();
     });
-
-    test('can get meta', () => {
-        store.entityName = 'patient';
-        store.moduleId = 1;
-        let meta = store.getMeta('11001');
-        expect(meta).toBeUndefined();
-    });
 });

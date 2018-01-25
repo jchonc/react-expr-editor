@@ -1,6 +1,5 @@
 import { observable, action, computed } from 'mobx';
 import { ExpressionBooleanLogic, ExpressionOperator, validCtrlKind, Operators } from './index';
-import ExpressionStore from '../stores/ExpressionStore';
 import ValidatorFactory from '../factories/ValidatorFactory';
 
 export interface NodeOwner {
@@ -72,6 +71,9 @@ export class CompareNode extends AbstractNode {
     attrCaption: string;
 
     @observable
+    meta: any;
+
+    @observable
     operator: string;
 
     @observable
@@ -106,10 +108,11 @@ export class CompareNode extends AbstractNode {
     }
 
     @action
-    setMeta(elmId: string, meta: any): void {
-        this.attrId = elmId;
+    setMeta(meta: any, operands: any = ['', '']): void {
+        this.attrId = meta.attrId;
         this.attrCaption = meta.attrCaption;
-        this.operands = ['', ''];
+        this.meta = meta;
+        this.operands = operands;
     }
 
     @action
@@ -133,10 +136,6 @@ export class CompareNode extends AbstractNode {
         }
         let index = (this.parentNode as LogicNode).operands.findIndex(n => n === this);
         (this.parentNode as LogicNode).operands.splice(index, 0, newNode);
-    }
-
-    @computed get meta(): any {
-        return ExpressionStore.getMeta(this.attrId);
     }
 
     @computed get validator(): (values: string[]) => boolean {
@@ -236,7 +235,6 @@ export class LogicNode extends AbstractNode implements NodeOwner {
 export class NodeFactory {
     static LoadExpression(jsonExpression: any): AbstractNode | null {
         if (jsonExpression && jsonExpression.name) {
-
             switch (jsonExpression.name) {
                 case 'compare':
                     let simpleResult = new CompareNode(undefined);
@@ -291,4 +289,20 @@ export class NodeFactory {
         return null;
     }
 
+    static UpdateMeta(node: AbstractNode, meta: any[]) {
+        if (node) {
+            if (node instanceof CompareNode) {
+                let metaData = meta.find(function (elm: any) {
+                    return elm.attrId === node.attrId;
+                });
+                if (metaData) {
+                    node.setMeta(metaData);
+                }
+            }
+            else {
+                const cn = node as LogicNode;
+                cn.operands.forEach((op) => NodeFactory.UpdateMeta(op, meta));
+            }
+        }
+    }
 }
