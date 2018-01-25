@@ -12,7 +12,7 @@ import { Provider, observer } from 'mobx-react';
 interface ExpressionEditorProps {
     moduleId: number;
     entityName: string;
-    readonly: boolean;
+    readOnly: boolean;
     root: any;
 }
 
@@ -26,10 +26,10 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
 
     constructor(props: any) {
         super(props);
-        stores.expressionStore.moduleId = this.props.moduleId;
-        stores.expressionStore.entityName = this.props.entityName;
-        stores.expressionStore.readonly = this.props.readonly;
-        stores.expressionStore.setExpression(this.props.root);
+        stores.expressionStore.moduleId = props.moduleId;
+        stores.expressionStore.entityName = props.entityName;
+        stores.expressionStore.readOnly = props.readOnly;
+        stores.expressionStore.setExpression(props.root);
     }
 
     componentDidMount() {
@@ -61,16 +61,15 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
             return <div>Loading Metabase</div>;
         }
         else {
-            debugger;
-            let expression = expressionStore.expression;
+            let expression = stores.expressionStore.expression;
             if (expression) {
                 if (!expression.parentNode) {
                     expression.parentNode = this;
                 }
                 let buttons = (<div />);
-                if (!expressionStore.readonly) {
+                if (!expressionStore.readOnly) {
                     buttons = (
-                        <div>
+                        <div className="expr-editor-toolbar">
                             <Button>Copy</Button>
                             <Button>Paste</Button>
                             <Button
@@ -91,7 +90,7 @@ class ExpressionEditor extends React.Component<ExpressionEditorProps> implements
                                 <Provider {...stores}>
                                     <ExpressionItem
                                         node={expression}
-                                        readOnly={expressionStore.readonly}
+                                        readOnly={expressionStore.readOnly}
                                     />
                                 </Provider>
                             </div>

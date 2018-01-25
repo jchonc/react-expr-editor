@@ -9,7 +9,7 @@ export class ExpressionStore {
 
     entityName: string;
     moduleId: number;
-    readonly: boolean;
+    readOnly: boolean;
 
     @action setExpression(expression: any) {
         this.expression = NodeFactory.LoadExpression(expression);
