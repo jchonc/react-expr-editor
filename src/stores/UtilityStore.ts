@@ -97,6 +97,7 @@ export class UtilityStore {
             }
         });
     }
+
 }
 
 export default new UtilityStore();

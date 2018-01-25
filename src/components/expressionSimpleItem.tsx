@@ -70,7 +70,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         const expression = this.props.node;
         let meta = this.props.expressionStore!.getMeta(elmId);
         if (expression && meta) {
-            expression.setMeta(elmId, meta.attrCaption);
+            expression.setMeta(elmId, meta);
         }
     }
 

@@ -27,8 +27,7 @@ class ExpressionValueMultiList extends React.Component<ExpressionValueMultiListP
         let opts = this.props.options;
         if (mobx.isObservableArray(opts)) {
             opts = (this.props.options as ObservableArray<string>).peek();
-        }
-        
+        }        
         return (
             <Select
                 className="expr-simple-value"

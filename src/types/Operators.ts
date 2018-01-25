@@ -33,6 +33,11 @@ const basicDateTimeOps = [
     {value: 'DURING_THE_NEXT', label: 'is during the next'}
 ];
 
+const basicLookupOps = [
+    {value: 'EQUALS_IS', label: 'is'},
+    {value: 'NOT_EQUALS_IS', label: 'is not'}
+];
+
 export const Operators = {
     'text': basicTextOps,
     'number': basicTextOps,
@@ -41,4 +46,5 @@ export const Operators = {
     'date': basicDateTimeOps,
     'date-range': basicDateTimeOps,
     'time': basicDateTimeOps,
+    'lookup': basicLookupOps
 };
