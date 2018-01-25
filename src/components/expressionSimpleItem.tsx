@@ -74,7 +74,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
         }
     }
 
-    getCurrentOp(){
+    getCurrentOp() {
 
     }
 
@@ -94,7 +94,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
             let allowedOperators = this.props.node.getAllowedOperators(meta);
             let currentOperators = allowedOperators.filter((op: any) => op.value === expression.operator);
             let displayOp = 'equals';
-            if (currentOperators.length){
+            if (currentOperators.length) {
                 displayOp = currentOperators[0].label;
             }
             let listItems: any[] = [];
@@ -193,7 +193,7 @@ class ExpressionSimpleItem extends React.Component<ExpressionSimpleItemProps> {
                     >
                         {
                             allowedOperators.map((o: any) =>
-                                <Option value={o.value}>{o.label}</Option>
+                                <Option key={o.value} value={o.value}>{o.label}</Option>
                             )
                         }
                     </Select>
