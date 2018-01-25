@@ -86,8 +86,8 @@ export class CompareNode extends AbstractNode {
         if (meta) {
             return Operators[meta.attrCtrlType];
         }
-        return [{value: '', label: ''}];
-        
+        return [{ value: '', label: '' }];
+
     }
 
     getOperandKind(meta: any) {
@@ -139,8 +139,8 @@ export class CompareNode extends AbstractNode {
         return ExpressionStore.getMeta(this.attrId);
     }
 
-    @computed get validator(): any {
-        return new ValidatorFactory().GetValidator(this.getOperandKind(this.meta));
+    @computed get validator(): (values: string[]) => boolean {
+        return ValidatorFactory.GetValidator(this.getOperandKind(this.meta));
     }
 
     @computed get isValid(): boolean {
